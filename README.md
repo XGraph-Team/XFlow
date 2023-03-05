@@ -1,10 +1,16 @@
-# xflow
+# XFlow
+XFlow is a library built upon Python to easily write and train method for a wide range of applications related to network flow problems.
 
 add icons https://css-tricks.com/adding-custom-github-badges-to-your-repo/
 
 ## Intro
 
 ## Table of Contents
+* [Library Highlights](#spreading-task)
+* [Quick Tour for New Users](#quick-tour-for-new-users)
+* [Architecture Overview](#architecture-overview)
+* [Implemented GNN Models](#implemented-gnn-models)
+* [Installation](#installation)
 
 
 
