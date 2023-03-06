@@ -121,15 +121,6 @@ Question: main-stream task of single and multilayer network has little overlap. 
 
 XFlow is available for Python 3.7 to Python 3.10.
 
-### Anaconda
-
-You can now install XFlow via [Anaconda](https://anaconda.org/XFlow/XFlow) for all major OS/PyTorch/CUDA combinations 🤗
-Given that you have PyTorch installed (`>=1.8.0`), simply run
-
-```
-conda install XFlow -c XFlow
-```
-
 ### Pip Wheels
 
 We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.XFlow.org/whl).
