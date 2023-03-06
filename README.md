@@ -21,10 +21,14 @@
 * [Spreading Task](#Spreading-Task)
 * [Backtracking Task](#Backtracking-Task)
 * [Diffusion learning](#Diffusion-learning)
+* [Explanability Task](#Explanability-Task)
 * [Installation](#installation)
 
 
 ## Spreading Task 
+
+[comment]: <> (put NIB here)
+
 
 selected variants
 
@@ -49,6 +53,9 @@ selected variants
 ## Backtracking Task
 
 selected variants
+
+[comment]: <> (write)
+
 
 - (identify starting nodes, given diffusion process and coverage)
 - If diffusion is not given
@@ -80,7 +87,10 @@ selected variants
 
 ## Explanability Task
 
-Task, Data, and Baselines
+
+[comment]: <> (write)
+
+
 
 ### Benchmarks
 
