@@ -20,7 +20,7 @@
 
 * [Spreading Task](#Spreading-Task)
 * [Backtracking Task](#Backtracking-Task)
-* [Diffusion learning](#Diffusion-learning)
+* [Diffusion Learning Task](#Diffusion-learning-task)
 * [Explanability Task](#Explanability-Task)
 * [Installation](#installation)
 
@@ -70,7 +70,7 @@ selected variants
 
 
 
-## Diffusion learning
+## Diffusion Learning Task
 
 selected variants
 
