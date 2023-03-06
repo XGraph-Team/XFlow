@@ -1,4 +1,11 @@
 # XFlow
+
+![my badge](https://badgen.net/badge/pypi/2.2.0/blue?icon=pypi)
+![my badge](https://badgen.net/badge/testing/passing/blue?icon=github)
+![my badge](https://badgen.net/badge/docs/passing/blue?icon=)
+![my badge](https://badgen.net/badge/contributions/welcome/blue?icon=github)
+
+
 XFlow is a library built upon Python to easily write and train method for a wide range of applications related to network flow problems.
 
 add icons https://css-tricks.com/adding-custom-github-badges-to-your-repo/
