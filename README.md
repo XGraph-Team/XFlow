@@ -145,7 +145,7 @@ Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective pa
 }
 ```
 
-Feel free to [email us](mailto:zchen@cse.msstate.edu) if you wish your work to be listed in the [external resources](XXX).
+Feel free to [email us](mailto:zchen@cse.msstate.edu) if you wish your work to be listed in this repo.
 If you notice anything unexpected, please open an [issue](XXX) and let us know.
 If you have any questions or are missing a specific feature, feel free [to discuss them with us](XXX).
 We are motivated to constantly make XFlow even better.
