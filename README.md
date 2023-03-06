@@ -12,22 +12,21 @@
 
 **[Documentation](https://pytorch-geometric.readthedocs.io)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks and Video Tutorials](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | 
 
-**XFlow** is a library built upon Python to easily write and train method for a wide range of applications related to network flow problems. Tasks, datasets benchmarks, baselines and implementation are introduced below.
+**XFlow** is a library built upon Python to easily write and train method for a wide range of applications related to network flow problems. XFlow is organized task-wise, which provide datasets benchmarks, baselines and auxiliary implementation.
 
 [comment]: <> (add icons https://css-tricks.com/adding-custom-github-badges-to-your-repo/)
 
 --------------------------------------------------------------------------------
 
-* [Tasks](#tasks)
-* [Benchmarks](#benchmarks)
-* [Implemented Baselines](#implemented-baselines)
-* [Create your own models](#create-your-own-models)
+* [Spreading Task ](#tasks)
+* [Backtracking Task](#benchmarks)
+* [Diffusion learning](#implemented-baselines)
 * [Installation](#installation)
 
-## Tasks
 
-### Spreading Task 
-Task, Data, and Baselines
+## Spreading Task 
+
+selected variants
 
 - (max/min/understand/predict coverage, given diffusion process and starting nodes)
 - important concept: ***Reverse Reachable Sets (RR set), K-core decomposition***
@@ -39,50 +38,73 @@ Task, Data, and Baselines
 
     [](https://journals.aps.org/pre/pdf/10.1103/PhysRevE.105.044311)
     
+### Benchmarks
+
+### Implemented Baselines
+
+### Create your own models
     
-### Backtracking Task
-Task, Data, and Baselines
+
+
+## Backtracking Task
+
+selected variants
 
 - (identify starting nodes, given diffusion process and coverage)
 - If diffusion is not given
 - Source Identification, or Identification of influential spreaders
 
-### Diffusion learning
+### Benchmarks
+
+### Implemented Baselines
+
+### Create your own models
+
+
+
+
+## Diffusion learning
+
+selected variants
 
 - Min-cost Max-Flow (edge), network simplex
 
-### Explanability Task
+### Benchmarks
+
+### Implemented Baselines
+
+### Create your own models
+
+
+
+
+## Explanability Task
+
 Task, Data, and Baselines
 
-### Multilayer
+### Benchmarks
+
+### Implemented Baselines
+
+### Create your own models
+
+
+
+
+## Multilayer
 
 - percolation
 - synchronization
 
 Question: main-stream task of single and multilayer network has little overlap. So they can be extended to each other.
 
-## Benchmarks
+### Benchmarks
 
-## Implemented Baselines
-We list currently supported XFlow models, layers and operators according to category:
+### Implemented Baselines
 
-## Create your own models
-
+### Create your own models
 
 
-### Manage experiments with GraphGym
-
-GraphGym allows you to manage and launch GNN experiments, using a highly modularized pipeline (see [here](https://pytorch-geometric.readthedocs.io/en/latest/advanced/graphgym.html) for the accompanying tutorial).
-
-```
-git clone https://github.com/XFlow-team/pytorch_geometric.git
-cd pytorch_geometric/graphgym
-bash run_single.sh  # run a single GNN experiment (node/edge/graph-level)
-bash run_batch.sh   # run a batch of GNN experiments, using differnt GNN designs/datasets/tasks
-```
-
-Users are highly encouraged to check out the [documentation](https://pytorch-geometric.readthedocs.io/en/latest), which contains additional tutorials on the essential functionalities of XFlow, including data handling, creation of datasets and a full list of implemented methods, transforms, and datasets.
-For a quick start, check out our [examples](https://github.com/XFlow-team/pytorch_geometric/tree/master/examples) in `examples/`.
 
 
 ## Installation
