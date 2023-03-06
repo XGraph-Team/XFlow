@@ -18,9 +18,9 @@
 
 --------------------------------------------------------------------------------
 
-* [Spreading Task ](#tasks)
-* [Backtracking Task](#benchmarks)
-* [Diffusion learning](#implemented-baselines)
+* [Spreading Task](#Spreading-Task)
+* [Backtracking Task](#Backtracking-Task)
+* [Diffusion learning](#Diffusion-learning)
 * [Installation](#installation)
 
 
