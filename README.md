@@ -122,6 +122,13 @@ Question: main-stream task of single and multilayer network has little overlap. 
 ### Benchmarks
 
 ### Implemented Baselines
+- random
+- degree
+- Digen centrality
+- simulation based greddy
+- Sigma
+- Pi
+- SIM
 
 ### Evaluation
 
