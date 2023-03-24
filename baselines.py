@@ -1,7 +1,7 @@
 import networkx as nx
 import numpy as np
 from simulation import simulationIC, simulationLT
-from score import SobolT
+#from score import SobolT
 import ndlib
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
@@ -246,115 +246,6 @@ def greedyLT(g, config, budget):
         candidates.remove(index)
 
     return selected
-
-
-
-
-
-def SobolPi(g, config, budget):
-    g_greedy = g.__class__()
-    g_greedy.add_nodes_from(g)
-    g_greedy.add_edges_from(g.edges)
-
-    for a, b in g_greedy.edges():
-        weight = config.config["edges"]['threshold'][(a, b)]
-        g_greedy[a][b]['weight'] = weight
-
-    result = []
-
-    for k in range(2*budget):
-
-        n = g_greedy.number_of_nodes()
-
-        I = np.ones((n, 1))
-
-        C = np.ones((n, n))
-        N = np.ones((n, n))
-
-        A = nx.to_numpy_matrix(g_greedy, nodelist=list(g_greedy.nodes()))
-
-        for i in range(5):
-            B = np.power(A, i + 1)
-            D = C - B
-            N = np.multiply(N, D)
-
-        P = C - N
-
-        pi = np.matmul(P, I)
-
-        value = {}
-
-        for i in range(n):
-            value[list(g_greedy.nodes())[i]] = pi[i, 0]
-
-        selected = sorted(value, key=value.get, reverse=True)[0]
-
-        result.append(selected)
-
-        g_greedy.remove_node(selected)
-
-
-    for j in range(budget):
-        df = simulationIC(1, g, result, config)
-        ST = SobolT(df, result)
-        rank = []
-        for node in sorted(ST, key=ST.get, reverse=True):
-            rank.append(node)
-        rem = rank.pop()
-        result.remove((rem))
-
-    return result
-
-def SobolSigma(g, config, budget):
-    g_greedy = g.__class__()
-    g_greedy.add_nodes_from(g)
-    g_greedy.add_edges_from(g.edges)
-
-    for a, b in g_greedy.edges():
-        weight = config.config["edges"]['threshold'][(a, b)]
-        g_greedy[a][b]['weight'] = weight
-
-    result = []
-
-    for k in range(2*budget):
-
-        n = g_greedy.number_of_nodes()
-
-        I = np.ones((n, 1))
-
-        F = np.ones((n, n))
-        N = np.ones((n, n))
-
-        A = nx.to_numpy_matrix(g, nodelist=g_greedy.nodes())
-
-        sigma = I
-        for i in range(5):
-            B = np.power(A, i + 1)
-            C = np.matmul(B, I)
-            sigma += C
-
-        value = {}
-
-        for i in range(n):
-            value[list(g_greedy.nodes())[i]] = sigma[i, 0]
-
-        selected = sorted(value, key=value.get, reverse=True)[0]
-
-        result.append(selected)
-
-        g_greedy.remove_node(selected)
-
-
-    for j in range(budget):
-        df = simulationIC(1, g, result, config)
-        ST = SobolT(df, result)
-        rank = []
-        for node in sorted(ST, key=ST.get, reverse=True):
-            rank.append(node)
-        rem = rank.pop()
-        result.remove((rem))
-
-    return result
 
 # baseline 6 random
 
