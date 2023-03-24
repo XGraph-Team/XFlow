@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img height="150" src="logo.jpg" />
+  <img height="100" src="logo.png" />
 </p>
 
 
@@ -10,7 +10,7 @@
 ![Docs Status](https://badgen.net/badge/docs/passing/green?icon=)
 ![Contributing](https://badgen.net/badge/contributions/welcome/green?icon=github)
 
-**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[Paper](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks and Video Tutorials](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | 
+**[XFlow Homepage](https://xflow.network)** | **[Documentation](https://xflow.network/docs)** | **[Paper Collection](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks Tutorials](https://xflow.network)** 
 
 **XFlow** is a library built upon Python to easily write and train method for a wide range of applications related to network flow problems. XFlow is organized task-wise, which provide datasets benchmarks, baselines and auxiliary implementation.
 
@@ -18,10 +18,10 @@
 
 --------------------------------------------------------------------------------
 
-* [Spreading Task](#Spreading-Task)
-* [Backtracking Task](#Backtracking-Task)
-* [Diffusion Learning Task](#Diffusion-learning-task)
-* [Explanability Task](#Explanability-Task)
+* [Spreading Task](#spreading-task)
+* [Backtracking Task](#backtracking-task)
+* [Diffusion Learning Task](#diffusion-learning-task)
+* [Explanability Task](#explanability-task)
 * [Installation](#installation)
 
 
@@ -110,14 +110,6 @@ selected variants
 ## physical flow
 
 traffic 
-
-
-## Multilayer
-
-- percolation
-- synchronization
-
-Question: main-stream task of single and multilayer network has little overlap. So they can be extended to each other.
 
 ### Benchmarks
 
