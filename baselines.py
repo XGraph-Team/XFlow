@@ -1,7 +1,7 @@
 import networkx as nx
 import numpy as np
 from simulation import simulationIC, simulationLT
-from score import SobolT
+#from score import SobolT
 import ndlib
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
