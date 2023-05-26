@@ -7,6 +7,17 @@ import ndlib.models.ModelConfig as mc
 import statistics as s
 import random
 import heapq
+import matplotlib.pyplot as plt
+from random import uniform, seed
+import numpy as np
+import pandas as pd
+import time
+from igraph import *
+# import random
+from collections import Counter
+import operator
+import numpy as np
+import copy
 
 # random
 
@@ -523,14 +534,104 @@ def sigma(g, config, budget):
 
     return result
 
+# https://github.com/Braylon1002/IMTool
+# IMRank
+
+
+
+def IMRank(g, config, budget):
+    """
+    IMRank algorithm to rank the nodes based on their influence.
+    """
+
+    # Obtain adjacency matrix from the graph
+    adjacency_matrix = nx.adjacency_matrix(g).todense()
+    
+    start = time.perf_counter()
+    t = 0
+    r0 = [i for i in range(len(adjacency_matrix))]
+    r = [0 for i in range(len(adjacency_matrix))]
+
+    # Loop until the ranks converge
+    while True:
+        t = t + 1
+        r = LFA(adjacency_matrix)
+        r = np.argsort(-np.array(r))
+        if operator.eq(list(r0), list(r)):
+            break
+        r0 = copy.copy(r)
+        
+    # elapsed_time = time.perf_counter() - start
+    # print(f"Elapsed time: {elapsed_time} seconds")
+
+    # Select top nodes up to the budget
+    selected = r[:budget]
+    print(sorted(selected))
+    return selected
+
+
 # baselines: sketch based
+# todo
+# https://github.com/Braylon1002/IMTool
+#RIS
+
+def RIS(g, config, budget):
+    mc=2
+    start_time = time.time()
+    R = [get_RRS(g, config) for _ in range(mc)]
+
+    SEED = []
+    timelapse = []
+    for _ in range(budget):
+        # Collect all nodes from all RRS
+        flat_map = [item for subset in R for item in subset]
+        # Only proceed if there are nodes in the flat_map
+        if flat_map:
+            seed = Counter(flat_map).most_common()[0][0]
+            print(Counter(flat_map).most_common()[0])
+            SEED.append(seed)
+
+            R = [rrs for rrs in R if seed not in rrs]
+
+        timelapse.append(time.time() - start_time)
+
+    return (sorted(SEED), timelapse)
 
 
+# helpers
+# helper function for IMRank
+def LFA(matrix):
+    """
+    Linear Feedback Algorithm to update the ranks of the nodes.
+    """
+    n = len(matrix)
+    Mr = [1 for i in range(n)]
+    for i_ in range(1, n):
+        i = n - i_
+        for j in range(0, i + 1):
+            Mr[j] = Mr[j] + matrix[j][i] * Mr[i]
+            Mr[i] = (1 - matrix[j][i]) * Mr[i]
+    return Mr
 
-# baseline 7 simulation
-
-# baseline 8 sketch base
-
+# helper function for RIS
+def get_RRS(g, config):
+    """
+    Inputs: g: Network graph
+            config: Configuration object for the IC model
+    Outputs: A random reverse reachable set expressed as a list of nodes
+    """
+    # select a random node as the starting point
+    source = random.choice(list(g.nodes()))
+    
+    # get edges according to the propagation probability
+    edges = [(u, v) for (u, v, d) in g.edges(data=True) if uniform(0, 1) < config.config["edges"]['threshold'][(u, v)]]
+    
+    # create a subgraph based on the edges
+    g_sub = g.edge_subgraph(edges)
+    
+    # perform a depth-first traversal from the source node to get the RRS
+    RRS = list(nx.dfs_preorder_nodes(g_sub, source))
+    return RRS
 
 # diffusion models
 # fixme set MC = 100
