@@ -16,7 +16,7 @@ node_trace = go.Scatter(
     y=[pos[node][1] for node in G.nodes()],
     mode="markers",
     marker=dict(
-        size=10,
+        size=20,
         color="blue",
     ),
 )
@@ -46,7 +46,17 @@ fig = go.Figure(data=[edge_trace, node_trace],
                            x=0,
                            y=-0.1
                        )
-                   ]
+                   ],
+                   xaxis=dict(
+                       showline=False,
+                       zeroline=False,
+                   ),
+                   yaxis=dict(
+                       showline=False,
+                       zeroline=False,
+                   ),
+                   height=600,
+                   autosize=True,  # Set autosize to True
                ))
 
 # Step 3: Create the Dash app
