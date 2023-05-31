@@ -540,8 +540,6 @@ def sigma(g, config, budget):
 # https://github.com/Braylon1002/IMTool
 # IMRank
 
-
-
 def IMRank(g, config, budget):
     """
     IMRank algorithm to rank the nodes based on their influence.
