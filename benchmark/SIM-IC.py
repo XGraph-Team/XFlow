@@ -2,22 +2,13 @@ import networkx as nx
 from time import time
 
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
-from baselines import eigen, degree, pi, sigma, greedy
+from baselines import eigen, degree, pi, sigma, greedy, celf, celfpp
 from score import effectIC
 
 g, config = Cora()
 
 print("Cora graph is on.")
 # print(nx.info(g))
-
-print('------------------------------------------------')
-print('greedy')
-start = time()
-set = greedy(g,config,5)
-end = time()
-print("time: ", end-start)
-ie,var = effectIC(g, config, set)
-print('IE:', ie, " +_ ", var)
 
 # print('------------------------------------------------')
 # print('degreeDiscount')
@@ -98,6 +89,34 @@ start = time()
 set = degree(g,config,5)
 end = time()
 print('time: ', end - start)
+ie,var = effectIC(g, config, set)
+print('IE:', ie, " +_ ", var)
+
+
+print('------------------------------------------------')
+print('celf')
+start = time()
+set = celf(g,config,5)
+end = time()
+print("time: ", end-start)
+ie,var = effectIC(g, config, set)
+print('IE:', ie, " +_ ", var)
+
+print('------------------------------------------------')
+print('celfpp')
+start = time()
+set = celfpp(g,config,5)
+end = time()
+print("time: ", end-start)
+ie,var = effectIC(g, config, set)
+print('IE:', ie, " +_ ", var)
+
+print('------------------------------------------------')
+print('greedy')
+start = time()
+set = greedy(g,config,5)
+end = time()
+print("time: ", end-start)
 ie,var = effectIC(g, config, set)
 print('IE:', ie, " +_ ", var)
 
