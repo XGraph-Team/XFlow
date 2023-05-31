@@ -581,18 +581,18 @@ def IMRank(g, config, budget):
 
 def RIS(g, config, budget):
     mc=100
-    start_time = time.time()
+    #start_time = time.time()
     R = [get_RRS(g, config) for _ in range(mc)]
 
     selected = []
-    timelapse = []
+    #timelapse = []
     for _ in range(budget):
         # Collect all nodes from all RRS
         flat_map = [item for subset in R for item in subset]
         # Only proceed if there are nodes in the flat_map
         if flat_map:
             seed = Counter(flat_map).most_common()[0][0]
-            print(Counter(flat_map).most_common()[0])
+            #print(Counter(flat_map).most_common()[0])
             selected.append(seed)
 
             R = [rrs for rrs in R if seed not in rrs]
@@ -635,6 +635,9 @@ def get_RRS(g, config):
     
     # create a subgraph based on the edges
     g_sub = g.edge_subgraph(edges)
+
+    # select a random node as the starting point that is part of the subgraph
+    source = random.choice(list(g_sub.nodes()))
     
     # perform a depth-first traversal from the source node to get the RRS
     RRS = list(nx.dfs_preorder_nodes(g_sub, source))
