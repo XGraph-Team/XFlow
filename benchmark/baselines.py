@@ -468,7 +468,7 @@ def pi(g, config, budget):
         C = np.ones((n, n))
         N = np.ones((n, n))
 
-        A = nx.to_numpy_matrix(g_greedy, nodelist=list(g_greedy.nodes()))
+        A = nx.to_numpy_array(np.array(g_greedy), nodelist=list(g_greedy.nodes()))
 
         for i in range(5):
             B = np.power(A, i + 1)
