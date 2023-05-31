@@ -44,8 +44,8 @@ def greedy(g, config, budget):
 
         selected.append(index)
         candidates.remove(index)
-    print(sorted(selected))
 
+    print(selected)
     return selected
 
 def celf(g, config, budget):   
@@ -98,9 +98,9 @@ def celf(g, config, budget):
         
         # Remove the selected node from the list
         Q = Q[1:]
-        print(sorted(selected))
-    
-    return(sorted(selected))
+
+    print(selected)
+    return(selected)
     # return(sorted(S),timelapse)
 
 def celfpp(g, config, budget):   
@@ -156,9 +156,8 @@ def celfpp(g, config, budget):
         # Remove the selected node from the list
         Q = Q[1:]
 
-        print(sorted(selected))
-
-    return sorted(selected)
+    print(selected)
+    return selected
 
 # greedy with IC
 # def greedyIC(g, config, budget):
@@ -426,6 +425,7 @@ def eigen(g, config, budget):
         eig.append(selected)
         g_eig.remove_node(selected)
 
+    print(eig)
     return eig
 
 # degree
@@ -445,6 +445,7 @@ def degree(g, config, budget):
         deg.append(selected)
         g_deg.remove_node(selected)
 
+    print(deg)
     return deg
 
 # pi
@@ -490,6 +491,7 @@ def pi(g, config, budget):
 
         g_greedy.remove_node(selected)
 
+    print(result)
     return result
 
 # sigma
@@ -532,6 +534,7 @@ def sigma(g, config, budget):
 
         g_greedy.remove_node(selected)
 
+    print(result)
     return result
 
 # https://github.com/Braylon1002/IMTool
@@ -566,7 +569,8 @@ def IMRank(g, config, budget):
 
     # Select top nodes up to the budget
     selected = r[:budget]
-    print(sorted(selected))
+
+    print(selected)
     return selected
 
 
@@ -580,7 +584,7 @@ def RIS(g, config, budget):
     start_time = time.time()
     R = [get_RRS(g, config) for _ in range(mc)]
 
-    SEED = []
+    selected = []
     timelapse = []
     for _ in range(budget):
         # Collect all nodes from all RRS
@@ -589,14 +593,15 @@ def RIS(g, config, budget):
         if flat_map:
             seed = Counter(flat_map).most_common()[0][0]
             print(Counter(flat_map).most_common()[0])
-            SEED.append(seed)
+            selected.append(seed)
 
             R = [rrs for rrs in R if seed not in rrs]
 
 #         timelapse.append(time.time() - start_time)
 
 #     return (sorted(SEED), timelapse)
-    return (sorted(SEED))
+    print(selected)
+    return (selected)
 
 
 
