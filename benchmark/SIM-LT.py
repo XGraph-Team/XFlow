@@ -2,7 +2,7 @@ import networkx as nx
 from time import time
 
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
-from IM import eigen, degree, Netshield, SoboldegLT, SoboleigenLT, SobolNSLT, greedyLT
+from baselines import eigen, degree, pi, sigma, greedy, celf, celfpp, IMRank, RIS
 from score import effectLT
 
 g, config = Cora()
