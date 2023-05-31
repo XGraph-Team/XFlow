@@ -576,7 +576,7 @@ def IMRank(g, config, budget):
 #RIS
 
 def RIS(g, config, budget):
-    mc=2
+    mc=100
     start_time = time.time()
     R = [get_RRS(g, config) for _ in range(mc)]
 
@@ -593,9 +593,11 @@ def RIS(g, config, budget):
 
             R = [rrs for rrs in R if seed not in rrs]
 
-        timelapse.append(time.time() - start_time)
+#         timelapse.append(time.time() - start_time)
 
-    return (sorted(SEED), timelapse)
+#     return (sorted(SEED), timelapse)
+    return (sorted(SEED))
+
 
 
 # helpers
