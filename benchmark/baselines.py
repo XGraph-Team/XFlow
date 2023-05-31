@@ -634,10 +634,9 @@ def get_RRS(g, config):
     return RRS
 
 # diffusion models
-# fixme set MC = 100
 def IC(g, config, seed):
     # number of Monte Carlo simulations to be run for the IC model
-    mc_number = 2
+    mc_number = 100
     result = []
 
     for iter in range(mc_number):
