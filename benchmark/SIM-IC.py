@@ -2,7 +2,7 @@ import networkx as nx
 from time import time
 
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
-from baselines import eigen, degree, pi, sigma, Netshield, greedy, celf, celfpp, IMRank, RIS
+from baselines import eigen, degree, pi, sigma, greedy, celf, celfpp, IMRank, RIS
 from score import effectIC
 
 g, config = Cora()
@@ -64,14 +64,14 @@ print('time: ', end - start)
 ie,var = effectIC(g, config, set)
 print('IE:', ie, " +_ ", var)
 
-print('------------------------------------------------')
-print('NetShield')
-start = time()
-set = Netshield(g,config,50)
-end = time()
-print("time: ", end-start)
-ie,var = effectIC(g, config, set)
-print('IE:', ie, " +_ ", var)
+# print('------------------------------------------------')
+# print('NetShield')
+# start = time()
+# set = Netshield(g,config,50)
+# end = time()
+# print("time: ", end-start)
+# ie,var = effectIC(g, config, set)
+# print('IE:', ie, " +_ ", var)
 
 # print('------------------------------------------------')
 # print('celfpp')
