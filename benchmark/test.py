@@ -5,7 +5,7 @@ from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
 from baselines import pi, eigen, degree, celfpp, celf, greedy,IMRank,RIS
 from score import effectIC, effectLT
 
-print('round B: budget = 5')
+print('round A: budget = 5')
 g, config = Cora()
 
 print("Cora graph is on.")
