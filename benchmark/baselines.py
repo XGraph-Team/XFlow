@@ -50,14 +50,7 @@ def greedy(g, config, budget, rounds=100, model='IC'):
     print(selected)
     return selected
 
-def celf(g, config, budget):   
-    """
-    Inputs: g:     Network graph
-            config: Configuration object for the IC model
-            budget:     Size of seed set
-    Return: A seed set of nodes as an approximate solution to the IM problem
-    """
-      
+def celf(g, config, budget, rounds=100, model='IC'):     
     # Find the first node with greedy algorithm
     
     # Compute marginal gain for each node
@@ -65,7 +58,10 @@ def celf(g, config, budget):
     #, start_time = list(g.nodes()), time.time()
     # step 1, call our IC function, get the result of list
     # step 2, calculate the margin gain 
-    marg_gain = [s.mean(IC(g, config, [node])) for node in candidates]
+    if (model == "IC"):
+        marg_gain = [s.mean(IC(g, config, [node])) for node in candidates]
+    elif (model == "LT"):
+        marg_gain = [s.mean(LT(g, config, [node])) for node in candidates]
 
     # Create the sorted list of nodes and their marginal gain 
     Q = sorted(zip(candidates,marg_gain), key = lambda x: x[1],reverse=True)
@@ -85,7 +81,10 @@ def celf(g, config, budget):
             current = Q[0][0]
             
             # Evaluate the spread function and store the marginal gain in the list
-            Q[0] = (current, s.mean(IC(g, config, selected+[current])) - spread)
+            if (model == "IC"):
+                Q[0] = (current, s.mean(IC(g, config, selected+[current])) - spread)
+            elif (model == "LT"):
+                Q[0] = (current, s.mean(LT(g, config, selected+[current])) - spread)
 
             # Re-sort the list
             Q = sorted(Q, key = lambda x: x[1], reverse=True)
@@ -105,17 +104,14 @@ def celf(g, config, budget):
     return(selected)
     # return(sorted(S),timelapse)
 
-def celfpp(g, config, budget):   
-    """
-    Inputs: g:     Network graph
-            config: Configuration object for the IC model
-            budget:     Size of seed set
-    Return: A seed set of nodes as an approximate solution to the IM problem
-    """
-      
+def celfpp(g, config, budget, rounds=100, model='IC'):
+
     # Compute marginal gain for each node
     candidates = list(g.nodes())
-    marg_gain = [s.mean(IC(g, config, [node])) for node in candidates]
+    if (model == "IC"):
+        marg_gain = [s.mean(IC(g, config, [node])) for node in candidates]
+    elif (model == "LT"):
+        marg_gain = [s.mean(LT(g, config, [node])) for node in candidates]
 
     # Create the sorted list of nodes and their marginal gain 
     Q = sorted(zip(candidates, marg_gain), key = lambda x: x[1], reverse=True)
@@ -136,7 +132,11 @@ def celfpp(g, config, budget):
             # Check if the last added seed has changed
             if current != last_seed:
                 # Compute new marginal gain
-                new_gain = s.mean(IC(g, config, selected+[current])) - spread
+                if (model == "IC"):
+                    new_gain = s.mean(IC(g, config, selected+[current])) - spread
+                elif (model == "LT"):
+                    new_gain = s.mean(LT(g, config, selected+[current])) - spread
+
             else:
                 # If the last added seed hasn't changed, the marginal gain remains the same
                 new_gain = old_gain
