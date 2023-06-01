@@ -3,7 +3,7 @@ from time import time
 
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
 from baselines import pi, eigen, degree, celfpp, celf, greedy,IMRank,RIS
-from score import effectIC
+from score import effectIC, effectLT
 
 g, config = Cora()
 
@@ -36,13 +36,13 @@ print("Cora graph is on.")
 # ie,var = effectIC(g, config, set)
 # print('IE:', ie, " +_ ", var)
 
-print('Simulation RIS')
-start = time()
-set = RIS(g,config,5)
-end = time()
-print("time: ", end-start)
-ie,var = effectIC(g, config, set)
-print('IE:', ie, " +_ ", var)
+# print('Simulation RIS')
+# start = time()
+# set = RIS(g,config,5)
+# end = time()
+# print("time: ", end-start)
+# ie,var = effectIC(g, config, set)
+# print('IE:', ie, " +_ ", var)
 
 # print('Simulation CELF++')
 # start = time()
@@ -52,29 +52,25 @@ print('IE:', ie, " +_ ", var)
 # ie,var = effectIC(g, config, set)
 # print('IE:', ie, " +_ ", var)
 
-# print('Simulation CELF++ 2')
+# print('Simulation CELF')
 # start = time()
-# set = celfpp2(g,config,5)
+# set = celf(g,config,5)
 # end = time()
 # print("time: ", end-start)
+# ie,var = effectIC(g, config, set)
+# print('IE:', ie, " +_ ", var)
 
-print('Simulation CELF')
+print('Simulation greedy LT')
 start = time()
-set = celf(g,config,5)
+set = greedy(g, config, budget=5, model='LT')
 end = time()
 print("time: ", end-start)
-ie,var = effectIC(g, config, set)
+ie,var = effectLT(g, config, set)
 print('IE:', ie, " +_ ", var)
 
-# print('Simulation CELF 2')
-# start = time()
-# set = celf2(g,config,5)
-# end = time()
-# print("time: ", end-start)
-
-print('Simulation greedy')
+print('Simulation greedy IC')
 start = time()
-set = greedy(g,config,5)
+set = greedy(g, config, budget=5, model='IC')
 end = time()
 print("time: ", end-start)
 ie,var = effectIC(g, config, set)

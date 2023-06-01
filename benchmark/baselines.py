@@ -24,7 +24,7 @@ import copy
 # baselines: simulation based
 
 # greedy
-def greedy(g, config, budget):
+def greedy(g, config, budget, rounds=100, model='IC'):
 
     selected = []
     candidates = list(g.nodes())
@@ -35,9 +35,11 @@ def greedy(g, config, budget):
         for node in candidates:
             seed = selected + [node]
 
-            result = IC(g, config, seed)
-            #result = LT(g, config, seed)
-
+            if (model == "IC"):
+                result = IC(g, config, seed, rounds)
+            elif (model == "LT"):
+                result = LT(g, config, seed, rounds)
+            
             if s.mean(result) > max:
                 max = s.mean(result)
                 index = node
@@ -642,12 +644,10 @@ def get_RRS(g, config):
     return RRS
 
 # diffusion models
-def IC(g, config, seed):
-    # number of Monte Carlo simulations to be run for the IC model
-    mc_number = 100
+def IC(g, config, seed, rounds=100):
     result = []
 
-    for iter in range(mc_number):
+    for iter in range(rounds):
 
         model_temp = ep.IndependentCascadesModel(g) # _temp
         config_temp = mc.Configuration()
@@ -672,12 +672,10 @@ def IC(g, config, seed):
 
     return result
 
-def LT(g, config, seed):
-    # number of Monte Carlo simulations to be run for the LT model
-    mc_number = 100
+def LT(g, config, seed, rounds=100):
     result = []
 
-    for iter in range(mc_number):
+    for iter in range(rounds):
 
         model_temp = ep.ThresholdModel(g) # _temp
         config_temp = mc.Configuration()
