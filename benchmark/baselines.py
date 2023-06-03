@@ -24,7 +24,7 @@ import copy
 # baselines: simulation based
 
 # greedy
-def greedy(g, config, budget, rounds=100, model='IC'):
+def greedy(g, config, budget, rounds=100, model='SI'):
 
     selected = []
     candidates = list(g.nodes())
@@ -39,6 +39,8 @@ def greedy(g, config, budget, rounds=100, model='IC'):
                 result = IC(g, config, seed, rounds)
             elif (model == "LT"):
                 result = LT(g, config, seed, rounds)
+            elif (model == "SI"):
+                result = SI(g, config, seed, rounds)
             
             if s.mean(result) > max:
                 max = s.mean(result)
@@ -50,7 +52,7 @@ def greedy(g, config, budget, rounds=100, model='IC'):
     print(selected)
     return selected
 
-def celf(g, config, budget, rounds=100, model='IC'):     
+def celf(g, config, budget, rounds=100, model='SI'):     
     # Find the first node with greedy algorithm
     
     # Compute marginal gain for each node
@@ -82,9 +84,11 @@ def celf(g, config, budget, rounds=100, model='IC'):
             
             # Evaluate the spread function and store the marginal gain in the list
             if (model == "IC"):
-                Q[0] = (current, s.mean(IC(g, config, selected+[current])) - spread)
+                Q[0] = (current, s.mean(IC(g, config, selected+[current]), rounds) - spread)
             elif (model == "LT"):
-                Q[0] = (current, s.mean(LT(g, config, selected+[current])) - spread)
+                Q[0] = (current, s.mean(LT(g, config, selected+[current]), rounds) - spread)
+            elif (model == "SI"):
+                Q[0] = (current, s.mean(SI(g, config, selected+[current]), rounds) - spread)
 
             # Re-sort the list
             Q = sorted(Q, key = lambda x: x[1], reverse=True)
@@ -104,7 +108,7 @@ def celf(g, config, budget, rounds=100, model='IC'):
     return(selected)
     # return(sorted(S),timelapse)
 
-def celfpp(g, config, budget, rounds=100, model='IC'):
+def celfpp(g, config, budget, rounds=100, model='SI'):
 
     # Compute marginal gain for each node
     candidates = list(g.nodes())
@@ -133,10 +137,11 @@ def celfpp(g, config, budget, rounds=100, model='IC'):
             if current != last_seed:
                 # Compute new marginal gain
                 if (model == "IC"):
-                    new_gain = s.mean(IC(g, config, selected+[current])) - spread
+                    new_gain = s.mean(IC(g, config, selected+[current]), rounds) - spread
                 elif (model == "LT"):
-                    new_gain = s.mean(LT(g, config, selected+[current])) - spread
-
+                    new_gain = s.mean(LT(g, config, selected+[current]), rounds) - spread
+                elif (model == "SI"):
+                    new_gain = s.mean(SI(g, config, selected+[current]), rounds) - spread
             else:
                 # If the last added seed hasn't changed, the marginal gain remains the same
                 new_gain = old_gain
