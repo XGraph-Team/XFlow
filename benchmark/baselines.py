@@ -700,3 +700,27 @@ def LT(g, config, seed, rounds=100):
         result.append(total_no)
 
     return result
+
+def SI(g, config, seeds, rounds=100, beta=0.1):
+    result = []
+
+    for iter in range(rounds):
+
+        model_temp = ep.SIModel(g) # _temp
+        
+        config_temp = mc.Configuration()
+        config_temp.add_model_initial_configuration('Infected', seeds)
+        config_temp.add_model_parameter('beta', beta)
+
+        for a, b in g.edges(): # _temp
+            weight = config.config["edges"]['threshold'][(a, b)]
+            # g_temp[a][b]['weight'] = weight
+            config_temp.add_edge_configuration('threshold', (a, b), weight)
+
+        model_temp.set_initial_status(config_temp)
+
+        iterations = model_temp.iteration_bunch(5)
+
+        result.append(iterations[4]['node_count'][1])
+
+    return result
