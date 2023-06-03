@@ -301,7 +301,7 @@ def effectSI(g, config, result):
       g_mid.add_nodes_from(g)
       g_mid.add_edges_from(g.edges)
 
-      model_mid = ep.ThresholdModel(g_mid)
+      model_mid = ep.SIModel(g_mid)
       config_mid = mc.Configuration()
       config_mid.add_model_initial_configuration('Infected', result)
 
@@ -310,17 +310,17 @@ def effectSI(g, config, result):
         g_mid[a][b]['weight'] = weight
         config_mid.add_edge_configuration('threshold', (a, b), weight)
 
-      for i in g.nodes():
-          threshold = random.randrange(1, 20)
-          threshold = round(threshold / 100, 2)
-          config_mid.add_node_configuration("threshold", i, threshold)
-
       model_mid.set_initial_status(config_mid)
 
       iterations = model_mid.iteration_bunch(5)
       trends = model_mid.build_trends(iterations)
 
-      total_no = iterations[4]['node_count'][1]
+      total_no = 0
+
+      for j in range(5):
+        a = iterations[j]['node_count'][1]
+        total_no += a
+
       input.append(total_no)
 
     e = s.mean(input)

@@ -713,7 +713,6 @@ def SI(g, config, seeds, rounds=100, beta=0.1):
     for iter in range(rounds):
 
         model_temp = ep.SIModel(g) # _temp
-        
         config_temp = mc.Configuration()
         config_temp.add_model_initial_configuration('Infected', seeds)
         config_temp.add_model_parameter('beta', beta)
