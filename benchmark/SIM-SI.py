@@ -3,7 +3,7 @@ from time import time
 
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
 from baselines import eigen, degree, pi, sigma, greedy, celf, celfpp, IMRank, RIS
-from score import effectIC
+from score import effectSI
 
 def analyze(seed, beta, size):
     g, config = connSW(size, beta)
@@ -17,7 +17,7 @@ def analyze(seed, beta, size):
     set = pi(g,config,seed)
     end = time()
     print("time: ", end-start)
-    ie,var = effectIC(g, config, set)
+    ie,var = effectSI(g, config, set)
     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
@@ -26,7 +26,7 @@ def analyze(seed, beta, size):
     set = degree(g,config,seed)
     end = time()
     print('time: ', end - start)
-    ie,var = effectIC(g, config, set)
+    ie,var = effectSI(g, config, set)
     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
@@ -35,7 +35,7 @@ def analyze(seed, beta, size):
     set = eigen(g,config,seed)
     end = time()
     print('time: ', end - start)
-    ie,var = effectIC(g, config, set)
+    ie,var = effectSI(g, config, set)
     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
@@ -44,7 +44,7 @@ def analyze(seed, beta, size):
     set = RIS(g,config,seed)
     end = time()
     print('time: ', end - start)
-    ie,var = effectIC(g, config, set)
+    ie,var = effectSI(g, config, set)
     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
@@ -53,7 +53,7 @@ def analyze(seed, beta, size):
     set = celfpp(g,config,seed)
     end = time()
     print('time: ', end - start)
-    ie,var = effectIC(g, config, set)
+    ie,var = effectSI(g, config, set)
     print('IE:', ie, " +_ ", var)
 
 
