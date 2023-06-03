@@ -17,7 +17,7 @@ def analyze(seed, beta, size):
     set = pi(g,config,seed)
     end = time()
     print("time: ", end-start)
-    ie,var = effectSI(g, config, set)
+    ie,var = effectSI(g, config, set, beta)
     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
@@ -26,7 +26,7 @@ def analyze(seed, beta, size):
     set = degree(g,config,seed)
     end = time()
     print('time: ', end - start)
-    ie,var = effectSI(g, config, set)
+    ie,var = effectSI(g, config, set, beta)
     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
@@ -35,7 +35,7 @@ def analyze(seed, beta, size):
     set = eigen(g,config,seed)
     end = time()
     print('time: ', end - start)
-    ie,var = effectSI(g, config, set)
+    ie,var = effectSI(g, config, set, beta)
     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
@@ -44,7 +44,7 @@ def analyze(seed, beta, size):
     set = RIS(g,config,seed)
     end = time()
     print('time: ', end - start)
-    ie,var = effectSI(g, config, set)
+    ie,var = effectSI(g, config, set, beta)
     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
@@ -53,7 +53,7 @@ def analyze(seed, beta, size):
     set = celfpp(g,config,seed)
     end = time()
     print('time: ', end - start)
-    ie,var = effectSI(g, config, set)
+    ie,var = effectSI(g, config, set, beta)
     print('IE:', ie, " +_ ", var)
 
 

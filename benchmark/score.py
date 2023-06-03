@@ -291,7 +291,7 @@ def effectLT(g, config, result):
 
     return e,v
 
-def effectSI(g, config, result, beta=0.01)
+def effectSI(g, config, result, beta=0.01):
 
     input = []
 
