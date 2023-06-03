@@ -317,12 +317,7 @@ def effectSI(g, config, result, beta=0.01):
         iterations = model_mid.iteration_bunch(5)
         trends = model_mid.build_trends(iterations)
 
-        total_no = 0
-
-        for j in range(5):
-            a = iterations[j]['node_count'][1]
-            total_no += a
-
+        total_no = iterations[4]['node_count'][1]
         input.append(total_no)
 
     e = s.mean(input)
