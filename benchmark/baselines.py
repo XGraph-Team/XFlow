@@ -701,6 +701,7 @@ def LT(g, config, seed, rounds=100):
 
     return result
 
+# Zonghan's code
 def SI(g, config, seeds, rounds=100, beta=0.1):
     result = []
 
