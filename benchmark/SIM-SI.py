@@ -47,14 +47,14 @@ def analyze(seed, beta, size):
     ie,var = effectSI(g, config, set, beta)
     print('IE:', ie, " +_ ", var)
 
-    print('------------------------------------------------')
-    print('celfpp')
-    start = time()
-    set = celfpp(g,config,seed)
-    end = time()
-    print('time: ', end - start)
-    ie,var = effectSI(g, config, set, beta)
-    print('IE:', ie, " +_ ", var)
+    # print('------------------------------------------------')
+    # print('celfpp')
+    # start = time()
+    # set = celfpp(g,config,seed)
+    # end = time()
+    # print('time: ', end - start)
+    # ie,var = effectSI(g, config, set, beta)
+    # print('IE:', ie, " +_ ", var)
 
 
 # for chart 1
