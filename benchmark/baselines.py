@@ -113,9 +113,11 @@ def celfpp(g, config, budget, rounds=100, model='SI'):
     # Compute marginal gain for each node
     candidates = list(g.nodes())
     if (model == "IC"):
-        marg_gain = [s.mean(IC(g, config, [node])) for node in candidates]
+        marg_gain = [s.mean(IC(g, config, [node]), rounds) for node in candidates]
     elif (model == "LT"):
-        marg_gain = [s.mean(LT(g, config, [node])) for node in candidates]
+        marg_gain = [s.mean(LT(g, config, [node]), rounds) for node in candidates]
+    elif (model == "SI"):
+        marg_gain = [s.mean(SI(g, config, [node]), rounds) for node in candidates]
 
     # Create the sorted list of nodes and their marginal gain 
     Q = sorted(zip(candidates, marg_gain), key = lambda x: x[1], reverse=True)
