@@ -66,9 +66,9 @@ def analyze(seed, beta, size):
 #     print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
-    print('IMRank2')
+    print('IMRank')
     start = time()
-    set = IMRank2(g,config,seed)
+    set = IMRank(g,config,seed)
     end = time()
     print('time: ', end - start)
     ie,var = effectSI(g, config, set, beta)
