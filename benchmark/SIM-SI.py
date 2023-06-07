@@ -2,7 +2,7 @@ import networkx as nx
 from time import time
 
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
-from baselines import eigen, degree, pi, sigma, greedy, celf, celfpp, IMRank, RIS, RIS2
+from baselines import eigen, degree, pi, sigma, greedy, celf, celfpp, IMRank, RIS
 from score import effectSI
 
 def analyze(seed, beta, size):
@@ -38,14 +38,14 @@ def analyze(seed, beta, size):
     # ie,var = effectSI(g, config, set, beta)
     # print('IE:', ie, " +_ ", var)
 
-    print('------------------------------------------------')
-    print('RIS2 round tens of thousands')
-    start = time()
-    set = RIS2(g,config,seed, 10000)
-    end = time()
-    print('time: ', end - start)
-    ie,var = effectSI(g, config, set, beta)
-    print('IE:', ie, " +_ ", var)
+    # print('------------------------------------------------')
+    # print('RIS2 round tens of thousands')
+    # start = time()
+    # set = RIS2(g,config,seed, 10000)
+    # end = time()
+    # print('time: ', end - start)
+    # ie,var = effectSI(g, config, set, beta)
+    # print('IE:', ie, " +_ ", var)
     
 #     print('------------------------------------------------')
 #     print('RIS')
@@ -64,6 +64,16 @@ def analyze(seed, beta, size):
 #     print('time: ', end - start)
 #     ie,var = effectSI(g, config, set, beta)
 #     print('IE:', ie, " +_ ", var)
+
+    print('------------------------------------------------')
+    print('IMRank2')
+    start = time()
+    set = IMRank2(g,config,seed)
+    end = time()
+    print('time: ', end - start)
+    ie,var = effectSI(g, config, set, beta)
+    print('IE:', ie, " +_ ", var)
+
 
 
 # for chart 1

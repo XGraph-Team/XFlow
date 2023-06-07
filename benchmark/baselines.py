@@ -549,38 +549,38 @@ def sigma(g, config, budget):
 # https://github.com/Braylon1002/IMTool
 # IMRank
 
-def IMRank(g, config, budget):
-    """
-    IMRank algorithm to rank the nodes based on their influence.
-    """
+# def IMRank(g, config, budget):
+#     """
+#     IMRank algorithm to rank the nodes based on their influence.
+#     """
 
-    # Obtain adjacency matrix from the graph
-    adjacency_matrix = nx.adjacency_matrix(g).todense()
+#     # Obtain adjacency matrix from the graph
+#     adjacency_matrix = nx.adjacency_matrix(g).todense()
     
-    start = time.perf_counter()
-    t = 0
-    r0 = [i for i in range(len(adjacency_matrix))]
-    r = [0 for i in range(len(adjacency_matrix))]
+#     start = time.perf_counter()
+#     t = 0
+#     r0 = [i for i in range(len(adjacency_matrix))]
+#     r = [0 for i in range(len(adjacency_matrix))]
 
-    # Loop until the ranks converge
-    while True:
-        t = t + 1
-        r = LFA(adjacency_matrix)
-        r = np.argsort(-np.array(r))
-        if operator.eq(list(r0), list(r)):
-            break
-        r0 = copy.copy(r)
+#     # Loop until the ranks converge
+#     while True:
+#         t = t + 1
+#         r = LFA(adjacency_matrix)
+#         r = np.argsort(-np.array(r))
+#         if operator.eq(list(r0), list(r)):
+#             break
+#         r0 = copy.copy(r)
         
-    # elapsed_time = time.perf_counter() - start
-    # print(f"Elapsed time: {elapsed_time} seconds")
+#     # elapsed_time = time.perf_counter() - start
+#     # print(f"Elapsed time: {elapsed_time} seconds")
 
-    # Select top nodes up to the budget
-    selected = r[:budget]
+#     # Select top nodes up to the budget
+#     selected = r[:budget]
 
-    print(selected)
-    return selected
+#     print(selected)
+#     return selected
 
-def IMRank2(g, config, budget):
+def IMRank(g, config, budget):
     """
     IMRank algorithm to rank the nodes based on their influence.
     """
@@ -605,7 +605,7 @@ def IMRank2(g, config, budget):
     # Loop until the ranks converge
     while True:
         t = t + 1
-        r = LFA2(adjacency_matrix)
+        r = LFA(adjacency_matrix)
         r = np.argsort(-np.array(r))
         if operator.eq(list(r0), list(r)):
             break
@@ -615,7 +615,7 @@ def IMRank2(g, config, budget):
     # print(f"Elapsed time: {elapsed_time} seconds")
 
     # Select top nodes up to the budget
-    selected = r[:budget]
+    selected = r[:budget].tolist()
 
     print(selected)
     return selected
@@ -675,21 +675,21 @@ def RIS(g, config, budget, rounds=100):
 
 # helpers
 # helper function for IMRank
-def LFA(matrix):
-    """
-    Linear Feedback Algorithm to update the ranks of the nodes.
-    """
-    n = len(matrix)
-    Mr = [1 for i in range(n)]
-    for i_ in range(1, n):
-        i = n - i_
-        for j in range(0, i + 1):
-            Mr[j] = Mr[j] + matrix[j][i] * Mr[i]
-            Mr[i] = (1 - matrix[j][i]) * Mr[i]
-    return Mr
+# def LFA(matrix):
+#     """
+#     Linear Feedback Algorithm to update the ranks of the nodes.
+#     """
+#     n = len(matrix)
+#     Mr = [1 for i in range(n)]
+#     for i_ in range(1, n):
+#         i = n - i_
+#         for j in range(0, i + 1):
+#             Mr[j] = Mr[j] + matrix[j][i] * Mr[i]
+#             Mr[i] = (1 - matrix[j][i]) * Mr[i]
+#     return Mr
 
 # updates to the Mr vector occur simultaneously:
-def LFA2(matrix):
+def LFA(matrix):
     """
     Linear Feedback Algorithm to update the ranks of the nodes.
     """
