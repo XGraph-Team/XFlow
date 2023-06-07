@@ -39,9 +39,9 @@ def analyze(seed, beta, size):
     # print('IE:', ie, " +_ ", var)
 
     print('------------------------------------------------')
-    print('RIS2 round 1000')
+    print('RIS2 round tens of thousands')
     start = time()
-    set = RIS2(g,config,seed, 1000)
+    set = RIS2(g,config,seed, 10000)
     end = time()
     print('time: ', end - start)
     ie,var = effectSI(g, config, set, beta)
