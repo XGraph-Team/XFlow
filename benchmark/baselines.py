@@ -610,7 +610,47 @@ def RIS(g, config, budget):
     print(selected)
     return (selected)
 
+def RIS2(g, config, budget, rounds=100):
+#     mc = 100
+    # Generate mc RRSs
+    R = [get_RRS2(g, config) for _ in range(rounds)]
 
+    selected = []
+    for _ in range(budget):
+        # Collect all nodes from all RRSs
+        flat_map = [item for subset in R for item in subset]
+        # Only proceed if there are nodes in the flat_map
+        if flat_map:
+            seed = Counter(flat_map).most_common()[0][0]
+            selected.append(seed)
+
+            R = [rrs for rrs in R if seed not in rrs]
+
+            # For every removed RRS, generate a new one
+            while len(R) < mc:
+                R.append(get_RRS(g, config))
+
+    print(selected)
+    return (selected)
+
+def get_RRS2(g, config):
+    """
+    Inputs: g: Network graph
+            config: Configuration object for the IC model
+    Outputs: A random reverse reachable set expressed as a list of nodes
+    """
+    # get edges according to the propagation probability
+    edges = [(u, v) for (u, v, d) in g.edges(data=True) if uniform(0, 1) < config.config["edges"]['threshold'][(u, v)]]
+    
+    # create a subgraph based on the edges
+    g_sub = g.edge_subgraph(edges)
+    
+    # select a random node as the starting point that is part of the subgraph
+    source = random.choice(list(g_sub.nodes()))
+    
+    # perform a depth-first traversal from the source node to get the RRS
+    RRS = list(nx.dfs_preorder_nodes(g_sub, source))
+    return RRS
 
 # helpers
 # helper function for IMRank
