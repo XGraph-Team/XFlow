@@ -38,23 +38,32 @@ def analyze(seed, beta, size):
     # ie,var = effectSI(g, config, set, beta)
     # print('IE:', ie, " +_ ", var)
 
-    # print('------------------------------------------------')
-    # print('RIS')
-    # start = time()
-    # set = RIS(g,config,seed)
-    # end = time()
-    # print('time: ', end - start)
-    # ie,var = effectSI(g, config, set, beta)
-    # print('IE:', ie, " +_ ", var)
-
     print('------------------------------------------------')
-    print('celfpp')
+    print('RIS2')
     start = time()
-    set = celfpp(g,config,seed)
+    set = RIS2(g,config,seed)
     end = time()
     print('time: ', end - start)
     ie,var = effectSI(g, config, set, beta)
     print('IE:', ie, " +_ ", var)
+    
+    print('------------------------------------------------')
+    print('RIS')
+    start = time()
+    set = RIS(g,config,seed)
+    end = time()
+    print('time: ', end - start)
+    ie,var = effectSI(g, config, set, beta)
+    print('IE:', ie, " +_ ", var)
+
+#     print('------------------------------------------------')
+#     print('celfpp')
+#     start = time()
+#     set = celfpp(g,config,seed)
+#     end = time()
+#     print('time: ', end - start)
+#     ie,var = effectSI(g, config, set, beta)
+#     print('IE:', ie, " +_ ", var)
 
 
 # for chart 1
