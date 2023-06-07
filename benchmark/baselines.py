@@ -586,10 +586,10 @@ def IMRank(g, config, budget):
 # https://github.com/Braylon1002/IMTool
 #RIS
 
-def RIS(g, config, budget):
-    mc=100
+def RIS(g, config, budget, rounds=100):
+#     mc=100
     #start_time = time.time()
-    R = [get_RRS(g, config) for _ in range(mc)]
+    R = [get_RRS(g, config) for _ in range(rounds)]
 
     selected = []
     #timelapse = []
