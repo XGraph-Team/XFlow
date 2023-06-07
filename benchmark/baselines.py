@@ -627,7 +627,7 @@ def RIS2(g, config, budget, rounds=100):
             R = [rrs for rrs in R if seed not in rrs]
 
             # For every removed RRS, generate a new one
-            while len(R) < mc:
+            while len(R) < rounds:
                 R.append(get_RRS(g, config))
 
     print(selected)
