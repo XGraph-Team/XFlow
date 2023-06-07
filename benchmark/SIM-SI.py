@@ -2,7 +2,7 @@ import networkx as nx
 from time import time
 
 from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
-from baselines import eigen, degree, pi, sigma, greedy, celf, celfpp, IMRank, RIS
+from baselines import eigen, degree, pi, sigma, greedy, celf, celfpp, IMRank, RIS, RIS2
 from score import effectSI
 
 def analyze(seed, beta, size):
