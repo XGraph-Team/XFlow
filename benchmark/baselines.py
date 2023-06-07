@@ -580,6 +580,46 @@ def IMRank(g, config, budget):
     print(selected)
     return selected
 
+def IMRank2(g, config, budget):
+    """
+    IMRank algorithm to rank the nodes based on their influence.
+    """
+
+    # Obtain adjacency matrix from the graph
+    adjacency_matrix = nx.adjacency_matrix(g).todense()
+
+    # Normalize the adjacency matrix
+    row_sums = adjacency_matrix.sum(axis=1)
+    
+    # Check for zero entries in row_sums (which could correspond to isolated nodes)
+    # and replace them with 1 to prevent division by zero errors
+    row_sums[row_sums == 0] = 1
+
+    adjacency_matrix = adjacency_matrix / row_sums
+    
+    start = time.perf_counter()
+    t = 0
+    r0 = [i for i in range(len(adjacency_matrix))]
+    r = [0 for i in range(len(adjacency_matrix))]
+
+    # Loop until the ranks converge
+    while True:
+        t = t + 1
+        r = LFA2(adjacency_matrix)
+        r = np.argsort(-np.array(r))
+        if operator.eq(list(r0), list(r)):
+            break
+        r0 = copy.copy(r)
+        
+    # elapsed_time = time.perf_counter() - start
+    # print(f"Elapsed time: {elapsed_time} seconds")
+
+    # Select top nodes up to the budget
+    selected = r[:budget]
+
+    print(selected)
+    return selected
+
 
 # baselines: sketch based
 # todo
@@ -647,6 +687,23 @@ def LFA(matrix):
             Mr[j] = Mr[j] + matrix[j][i] * Mr[i]
             Mr[i] = (1 - matrix[j][i]) * Mr[i]
     return Mr
+
+# updates to the Mr vector occur simultaneously:
+def LFA2(matrix):
+    """
+    Linear Feedback Algorithm to update the ranks of the nodes.
+    """
+    n = len(matrix)
+    Mr = [1 for _ in range(n)]
+    Mr_next = Mr.copy()
+    for i_ in range(1, n):
+        i = n - i_
+        for j in range(0, i + 1):
+            Mr_next[j] = Mr_next[j] + matrix[j][i] * Mr[i]
+            Mr_next[i] = (1 - matrix[j][i]) * Mr_next[i]
+        Mr = Mr_next.copy()
+    return Mr
+
 
 def get_RRS(g, config):
     """
