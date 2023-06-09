@@ -1,17 +1,13 @@
 import networkx as nx
-import torch
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv
 from torch_geometric.nn.inits import reset
 import random
 import numpy as np
 from torch_geometric import utils
-import scipy
-import ndlib
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
 import statistics as s
-import time
 from util import combinations, substract, subcombs
 
 def effectIC(g, config, result):
