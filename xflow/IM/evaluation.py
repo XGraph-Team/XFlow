@@ -8,7 +8,6 @@ from torch_geometric import utils
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
 import statistics as s
-from util import combinations, substract, subcombs
 
 def effectIC(g, config, result):
 
