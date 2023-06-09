@@ -13,11 +13,15 @@ def blocking_effect_IC(g, config, seeds, selected_to_block):
     for node in selected_to_block:
         g_block.remove_node(node)
 
-    after = s.mean(IC(g_block, config, seeds))
+    after = IC(g_block, config, seeds)
 
-    before = s.mean(IC(g, config, seeds))
+    before = IC(g, config, seeds)
 
-    return before - after
+    blocking_effect = []
+    for i in range(len(before)):
+        blocking_effect.append(before[i] - after[i])
+
+    return s.mean(blocking_effect), s.stdev(blocking_effect)
 
 def blocking_effect_SI(g, config, seeds, selected_to_block, beta=0.1):
 
@@ -31,8 +35,34 @@ def blocking_effect_SI(g, config, seeds, selected_to_block, beta=0.1):
     for node in selected_to_block:
         g_block.remove_node(node)
 
-    after = s.mean(SI(g_block, config, seeds, beta=beta))
+    after = SI(g_block, config, seeds, beta=beta)
 
-    before = s.mean(SI(g, config, seeds, beta=beta))
+    before = SI(g, config, seeds, beta=beta)
 
-    return before - after
+    blocking_effect = []
+    for i in range(len(before)):
+        blocking_effect.append(before[i] - after[i])
+
+    return s.mean(blocking_effect), s.stdev(blocking_effect)
+
+def blocking_effect_LT(g, config, seeds, selected_to_block):
+
+    g_block = g.__class__()
+    g_block.add_nodes_from(g)
+    g_block.add_edges_from(g.edges)
+    for a, b in g_block.edges():
+        weight = config.config["edges"]['threshold'][(a, b)]
+        g_block[a][b]['weight'] = weight
+
+    for node in selected_to_block:
+        g_block.remove_node(node)
+
+    after = LT(g_block, config, seeds)
+
+    before = LT(g, config, seeds)
+
+    blocking_effect = []
+    for i in range(len(before)):
+        blocking_effect.append(before[i] - after[i])
+
+    return s.mean(blocking_effect), s.stdev(blocking_effect)

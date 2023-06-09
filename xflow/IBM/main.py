@@ -1,6 +1,7 @@
 from graph_generation import *
 from IBM_baselines import *
 from evaluation import *
+import time
 
 print('exp 1')
 
@@ -18,34 +19,49 @@ for budget in [5, 10, 15, 20, 25, 30]:
     print('budget: ', budget)
 
     # greedy
+    start = time.time()
     selected = greedySI(g, config, budget, seeds, beta=beta)
+    end = time.time()
+    print('time: ', end - start)
     print('greedy: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # eigen
+    start = time.time()
     selected = eigen(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('eigen: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # degree
+    start = time.time()
     selected = degree(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('degree: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # sigma
+    start = time.time()
     selected = sigma(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('sigma: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # pi
+    start = time.time()
     selected = pi(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('pi: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
 ####################################################################################################
 
@@ -62,34 +78,48 @@ for beta in [0.1,0.2,0.3,0.4,0.5]:
     print('beta: ', beta)
 
     # greedy
+    start = time.time()
     selected = greedySI(g, config, budget, seeds, beta=beta)
+    end = time.time()
+    print('time: ', end - start)
     print('greedy: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
-
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
     # eigen
+    start = time.time()
     selected = eigen(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('eigen: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # degree
+    start = time.time()
     selected = degree(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('degree: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # sigma
+    start = time.time()
     selected = sigma(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('sigma: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # pi
+    start = time.time()
     selected = pi(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('pi: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
 
 ####################################################################################################
@@ -111,32 +141,46 @@ for n in [200,400,600,800,1000]:
     beta = 0.1
 
     # greedy
+    start = time.time()
     selected = greedySI(g, config, budget, seeds, beta=beta)
+    end = time.time()
+    print('time: ', end - start)
     print('greedy: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # eigen
+    start = time.time()
     selected = eigen(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('eigen: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # degree
+    start = time.time()
     selected = degree(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('degree: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # sigma
+    start = time.time()
     selected = sigma(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('sigma: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
 
     # pi
+    start = time.time()
     selected = pi(g, config, budget)
+    end = time.time()
+    print('time: ', end - start)
     print('pi: ', selected)
-    effect = blocking_effect_SI(g, config, seeds, selected, beta=beta)
-    print('blocked: ', effect)
-
+    mean, std = blocking_effect_SI(g, config, seeds, selected, beta=beta)
+    print('blocked: ', mean, '+-', std)
