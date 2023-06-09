@@ -328,40 +328,8 @@ def Netshield(g, config, budget):
 
     return nodes
 
-# https://github.com/Braylon1002/IMTool
 # IMRank
-
-# def IMRank(g, config, budget):
-#     """
-#     IMRank algorithm to rank the nodes based on their influence.
-#     """
-
-#     # Obtain adjacency matrix from the graph
-#     adjacency_matrix = nx.adjacency_matrix(g).todense()
-    
-#     start = time.perf_counter()
-#     t = 0
-#     r0 = [i for i in range(len(adjacency_matrix))]
-#     r = [0 for i in range(len(adjacency_matrix))]
-
-#     # Loop until the ranks converge
-#     while True:
-#         t = t + 1
-#         r = LFA(adjacency_matrix)
-#         r = np.argsort(-np.array(r))
-#         if operator.eq(list(r0), list(r)):
-#             break
-#         r0 = copy.copy(r)
-        
-#     # elapsed_time = time.perf_counter() - start
-#     # print(f"Elapsed time: {elapsed_time} seconds")
-
-#     # Select top nodes up to the budget
-#     selected = r[:budget]
-
-#     print(selected)
-#     return selected
-
+# https://github.com/Braylon1002/IMTool
 def IMRank(g, config, budget):
     """
     IMRank algorithm to rank the nodes based on their influence.
@@ -393,45 +361,16 @@ def IMRank(g, config, budget):
             break
         r0 = copy.copy(r)
         
-    # elapsed_time = time.perf_counter() - start
-    # print(f"Elapsed time: {elapsed_time} seconds")
-
     # Select top nodes up to the budget
     selected = r[:budget].tolist()
 
     print(selected)
     return selected
 
-
 # baselines: sketch based
-# todo
-# https://github.com/Braylon1002/IMTool
+
 #RIS
-
-# def RIS(g, config, budget, rounds=100):
-# #     mc=100
-#     #start_time = time.time()
-#     R = [get_RRS(g, config) for _ in range(rounds)]
-
-#     selected = []
-#     #timelapse = []
-#     for _ in range(budget):
-#         # Collect all nodes from all RRS
-#         flat_map = [item for subset in R for item in subset]
-#         # Only proceed if there are nodes in the flat_map
-#         if flat_map:
-#             seed = Counter(flat_map).most_common()[0][0]
-#             #print(Counter(flat_map).most_common()[0])
-#             selected.append(seed)
-
-#             R = [rrs for rrs in R if seed not in rrs]
-
-# #         timelapse.append(time.time() - start_time)
-
-# #     return (sorted(SEED), timelapse)
-#     print(selected)
-#     return (selected)
-
+# https://github.com/Braylon1002/IMTool
 def RIS(g, config, budget, rounds=100):
 #     mc = 100
     # Generate mc RRSs
@@ -455,7 +394,8 @@ def RIS(g, config, budget, rounds=100):
     print(selected)
     return (selected)
 
-def IMM(g, config, budget, model='IC', rounds=100):
+# IMM
+def IMM(g, config, budget, model='SI', rounds=100, beta=0.1):
     l = config['l'] * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
     k = budget
     
