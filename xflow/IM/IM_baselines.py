@@ -394,63 +394,58 @@ def RIS(g, config, budget, rounds=100):
     print(selected)
     return (selected)
 
-# IMM
-def IMM(g, config, budget, rounds=100, model='SI', beta=0.1):
-    l = 1
-    epsilon = 0.1
-    l = l * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
-    k = budget
+# def IMM(g, config, budget, rounds=100, model='SI', beta=0.1):
+#     l = 1
+#     epsilon = 0.1
+#     l = l * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
+#     k = budget
     
-    R = Sampling(g, config, k, epsilon, l, model, rounds, beta)
+#     R = Sampling(g, config, epsilon, l, model, rounds, beta)
     
-    S = NodeSelection(g, config, R, k, model, rounds, beta)
-    
-    return S
+#     S = NodeSelection(R, k)
+#     print(S)
+#     return S
 
-# helpers
+# def Sampling(g, config, epsilon, l, model='SI', rounds=100, beta=0.1):
+#     R = []
+#     n = len(g.nodes())
+#     LB = 1
+#     eps_prime = np.sqrt(2) * epsilon
+#     for i in range(1, int(np.log2(n))):
+#         x = n / (2 ** i)
+#         theta_i = (l / eps_prime ** 2) * np.log(n) / x
+#         while len(R) <= theta_i:
+#             v = random.choice(list(g.nodes()))
+#             R.append(get_RRS(g, config))
+#         S_i = NodeSelection(R, int(x))  # Changed budget to int(x) here
+#         if n * len(S_i) >= (1 + eps_prime) * x:  
+#             LB = n * len(S_i) / (1 + eps_prime)
+#             break
+#     theta = (l / (epsilon ** 2)) * np.log(n) / LB
+#     while len(R) <= theta:
+#         v = random.choice(list(g.nodes()))
+#         R.append(get_RRS(g, config))
+#     return R
 
-# helper 1 of IMM
-def Sampling(g, config, k, epsilon, l, model='SI', rounds=100, beta=0.1):
-    R = []
-    n = len(g.nodes())
-    LB = 1
-    eps_prime = np.sqrt(2) * epsilon
-    for i in range(1, int(np.log2(n))):
-        x = n / (2 ** i)
-        theta_i = (l / eps_prime ** 2) * np.log(n) / x
-        while len(R) <= theta_i:
-            v = random.choice(list(g.nodes()))
-            R.append(get_RRS(g, config))
-        S_i = NodeSelection(g, config, R, k, model, rounds, beta)
-        if n * len(S_i) >= (1 + eps_prime) * x:  # updated here
-            LB = n * len(S_i) / (1 + eps_prime)  # and here
-            break
-    theta = (l / (epsilon ** 2)) * np.log(n) / LB
-    while len(R) <= theta:
-        v = random.choice(list(g.nodes()))
-        R.append(get_RRS(g, config))
-    return R
+# def NodeSelection(R, k):
+#     S = []
+#     RR_sets_covered = set()
+#     for _ in range(k):
+#         max_spread = 0
+#         best_node = None
+#         for v in set().union(*R):  
+#             if v not in S:
+#                 RR_sets_can_cover = sum([v in RR for RR in R if tuple(RR) not in RR_sets_covered])
+#                 if RR_sets_can_cover > max_spread:
+#                     max_spread = RR_sets_can_cover
+#                     best_node = v
+#         if best_node is not None:
+#             S.append(best_node)
+#             RR_sets_covered |= set([tuple(RR) for RR in R if best_node in RR])
+#         else:
+#             print("No suitable node found!")
+#     return S
 
-
-# helper 2 of IMM
-def NodeSelection(g, config, R, k, model='SI', rounds=100, beta=0.1):
-    S = []
-    for _ in range(k):
-        max_spread = 0
-        seed = -1
-        for v in set().union(*R):  # Get unique nodes across all RR sets
-            if v not in S:
-                if model == 'IC':
-                    spread = len(set(IC(g, config, [v], rounds)) & set().union(*R))
-                if model == 'LT':
-                    spread = len(set(LT(g, config, [v], rounds)) & set().union(*R))
-                elif model == 'SI':
-                    spread = len(set(SI(g, config, [v], rounds, beta)) & set().union(*R))
-                if spread > max_spread:
-                    max_spread = spread
-                    seed = v
-        S.append(seed)
-    return S
 
 # updates to the Mr vector occur simultaneously:
 def LFA(matrix):
