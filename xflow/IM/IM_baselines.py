@@ -395,7 +395,7 @@ def RIS(g, config, budget, rounds=100):
     return (selected)
 
 # IMM
-def IMM(g, config, budget, model='SI', rounds=100, beta=0.1):
+def IMM(g, config, budget, rounds=100, model='SI', beta=0.1):
     l = config['l'] * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
     k = budget
     
