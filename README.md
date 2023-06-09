@@ -16,147 +16,69 @@
 
 [comment]: <> (add icons https://css-tricks.com/adding-custom-github-badges-to-your-repo/)
 
---------------------------------------------------------------------------------
-
-* [Spreading Task](#spreading-task)
-* [Backtracking Task](#backtracking-task)
-* [Diffusion Learning Task](#diffusion-learning-task)
-* [Explanability Task](#explanability-task)
-* [Installation](#installation)
-
-
-## Spreading Task 
-
-[comment]: <> (put NIB here)
-
-
-selected variants
-
-- (max/min/understand/predict coverage, given diffusion process and starting nodes)
-- important concept: ***Reverse Reachable Sets (RR set), K-core decomposition***
-- IM and variants (node)
-- simulation-based, proxy/heuristic based, sketch based
-- Dynamic Influence Maximization, Competitive Influence Maximization
-- competitive IM vs network interdiction
-    - 2 or more competitors can remove/add edges or change nodes
-
-    [](https://journals.aps.org/pre/pdf/10.1103/PhysRevE.105.044311)
-    
-### Benchmarks
-
-### Implemented Baselines
-
-### Evaluation
-
-### Create your own models
-    
-
-
-## Backtracking Task
-
-selected variants
-
-[comment]: <> (write)
-
-
-- (identify starting nodes, given diffusion process and coverage)
-- If diffusion is not given
-- Source Identification, or Identification of influential spreaders
-
-### Benchmarks
-
-### Implemented Baselines
-
-### Evaluation
-
-### Create your own models
 
 
 
+# Installation
 
-## Diffusion Learning Task
+```
+pip install xflow-net
+```
 
-selected variants
+# Example
 
-- Min-cost Max-Flow (edge), network simplex
+```python
+from xflow.dataset import cora, random, ba
+from xflow.diffusion import ic, si
+from xflow.seed import random, degree, eigen
+from xflow.method.im import celf, sigma
 
-### Benchmarks
+# graphs to test
+gs = [cora, random, ba]
 
-### Implemented Baselines
+# diffusion models to test
+df = [ic, si]
 
-### Evaluation
+# seed configurations to test
+se = [random, degree, eigen]
 
-### Create your own models
+# methods to test
+me = [celf, sigma, imrank]
 
+# configurations of experiments
+rt = run(graph=gs, diffusion=df, seed=se, method=me, eval='im', epoch=10, output=['animation', 'csv', 'fig'])
+```
 
+[Result]
 
-
-## Explanability Task
-
-
-[comment]: <> (write)
-
-
-
-### Benchmarks
-
-### Implemented Baselines
-
-### Evaluation
-
-### Create your own models
+# Create your own models
 
 
-## physical flow
 
-traffic 
+# Benchmark Task
 
-### Benchmarks
-
-### Implemented Baselines
-- random
+## Influence Maximization
+- simulation: [greedy](https://dl.acm.org/doi/10.1145/956750.956769), [CELF](https://dl.acm.org/doi/abs/10.1145/1281192.1281239), and [CELF++](https://dl.acm.org/doi/10.1145/1963192.1963217), 
+- proxy: [pi](https://ojs.aaai.org/index.php/AAAI/article/view/21694), [sigma](https://ieeexplore.ieee.org/document/8661648), degree, and [eigen-centrality](https://en.wikipedia.org/wiki/Eigenvector_centrality)
+- sketch: [RIS](https://epubs.siam.org/doi/abs/10.1137/1.9781611973402.70), [SKIM](https://dl.acm.org/doi/10.1145/2661829.2662077), [IMM](https://dl.acm.org/doi/10.1145/2723372.2723734) 
+       
+## Blocking Maximization
+- [greedy](https://dl.acm.org/doi/10.1145/956750.956769)
+- [pi](https://ojs.aaai.org/index.php/AAAI/article/view/21694)
+- [sigma](https://ieeexplore.ieee.org/document/8661648)
+- [eigen-centrality](https://en.wikipedia.org/wiki/Eigenvector_centrality)
 - degree
-- Digen centrality
-- simulation based greddy
-- Sigma
-- Pi
-- SIM
+  
+## Source Localization
+- [NETSLEUTH](https://ieeexplore.ieee.org/document/6413787) (Legacy and Fast versions)
+- [Jordan Centrality](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7913632)
+- [LISN](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8697898).
 
-### Evaluation
+## Experimental Configurations
+- Graphs: Compatiable with graph objects/class by [Networkx](https://networkx.org/) and [Pytorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest/)
+- Diffusion Models: Support [NDLib](https://ndlib.readthedocs.io/en/latest/)
 
-### Create your own models
-
-
-
-
-## Installation
-
-XFlow is available for Python 3.7 to Python 3.10.
-
-### Pip Wheels
-
-We alternatively provide pip wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.XFlow.org/whl).
-
-For additional but optional functionality, run
-
-```
-pip install torch_cluster torch_spline_conv -f https://data.XFlow.org/whl/torch-1.12.0+${CUDA}.html
-```
-
-
-## Cite
-
-Please cite [our paper](https://arxiv.org/abs/1903.02428) (and the respective papers of the methods used) if you use this code in your own work:
-
-```
-@inproceedings{XXX,
-  title={XXX},
-  author={XXX},
-  booktitle={XXX},
-  year={2023},
-}
-```
-
+# Contact
 Feel free to [email us](mailto:zchen@cse.msstate.edu) if you wish your work to be listed in this repo.
 If you notice anything unexpected, please open an [issue](XXX) and let us know.
 If you have any questions or are missing a specific feature, feel free [to discuss them with us](XXX).
