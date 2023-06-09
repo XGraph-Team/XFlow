@@ -483,29 +483,6 @@ def get_RRS(g, config):
     RRS = list(nx.dfs_preorder_nodes(g_sub, source))
     return RRS
 
-# helper function for RIS
-# def get_RRS(g, config):
-#     """
-#     Inputs: g: Network graph
-#             config: Configuration object for the IC model
-#     Outputs: A random reverse reachable set expressed as a list of nodes
-#     """
-#     # select a random node as the starting point
-#     source = random.choice(list(g.nodes()))
-    
-#     # get edges according to the propagation probability
-#     edges = [(u, v) for (u, v, d) in g.edges(data=True) if uniform(0, 1) < config.config["edges"]['threshold'][(u, v)]]
-    
-#     # create a subgraph based on the edges
-#     g_sub = g.edge_subgraph(edges)
-
-#     # select a random node as the starting point that is part of the subgraph
-#     source = random.choice(list(g_sub.nodes()))
-    
-#     # perform a depth-first traversal from the source node to get the RRS
-#     RRS = list(nx.dfs_preorder_nodes(g_sub, source))
-#     return RRS
-
 # diffusion models
 def IC(g, config, seed, rounds=100):
     result = []
@@ -566,6 +543,7 @@ def LT(g, config, seed, rounds=100):
 
 # Zonghan's code
 def SI(g, config, seeds, rounds=100, beta=0.1):
+
     result = []
 
     for iter in range(rounds):
@@ -577,7 +555,6 @@ def SI(g, config, seeds, rounds=100, beta=0.1):
 
         for a, b in g.edges(): # _temp
             weight = config.config["edges"]['threshold'][(a, b)]
-            # g_temp[a][b]['weight'] = weight
             config_temp.add_edge_configuration('threshold', (a, b), weight)
 
         model_temp.set_initial_status(config_temp)
