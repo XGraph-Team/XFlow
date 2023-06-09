@@ -1,9 +1,9 @@
 import networkx as nx
 from time import time
 
-from graphGeneration import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
+from graph_generation import Cora, CiteSeer, PubMed, connSW, ER, coms, photo
 from IM_baselines import eigen, degree, pi, sigma, greedy, celf, celfpp, IMRank, RIS
-from score import effectSI
+from evaluation import effectSI
 
 def analyze(seed, beta, size):
     g, config = connSW(size, beta)
