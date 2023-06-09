@@ -1,22 +1,18 @@
 import networkx as nx
 import numpy as np
-from simulation import simulationIC, simulationLT
 import ndlib
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
 import statistics as s
 import random
-import heapq
 import matplotlib.pyplot as plt
-from random import uniform, seed
 import numpy as np
 import pandas as pd
 import time
-from igraph import *
-# import random
+from random import uniform, seed
+
 from collections import Counter
 import operator
-import numpy as np
 import copy
 
 # random
@@ -24,7 +20,7 @@ import copy
 # baselines: simulation based
 
 # greedy
-def greedy(g, config, budget, rounds=100, model='SI'):
+def greedy(g, config, budget, rounds=100, model='SI', beta=0.1):
 
     selected = []
     candidates = list(g.nodes())
@@ -40,7 +36,7 @@ def greedy(g, config, budget, rounds=100, model='SI'):
             elif (model == "LT"):
                 result = LT(g, config, seed, rounds)
             elif (model == "SI"):
-                result = SI(g, config, seed, rounds)
+                result = SI(g, config, seed, rounds, beta=beta)
             
             if s.mean(result) > max:
                 max = s.mean(result)
@@ -52,25 +48,25 @@ def greedy(g, config, budget, rounds=100, model='SI'):
     print(selected)
     return selected
 
-def celf(g, config, budget, rounds=100, model='SI'):     
+def celf(g, config, budget, rounds=100, model='SI', beta=0.1): 
     # Find the first node with greedy algorithm
     
     # Compute marginal gain for each node
     candidates = list(g.nodes())
     #, start_time = list(g.nodes()), time.time()
-    # step 1, call our IC function, get the result of list
+    # step 1, call a diffusion function, get the result of list
     # step 2, calculate the margin gain 
     if (model == "IC"):
         marg_gain = [s.mean(IC(g, config, [node])) for node in candidates]
     elif (model == "LT"):
         marg_gain = [s.mean(LT(g, config, [node])) for node in candidates]
-
+    elif (model == "SI"):
+         marg_gain = [s.mean(SI(g, config, [node], beta)) for node in candidates]
     # Create the sorted list of nodes and their marginal gain 
     Q = sorted(zip(candidates,marg_gain), key = lambda x: x[1],reverse=True)
 
     # Select the first node and remove from candidate list
     selected, spread, Q = [Q[0][0]], Q[0][1], Q[1:]
-    # timelapse = [time.time() - start_time]
     
     # Find the next budget-1 nodes using the CELF list-sorting procedure
     
@@ -88,7 +84,7 @@ def celf(g, config, budget, rounds=100, model='SI'):
             elif (model == "LT"):
                 Q[0] = (current, s.mean(LT(g, config, selected+[current]), rounds) - spread)
             elif (model == "SI"):
-                Q[0] = (current, s.mean(SI(g, config, selected+[current]), rounds) - spread)
+                Q[0] = (current, s.mean(SI(g, config, selected+[current]), rounds, beta) - spread)
 
             # Re-sort the list
             Q = sorted(Q, key = lambda x: x[1], reverse=True)
@@ -99,7 +95,6 @@ def celf(g, config, budget, rounds=100, model='SI'):
         # Select the next node
         selected.append(Q[0][0])
         spread = Q[0][1]
-        # timelapse.append(time.time() - start_time)
         
         # Remove the selected node from the list
         Q = Q[1:]
@@ -108,7 +103,7 @@ def celf(g, config, budget, rounds=100, model='SI'):
     return(selected)
     # return(sorted(S),timelapse)
 
-def celfpp(g, config, budget, rounds=100, model='SI'):
+def celfpp(g, config, budget, rounds=100, model='SI', beta=0.1):
 
     # Compute marginal gain for each node
     candidates = list(g.nodes())
@@ -117,7 +112,7 @@ def celfpp(g, config, budget, rounds=100, model='SI'):
     elif (model == "LT"):
         marg_gain = [s.mean(LT(g, config, [node], rounds)) for node in candidates]
     elif (model == "SI"):
-        marg_gain = [s.mean(SI(g, config, [node], rounds)) for node in candidates]
+        marg_gain = [s.mean(SI(g, config, [node], rounds, beta)) for node in candidates]
 
     # Create the sorted list of nodes and their marginal gain 
     Q = sorted(zip(candidates, marg_gain), key = lambda x: x[1], reverse=True)
@@ -143,7 +138,7 @@ def celfpp(g, config, budget, rounds=100, model='SI'):
                 elif (model == "LT"):
                     new_gain = s.mean(LT(g, config, selected+[current], rounds)) - spread
                 elif (model == "SI"):
-                    new_gain = s.mean(SI(g, config, selected+[current], rounds)) - spread
+                    new_gain = s.mean(SI(g, config, selected+[current], rounds, beta)) - spread
             else:
                 # If the last added seed hasn't changed, the marginal gain remains the same
                 new_gain = old_gain
@@ -167,252 +162,6 @@ def celfpp(g, config, budget, rounds=100, model='SI'):
 
     print(selected)
     return selected
-
-# greedy with IC
-# def greedyIC(g, config, budget):
-
-#     selected = []
-#     candidates = []
-
-#     for node in g.nodes():
-#         candidates.append(node)
-
-#     for i in range(budget):
-#         max = 0
-#         index = -1
-#         for node in candidates:
-#             seed = []
-#             for item in selected:
-#                 seed.append(item)
-#             seed.append(node)
-
-#             # g_temp = g.__class__()
-#             # g_temp.add_nodes_from(g)
-#             # g_temp.add_edges_from(g.edges)
-#             result = []
-
-#             for iter in range(100):
-
-#                 model_temp = ep.IndependentCascadesModel(g) # _temp
-#                 config_temp = mc.Configuration()
-#                 config_temp.add_model_initial_configuration('Infected', seed)
-
-#                 for a, b in g.edges(): # _temp
-#                     weight = config.config["edges"]['threshold'][(a, b)]
-#                     # g_temp[a][b]['weight'] = weight
-#                     config_temp.add_edge_configuration('threshold', (a, b), weight)
-
-#                 model_temp.set_initial_status(config_temp)
-
-#                 iterations = model_temp.iteration_bunch(5)
-
-#                 total_no = 0
-
-#                 for j in range(5):
-#                     a = iterations[j]['node_count'][1]
-#                     total_no += a
-
-#                 result.append(total_no)
-
-#             if s.mean(result) > max:
-#                 max = s.mean(result)
-#                 index = node
-
-#         selected.append(index)
-#         candidates.remove(index)
-
-#     return selected
-
-# greedy with LT
-# def greedyLT(g, config, budget):
-
-#     selected = []
-#     candidates = []
-
-#     for node in g.nodes():
-#         candidates.append(node)
-
-#     for i in range(budget):
-#         max = 0
-#         index = -1
-#         for node in candidates:
-#             seed = []
-#             for item in selected:
-#                 seed.append(item)
-#             seed.append(node)
-
-#             # g_temp = g.__class__()
-#             # g_temp.add_nodes_from(g)
-#             # g_temp.add_edges_from(g.edges)
-#             result = []
-
-#             for iter in range(100):
-
-#                 model_temp = ep.ThresholdModel(g) # _temp
-#                 config_temp = mc.Configuration()
-#                 config_temp.add_model_initial_configuration('Infected', seed)
-
-#                 for a, b in g.edges(): # _temp
-#                     weight = config.config["edges"]['threshold'][(a, b)]
-#                     # g_temp[a][b]['weight'] = weight
-#                     config_temp.add_edge_configuration('threshold', (a, b), weight)
-
-#                 for i in g.nodes():
-#                     threshold = random.randrange(1, 20)
-#                     threshold = round(threshold / 100, 2)
-#                     config_temp.add_node_configuration("threshold", i, threshold)
-
-#                 model_temp.set_initial_status(config_temp)
-
-#                 iterations = model_temp.iteration_bunch(5)
-
-#                 total_no = iterations[4]['node_count'][1]
-#                 result.append(total_no)
-
-#             if s.mean(result) > max:
-#                 max = s.mean(result)
-#                 index = node
-
-#         selected.append(index)
-#         candidates.remove(index)
-
-#     return selected
-
-# CELF with heapq implementation
-# Function definition with inputs of a graph 'g', a configuration 'config', and a budget 'budget'
-# def celf_heapq(g, config, budget):
-
-#     # Initialize 'selected' as an empty list. This list will eventually hold the selected nodes
-#     selected = []
-    
-#     # Get a list of all nodes in the graph 'g'
-#     candidates = list(g.nodes())
-
-#     # Initialize 'gains' as an empty list. This list will hold the gain of each node
-#     gains = []
-
-#     # For each node in the list of candidates
-#     for node in candidates:
-#         # Create a new list 'seed' that includes all currently selected nodes plus the current node
-#         seed = selected + [node]
-        
-#         # Run the IC function on the graph with the 'seed' list and get the result
-#         result = IC(g, config, seed)
-        
-#         # Calculate the average (mean) of the result and assign it to 'gain'
-#         gain = s.mean(result)
-        
-#         # Add a tuple of negative 'gain' and 'node' to the 'gains' list
-#         heapq.heappush(gains, (-gain, node))
-
-#     # Repeat the next steps 'budget' times
-#     for i in range(budget):
-#         # Keep looping until a condition is met
-#         while True:
-#             # Get the tuple with the highest gain (which will be the first in the list due to the sorting in the heap)
-#             gain, node = heapq.heappop(gains)
-            
-#             # Again, create a new list 'seed' that includes all currently selected nodes plus the current node
-#             seed = selected + [node]
-            
-#             # Run the IC function on the graph with the 'seed' list and get the result
-#             result = IC(g, config, seed)
-            
-#             # Calculate the average (mean) of the result and assign it to 'new_gain'
-#             new_gain = s.mean(result)
-            
-#             # If 'new_gain' equals the negation of 'gain'
-#             if new_gain == -gain:
-#                 # Break the loop
-#                 break
-#             else:
-#                 # Otherwise, add the tuple of negative 'new_gain' and 'node' back to the 'gains' list
-#                 heapq.heappush(gains, (-new_gain, node))
-
-#         # Append the current node to the 'selected' list
-#         selected.append(node)
-        
-#         # Remove the current node from the 'candidates' list
-#         candidates.remove(node)
-#         print(sorted(selected))
-
-#     # Return the list of selected nodes
-#     return (sorted(selected))
-
-# CELFPP with heapq implementation
-# Function definition with inputs of a graph 'g', a configuration 'config', and a budget 'budget'
-# def celfpp_heapq(g, config, budget):
-
-#     # Initialize 'selected' as an empty list. This list will eventually hold the selected nodes
-#     selected = []
-    
-#     # Get a list of all nodes in the graph 'g'
-#     candidates = list(g.nodes())
-
-#     # Initialize 'gains' as an empty list. This list will hold the gain of each node
-#     gains = []
-
-#     # For each node in the list of candidates
-#     for node in candidates:
-#         # Create a new list 'seed' that includes all currently selected nodes plus the current node
-#         seed = selected + [node]
-        
-#         # Run the IC function on the graph with the 'seed' list and get the result
-#         result = IC(g, config, seed)
-        
-#         # Calculate the average (mean) of the result and assign it to 'gain'
-#         gain = s.mean(result)
-        
-#         # Add a tuple of negative 'gain', 'node', and 'None' (which will later be replaced with the last seed added) to the 'gains' list
-#         heapq.heappush(gains, (-gain, node, None))
-
-#     # Initialize 'last_seed' as 'None'. This variable will hold the last seed that was added to 'selected'
-#     last_seed = None
-
-#     # Repeat the next steps 'budget' times
-#     for i in range(budget):
-#         # Keep looping until a condition is met
-#         while True:
-#             # Get the tuple with the highest gain (which will be the first in the list due to the sorting in the heap)
-#             gain, node, last_added_seed = heapq.heappop(gains)
-
-#             # If 'last_added_seed' equals 'last_seed'
-#             if last_added_seed == last_seed:
-#                 # Then the gain doesn't need to be recomputed, so set 'new_gain' to the negation of 'gain'
-#                 new_gain = -gain
-#             else:
-#                 # Otherwise, create a new list 'seed' that includes all currently selected nodes plus the current node
-#                 seed = selected + [node]
-                
-#                 # Run the IC function on the graph with the 'seed' list and get the result
-#                 result = IC(g, config, seed)
-                
-#                 # Calculate the average (mean) of the result and assign it to 'new_gain'
-#                 new_gain = s.mean(result)
-
-#             # If 'new_gain' equals the negation of 'gain'
-#             if new_gain == -gain:
-#                 # Break the loop
-#                 break
-#             else:
-#                 # Otherwise, add the tuple of negative 'new_gain', 'node', and 'last_seed' back to the 'gains' list
-#                 heapq.heappush(gains, (-new_gain, node, last_seed))
-
-#         # Append the current node to the 'selected' list
-#         selected.append(node)
-        
-#         # Remove the current node from the 'candidates' list
-#         candidates.remove(node)
-        
-#         # Set 'last_seed' to the current node
-#         last_seed = node
-
-#     # Print the sorted list of selected nodes
-#     print(sorted(selected))
-    
-#     # Return the list of selected nodes
-#     return selected
-
 
 # baselines: proxy based
 # eigen centrality 
@@ -545,6 +294,39 @@ def sigma(g, config, budget):
 
     print(result)
     return result
+
+def Netshield(g, config, budget):
+
+    g_greedy = g.__class__()
+    g_greedy.add_nodes_from(g)
+    g_greedy.add_edges_from(g.edges)
+
+    for a, b in g_greedy.edges():
+        weight = config.config["edges"]['threshold'][(a, b)]
+        g_greedy[a][b]['weight'] = weight
+
+    A = nx.adjacency_matrix(g_greedy)
+
+    lam, u = np.linalg.eigh(A.toarray())
+    lam = list(lam)
+    lam = lam[-1]
+
+    u = u[:, -1]
+
+    u = np.abs(np.real(u).flatten())
+    v = (2 * lam * np.ones(len(u))) * np.power(u, 2)
+
+    nodes = []
+    for i in range(budget):
+        B = A[:, nodes]
+        b = B * u[nodes]
+
+        score = v - 2 * b * u
+        score[nodes] = -1
+
+        nodes.append(np.argmax(score))
+
+    return nodes
 
 # https://github.com/Braylon1002/IMTool
 # IMRank
