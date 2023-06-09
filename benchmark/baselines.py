@@ -673,20 +673,57 @@ def RIS(g, config, budget, rounds=100):
     print(selected)
     return (selected)
 
+def IMM(g, config, budget, model='IC', rounds=100):
+    l = config['l'] * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
+    k = budget
+    
+    R = Sampling(g, k, config['epsilon'], l, config, rounds)
+    
+    S = NodeSelection(R, k, config, model, rounds)
+    
+    return S
+
 # helpers
-# helper function for IMRank
-# def LFA(matrix):
-#     """
-#     Linear Feedback Algorithm to update the ranks of the nodes.
-#     """
-#     n = len(matrix)
-#     Mr = [1 for i in range(n)]
-#     for i_ in range(1, n):
-#         i = n - i_
-#         for j in range(0, i + 1):
-#             Mr[j] = Mr[j] + matrix[j][i] * Mr[i]
-#             Mr[i] = (1 - matrix[j][i]) * Mr[i]
-#     return Mr
+
+# helper 1 of IMM
+def Sampling(g, k, epsilon, l, config, rounds=100):
+    R = []
+    n = len(g.nodes())
+    LB = 1
+    eps_prime = np.sqrt(2) * epsilon
+    for i in range(1, int(np.log2(n))):
+        x = n / (2 ** i)
+        theta_i = (l / eps_prime ** 2) * np.log(n) / x
+        while len(R) <= theta_i:
+            v = random.choice(list(g.nodes()))
+            R.append(get_RRS(g, config))
+        S_i = NodeSelection(g, R, k, config, rounds=rounds)
+        if n * len(set().union(*S_i)) >= (1 + eps_prime) * x:
+            LB = n * len(set().union(*S_i)) / (1 + eps_prime)
+            break
+    theta = (l / (epsilon ** 2)) * np.log(n) / LB
+    while len(R) <= theta:
+        v = random.choice(list(g.nodes()))
+        R.append(get_RRS(g, config))
+    return R
+
+# helper 2 of IMM
+def NodeSelection(g, R, k, config, model='SI', rounds=100):
+    S = []
+    for _ in range(k):
+        max_spread = 0
+        seed = -1
+        for v in set().union(*R):  # Get unique nodes across all RR sets
+            if v not in S:
+                if model == 'IC':
+                    spread = len(set(IC(g, config, [v], rounds)) & set().union(*R))
+                elif model == 'SI':
+                    spread = len(set(SI(g, config, [v], rounds)) & set().union(*R))
+                if spread > max_spread:
+                    max_spread = spread
+                    seed = v
+        S.append(seed)
+    return S
 
 # updates to the Mr vector occur simultaneously:
 def LFA(matrix):
