@@ -7,19 +7,6 @@ import ndlib.models.ModelConfig as mc
 
 from torch_geometric.datasets import Planetoid
 
-# def connSW():
-#     g = nx.connected_watts_strogatz_graph(5000, 10, 0.1)
-
-#     config = mc.Configuration()
-
-#     for a, b in g.edges():
-#         weight = random.randrange(40,80)
-#         weight = round(weight / 100, 2)
-#         g[a][b]['weight'] = weight
-#         config.add_edge_configuration("threshold", (a, b), weight)
-
-#     return g, config
-
 def connSW(n, beta=None):
     g = nx.connected_watts_strogatz_graph(n, 10, 0.1)
 
