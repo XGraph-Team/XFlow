@@ -396,19 +396,21 @@ def RIS(g, config, budget, rounds=100):
 
 # IMM
 def IMM(g, config, budget, rounds=100, model='SI', beta=0.1):
-    l = config['l'] * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
+    l = 1
+    epsilon = 0.1
+    l = l * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
     k = budget
     
-    R = Sampling(g, k, config['epsilon'], l, config, rounds)
+    R = Sampling(g, config, k, epsilon, l, model, rounds, beta)
     
-    S = NodeSelection(R, k, config, model, rounds)
+    S = NodeSelection(g, config, R, k, model, rounds, beta)
     
     return S
 
 # helpers
 
 # helper 1 of IMM
-def Sampling(g, k, epsilon, l, config, rounds=100):
+def Sampling(g, config, k, epsilon, l, model='SI', rounds=100, beta=0.1):
     R = []
     n = len(g.nodes())
     LB = 1
@@ -419,9 +421,9 @@ def Sampling(g, k, epsilon, l, config, rounds=100):
         while len(R) <= theta_i:
             v = random.choice(list(g.nodes()))
             R.append(get_RRS(g, config))
-        S_i = NodeSelection(g, R, k, config, rounds=rounds)
-        if n * len(set().union(*S_i)) >= (1 + eps_prime) * x:
-            LB = n * len(set().union(*S_i)) / (1 + eps_prime)
+        S_i = NodeSelection(g, config, R, k, model, rounds, beta)
+        if n * len(S_i) >= (1 + eps_prime) * x:  # updated here
+            LB = n * len(S_i) / (1 + eps_prime)  # and here
             break
     theta = (l / (epsilon ** 2)) * np.log(n) / LB
     while len(R) <= theta:
@@ -429,8 +431,9 @@ def Sampling(g, k, epsilon, l, config, rounds=100):
         R.append(get_RRS(g, config))
     return R
 
+
 # helper 2 of IMM
-def NodeSelection(g, R, k, config, model='SI', rounds=100):
+def NodeSelection(g, config, R, k, model='SI', rounds=100, beta=0.1):
     S = []
     for _ in range(k):
         max_spread = 0
@@ -439,8 +442,10 @@ def NodeSelection(g, R, k, config, model='SI', rounds=100):
             if v not in S:
                 if model == 'IC':
                     spread = len(set(IC(g, config, [v], rounds)) & set().union(*R))
+                if model == 'LT':
+                    spread = len(set(LT(g, config, [v], rounds)) & set().union(*R))
                 elif model == 'SI':
-                    spread = len(set(SI(g, config, [v], rounds)) & set().union(*R))
+                    spread = len(set(SI(g, config, [v], rounds, beta)) & set().union(*R))
                 if spread > max_spread:
                     max_spread = spread
                     seed = v
