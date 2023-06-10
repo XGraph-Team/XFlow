@@ -2,7 +2,7 @@ import networkx as nx
 import cosasi
 import random
 import numpy as np
-from graphGeneration import CiteSeer, PubMed, Cora, coms, photo, connSW, rand
+from graph_generation import CiteSeer, PubMed, Cora, coms, photo, connSW, rand
 from time import time
 import tracemalloc
 import logging
