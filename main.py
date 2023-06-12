@@ -18,6 +18,7 @@ me = [pi, degree, sigma]
 # rt = run ( graph =gs, diffusion = df, seed = se,
 # method = me , eval = 'im', epoch = 10 ,
 # output = [ 'animation', 'csv', 'fig'])
-rt = run (graph =gs, diffusion = df, seed = se,
-method = me , eval = 'im', epoch = 10 ,
-output = [ 'animation', 'csv', 'fig'])
+rt = run (
+    graph = gs, diffusion = df, seed = se,
+    method = me, eval = 'im', epoch = 10,
+    output = [ 'animation', 'csv', 'fig'])
