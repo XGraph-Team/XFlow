@@ -5,12 +5,12 @@
 
 
 
-![PyPI](https://badgen.net/badge/pypi/2.2.0/green?icon=pypi)
+![PyPI](https://badgen.net/badge/pypi/0.0.0/green?icon=pypi)
 ![Testing Status](https://badgen.net/badge/testing/passing/green?icon=github)
 ![Docs Status](https://badgen.net/badge/docs/passing/green?icon=)
 ![Contributing](https://badgen.net/badge/contributions/welcome/green?icon=github)
 
-**[XFlow Homepage](https://xflow.network)** | **[Documentation](https://xflow.network/docs)** | **[Paper Collection](https://arxiv.org/abs/1903.02428)** | **[Colab Notebooks Tutorials](https://xflow.network)** 
+**[XFlow Homepage](https://xflow.network)** | **[Documentation](https://xflow.network/docs)** | **[Paper Collection](https://xflow.network)** | **[Colab Notebooks Tutorials](https://xflow.network)** 
 
 **XFlow** is a library built upon Python to easily write and train method for a wide range of applications related to network flow problems. XFlow is organized task-wise, which provide datasets benchmarks, baselines and auxiliary implementation.
 
