@@ -17,43 +17,7 @@ from xflow.diffusion import SI, IC, LT
 # baselines: simulation based
 
 # greedy
-def greedySI(g, config, budget, seeds, beta=0.1):
-
-
-    selected = []
-    candidates = list(g.nodes())
-
-    for i in range(budget):
-
-        min = float('inf')
-        index = -1
-        for node in candidates:
-
-            g_greedy = g.__class__()
-            g_greedy.add_nodes_from(g)
-            g_greedy.add_edges_from(g.edges)
-            for a, b in g_greedy.edges():
-                weight = config.config["edges"]['threshold'][(a, b)]
-                g_greedy[a][b]['weight'] = weight
-
-            removed = selected + [node]
-            for node in removed:
-                g_greedy.remove_node(node)
-
-            result = SI(g_greedy, config, seeds, beta=beta)
-            # result = LT(g, config, seed)
-
-            if s.mean(result) < min:
-                min = s.mean(result)
-                index = node
-
-        selected.append(index)
-        candidates.remove(index)
-
-    return selected
-
-def greedyIC(g, config, budget, seeds):
-
+def greedy(g, config, budget, seeds, rounds=100, model='SI', beta=0.1):
 
     selected = []
     candidates = list(g.nodes())
@@ -75,9 +39,13 @@ def greedyIC(g, config, budget, seeds):
             for node in removed:
                 g_greedy.remove_node(node)
 
-            result = IC(g_greedy, config, seeds)
-            # result = LT(g, config, seed)
-
+            if (model == "IC"):
+                result = IC(g_greedy, config, seeds, rounds)
+            if (model == "LT"):
+                result = LT(g_greedy, config, seeds, rounds)
+            if (model == "SI"):
+                result = SI(g_greedy, config, seeds, rounds, beta)
+            
             if s.mean(result) < min:
                 min = s.mean(result)
                 index = node
@@ -85,6 +53,7 @@ def greedyIC(g, config, budget, seeds):
         selected.append(index)
         candidates.remove(index)
 
+    print(selected)
     return selected
 
 # baselines: proxy based
@@ -105,6 +74,7 @@ def eigen(g, config, budget):
         eig.append(selected)
         g_eig.remove_node(selected)
 
+    print(eig)
     return eig
 
 
@@ -125,6 +95,7 @@ def degree(g, config, budget):
         deg.append(selected)
         g_deg.remove_node(selected)
 
+    print(deg)
     return deg
 
 
@@ -215,6 +186,7 @@ def sigma(g, config, budget):
 
         g_greedy.remove_node(selected)
 
+    print(result)
     return result
 
 def Netshield(g, config, budget):
@@ -248,4 +220,5 @@ def Netshield(g, config, budget):
 
         nodes.append(np.argmax(score))
 
+    print(nodes)
     return nodes

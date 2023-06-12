@@ -27,17 +27,18 @@ def greedy(g, config, budget, rounds=100, model='SI', beta=0.1):
     candidates = list(g.nodes())
 
     for i in range(budget):
+
         max = 0
         index = -1
         for node in candidates:
-            seed = selected + [node]
+            seeds = selected + [node]
 
             if (model == "IC"):
-                result = IC(g, config, seed, rounds)
+                result = IC(g, config, seeds, rounds)
             elif (model == "LT"):
-                result = LT(g, config, seed, rounds)
+                result = LT(g, config, seeds, rounds)
             elif (model == "SI"):
-                result = SI(g, config, seed, rounds, beta=beta)
+                result = SI(g, config, seeds, rounds, beta)
             
             if s.mean(result) > max:
                 max = s.mean(result)
@@ -102,7 +103,6 @@ def celf(g, config, budget, rounds=100, model='SI', beta=0.1):
 
     print(selected)
     return(selected)
-    # return(sorted(S),timelapse)
 
 def celfpp(g, config, budget, rounds=100, model='SI', beta=0.1):
 
@@ -327,6 +327,7 @@ def Netshield(g, config, budget):
 
         nodes.append(np.argmax(score))
 
+    print(nodes)
     return nodes
 
 # IMRank
