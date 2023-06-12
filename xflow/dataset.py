@@ -140,13 +140,14 @@ def coms():
 
     return g, config
 
-def rand (n, p, seed):
-    # n The number of nodes
-    # p Probability for edge creation
-    # seed Seed for random number generator (default=None)
-    random.seed(seed)
-    np.random.seed(seed)
-    g = nx.fast_gnp_random_graph(n, p, seed=seed)
-    config = mc.Configuration()
+# TDDO, threshold
+# def rand (n, p, seed):
+#     # n The number of nodes
+#     # p Probability for edge creation
+#     # seed Seed for random number generator (default=None)
+#     random.seed(seed)
+#     np.random.seed(seed)
+#     g = nx.fast_gnp_random_graph(n, p, seed=seed)
+#     config = mc.Configuration()
 
-    return g, config
+#     return g, config

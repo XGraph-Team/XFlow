@@ -63,7 +63,7 @@ def LT(g, config, seed, rounds=100):
     return result
 
 # Zonghan's code
-def SI(g, config, seeds, rounds=100, beta=0.1):
+def SI(g, config, seed, rounds=100, beta=0.1):
 
     result = []
 
@@ -71,7 +71,7 @@ def SI(g, config, seeds, rounds=100, beta=0.1):
 
         model_temp = ep.SIModel(g) # _temp
         config_temp = mc.Configuration()
-        config_temp.add_model_initial_configuration('Infected', seeds)
+        config_temp.add_model_initial_configuration('Infected', seed)
         config_temp.add_model_parameter('beta', beta)
 
         for a, b in g.edges(): # _temp

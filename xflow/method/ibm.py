@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import time
 import random
+from xflow.diffusion import SI, IC, LT
 
 # random
 
@@ -169,7 +170,8 @@ def pi(g, config, budget):
         result.append(selected)
 
         g_greedy.remove_node(selected)
-
+    
+    print(result)
     return result
 
 
