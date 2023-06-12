@@ -73,3 +73,9 @@ rt = run (
     method = me, eval = 'ibm', epoch = 10,
     budget = 10,
     output = [ 'animation', 'csv', 'fig'])
+
+rt = run (
+    graph = gs, diffusion = df, seeds = se,
+    method = me, eval = 'sl', epoch = 10,
+    budget = 10,
+    output = [ 'animation', 'csv', 'fig'])
