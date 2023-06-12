@@ -8,16 +8,17 @@ def run ( graph, diffusion, seed, method, eval, epoch, output):
 
 # graphs to test
 gs = [ Cora , random , BA ]
+
 # diffusion models to test
 df = [IC , SI ]
+
 # seed configurations to test
 se = [random, degree, eigen]
+
 # methods to test
 me = [pi, degree, sigma]
+
 # configurations of experiments
-# rt = run ( graph =gs, diffusion = df, seed = se,
-# method = me , eval = 'im', epoch = 10 ,
-# output = [ 'animation', 'csv', 'fig'])
 rt = run (
     graph = gs, diffusion = df, seed = se,
     method = me, eval = 'im', epoch = 10,
