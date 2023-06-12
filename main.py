@@ -57,7 +57,7 @@ def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
 
 
 # configurations of IM experiments
-from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, celfpp as im_celfpp
+from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, celfpp as im_celfpp, greedy as im_greedy
 me = [im_pi]
 rt = run (
     graph = gs, diffusion = df, seeds = se,
