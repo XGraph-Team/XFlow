@@ -7,7 +7,7 @@ from xflow.seed import random as seed_random, degree as seed_degree, eigen as se
 from xflow.method.im import pi, degree as im_degree, sigma as im_sigma
 
 # graphs to test
-gs = [Cora, dataset_random, BA]
+gs = [Cora, lambda: dataset_random(1000, 0.001, 10), BA]
 
 # diffusion models to test
 df = [IC, SI]
@@ -19,15 +19,21 @@ se = [seed_random, seed_degree, seed_eigen]
 me = [pi, im_degree, im_sigma]
 
 def run (graph, diffusion, seed, method, eval, epoch, output):
-    print('Run')
+
     for graph_fn in graph: # renaming `graph` to `graph_fn` to avoid naming conflicts
         try:
+            print('graph')
             g, config = graph_fn()  # Calls the function directly
             print(g)
             print(config)
         except Exception as e:
             print(f"Error when calling {graph_fn.__name__}: {str(e)}")
 
+    for diffusion_fn in diffusion: # renaming `graph` to `graph_fn` to avoid naming conflicts
+        try:
+           print('diffusion')
+        except Exception as e:
+            print(f"Error when calling {diffusion_fn.__name__}: {str(e)}")
 
 # configurations of experiments
 rt = run (
