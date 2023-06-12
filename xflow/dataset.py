@@ -37,7 +37,6 @@ def BA():
     return g, config
 
 def ER():
-
     g = nx.erdos_renyi_graph(5000, 0.002)
 
     while nx.is_connected(g) == False:
@@ -108,7 +107,6 @@ def Cora():
     return g, config
 
 def photo():
-
     dataset = ds.Amazon(root='./geo', name = 'Photo')
     data = dataset[0]
     edges = (data.edge_index.numpy()).T.tolist()
@@ -126,7 +124,6 @@ def photo():
     return g, config
 
 def coms():
-
     dataset = ds.Amazon(root='./geo', name = 'Computers')
     data = dataset[0]
     edges = (data.edge_index.numpy()).T.tolist()
@@ -143,7 +140,7 @@ def coms():
 
     return g, config
 
-def random (n, p, seed):
+def rand (n, p, seed):
     # n The number of nodes
     # p Probability for edge creation
     # seed Seed for random number generator (default=None)
