@@ -9,7 +9,7 @@ from distutils.core import setup
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'xflow-net'
+NAME = 'xflow'
 DESCRIPTION = 'a python library for graph flow'
 URL = 'https://xflow.network/'
 EMAIL = 'zchen@cse.msstate.edu'
