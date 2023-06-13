@@ -1,1 +1,3 @@
-name = "xflow-net"
+import xflow.method
+import xflow.dataset
+import xflow.diffusion
