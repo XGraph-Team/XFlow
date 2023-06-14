@@ -12,7 +12,7 @@
 
 **[XFlow Homepage](https://xflow.network)** | **[Documentation](https://xflow.network/docs)** | **[Paper Collection](https://xflow.network)** | **[Colab Notebooks Tutorials](https://xflow.network)** 
 
-**XFlow** is a library built upon Python to easily write and train method for a wide range of applications related to network flow problems. XFlow is organized task-wise, which provide datasets benchmarks, baselines and auxiliary implementation.
+**XFlow** is a library built upon Python to easily write and train method for a wide range of applications related to graph flow problems. XFlow is organized task-wise, which provide datasets benchmarks, baselines and auxiliary implementation.
 
 [comment]: <> (add icons https://css-tricks.com/adding-custom-github-badges-to-your-repo/)
 
