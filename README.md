@@ -60,7 +60,8 @@ rt = run(graph=gs, diffusion=df, seed=se, method=me, eval='im', epoch=10, output
 ## Influence Maximization
 - simulation: [greedy](https://dl.acm.org/doi/10.1145/956750.956769), [CELF](https://dl.acm.org/doi/abs/10.1145/1281192.1281239), and [CELF++](https://dl.acm.org/doi/10.1145/1963192.1963217), 
 - proxy: [pi](https://ojs.aaai.org/index.php/AAAI/article/view/21694), [sigma](https://ieeexplore.ieee.org/document/8661648), degree, and [eigen-centrality](https://en.wikipedia.org/wiki/Eigenvector_centrality)
-- sketch: [RIS](https://epubs.siam.org/doi/abs/10.1137/1.9781611973402.70), [SKIM](https://dl.acm.org/doi/10.1145/2661829.2662077), [IMM](https://dl.acm.org/doi/10.1145/2723372.2723734) 
+- sketch: [RIS](https://epubs.siam.org/doi/abs/10.1137/1.9781611973402.70)
+<!-- - , [SKIM](https://dl.acm.org/doi/10.1145/2661829.2662077), [IMM](https://dl.acm.org/doi/10.1145/2723372.2723734)  -->
        
 ## Blocking Maximization
 - [greedy](https://dl.acm.org/doi/10.1145/956750.956769)
