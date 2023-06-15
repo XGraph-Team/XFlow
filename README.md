@@ -27,6 +27,8 @@ pip install xflow-net
 
 # Example
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1N0gFLSOl1r4h0tvqzStssEZSnmNMvoHc?usp=sharing&pli=1#scrollTo=iXN5BYm4sh4T)
+
 ```python
 import sys
 import os
