@@ -1,5 +1,8 @@
-from xflow.dataset import connSW, Cora, BA
-from xflow.diffusion import IC, SI, LT
+from xflow.dataset.nx import BA, connSW
+from xflow.dataset.pyg import Cora
+from xflow.diffusion.SI import SI
+from xflow.diffusion.IC import IC
+from xflow.diffusion.LT import LT
 from xflow.seed import random as seed_random, degree as seed_degree, eigen as seed_eigen
 import random
 
