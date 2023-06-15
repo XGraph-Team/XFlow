@@ -1,3 +1,4 @@
+import xflow
 from xflow.dataset.nx import BA, connSW
 from xflow.dataset.pyg import Cora
 from xflow.diffusion.SI import SI
