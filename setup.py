@@ -19,7 +19,7 @@ VERSION = '0.0.8'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-   'networkx', 'ndlib'
+   'networkx', 'ndlib', 'torch_geometric'
 ]
 
 # What packages are optional?
