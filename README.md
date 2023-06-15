@@ -53,6 +53,7 @@ df = [SI, IC, LT]
 # seed configurations to test
 se = [seed_random, seed_degree, seed_eigen]
 
+# run
 def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
     print("Running " + eval.upper() + " :")
 
