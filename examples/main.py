@@ -27,22 +27,22 @@ se = [seed_random, seed_degree, seed_eigen]
 
 
 # configurations of IM experiments
-from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, celfpp as im_celfpp, greedy as im_greedy
-me = [im_pi]
-rt = run (
-    graph = gs, diffusion = df, seeds = se,
-    method = me, eval = 'im', epoch = 10, 
-    budget = 10, 
-    output = [ 'animation', 'csv', 'fig'])
-
-# # configurations of IBM experiments
-# from xflow.method.ibm import pi as ibm_pi, degree as ibm_degree, sigma as ibm_sigma, greedy as ibm_greedy
-# me = [ibm_pi, ibm_greedy]
+# from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, celfpp as im_celfpp, greedy as im_greedy
+# me = [im_pi]
 # rt = run (
 #     graph = gs, diffusion = df, seeds = se,
-#     method = me, eval = 'ibm', epoch = 10,
-#     budget = 10,
+#     method = me, eval = 'im', epoch = 10, 
+#     budget = 10, 
 #     output = [ 'animation', 'csv', 'fig'])
+
+# configurations of IBM experiments
+from xflow.method.ibm import pi as ibm_pi, degree as ibm_degree, sigma as ibm_sigma, greedy as ibm_greedy
+me = [ibm_pi, ibm_greedy]
+rt = run (
+    graph = gs, diffusion = df, seeds = se,
+    method = me, eval = 'ibm', epoch = 10,
+    budget = 10,
+    output = [ 'animation', 'csv', 'fig'])
 
 # # configurations of SL experiments
 # rt = run (
