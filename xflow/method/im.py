@@ -14,7 +14,9 @@ from random import uniform, seed
 from collections import Counter
 import operator
 import copy
-from xflow.diffusion import SI, IC, LT
+from xflow.diffusion.SI import SI
+from xflow.diffusion.IC import IC
+from xflow.diffusion.LT import LT
 
 # random
 

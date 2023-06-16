@@ -10,8 +10,9 @@ import numpy as np
 import pandas as pd
 import time
 import random
-from xflow.diffusion import SI, IC, LT
-
+from xflow.diffusion.SI import SI
+from xflow.diffusion.IC import IC
+from xflow.diffusion.LT import LT
 # random
 
 # baselines: simulation based
