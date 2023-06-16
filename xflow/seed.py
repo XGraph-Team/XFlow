@@ -9,8 +9,10 @@ def random(seed):
     np.random.seed(seed)
     return seed
 
+# todo
 def degree():
     return 
 
+# todo
 def eigen():
     return 

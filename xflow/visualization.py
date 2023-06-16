@@ -6,6 +6,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
+# todo
 # Step 1: Randomly draw a 50-node graph using NetworkX
 G = nx.gnm_random_graph(50, 100)
 
