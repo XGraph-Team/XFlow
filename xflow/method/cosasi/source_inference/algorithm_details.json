@@ -1,0 +1,116 @@
+{
+    "single-source": {
+        "rumor centrality": {
+            "epidemic model": ["si", "ic"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://devavrat.mit.edu/wp-content/uploads/2017/10/Rumors-in-a-network-whos-the-culprit.pdf",
+                "manuscript link": "https://core.ac.uk/download/pdf/4434717.pdf"
+            },
+            "status": "complete",
+            "namespace": "cosasi.single_source.rumor_centrality"
+        },
+        "short-fat-tree": {
+            "epidemic model": ["si", "ic"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://ieeexplore.ieee.org/document/6962907",
+                "manuscript link": ""
+            },
+            "status": "complete",
+            "namespace": "cosasi.single_source.short_fat_tree"
+        },
+        "netsleuth": {
+            "epidemic model": ["si", "ic"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://ieeexplore.ieee.org/document/6413787",
+                "manuscript link": "https://faculty.cc.gatech.edu/~badityap/papers/netsleuth-kais13.pdf"
+            },
+            "status": "complete",
+            "namespace": "cosasi.single_source.netsleuth"
+        },
+        "jordan centrality": {
+            "epidemic model": ["si", "ic", "siri", "sis"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://ieeexplore.ieee.org/iel7/18/4667673/07913632.pdf?casa_token=mfMyaXbQIQMAAAAA:p7AbElSgNndvy6e75fqinT0FjO9QYV1HKseEWhmFkmh8pTtTfGX5hnjx00DvS-pO6Yi_2mXA",
+                "manuscript link": "https://arxiv.org/abs/1411.2370"
+            },
+            "status": "complete",
+            "namespace": "cosasi.single_source.jordan_centrality"
+        },
+        "lisn": {
+            "epidemic model": ["si"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://truth-discovery-kdd2019.github.io/papers/localizing-information.pdf",
+                "manuscript link": "https://par.nsf.gov/servlets/purl/10125022"
+            },
+            "status": "complete",
+            "namespace": "cosasi.single_source.lisn"
+        },
+        "earliest infection first": {
+            "epidemic model": ["si"],
+            "information type": "observers",
+            "reference": {
+                "publication link": "https://link.springer.com/article/10.1007/s10618-015-0435-9",
+                "manuscript link": "https://arxiv.org/abs/1412.4141"
+            },
+            "status": "complete",
+            "namespace": "cosasi.single_source.earliest_infection_first"
+        }
+    },
+    "multi-source": {
+        "netsleuth": {
+            "epidemic model": ["si", "ic"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://ieeexplore.ieee.org/document/6413787",
+                "manuscript link": "https://faculty.cc.gatech.edu/~badityap/papers/netsleuth-icdm12.pdf"
+            },
+            "status": "complete",
+            "namespace": "cosasi.multiple_source.netsleuth"
+        },
+        "fast multi-source netsleuth": {
+            "epidemic model": ["si", "ic"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://ieeexplore.ieee.org/document/6413787",
+                "manuscript link": ""
+            },
+            "status": "complete",
+            "namespace": "cosasi.multiple_source.fast_multisource_netsleuth"
+        },
+        "fast multi-source lisn": {
+            "epidemic model": ["si"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://truth-discovery-kdd2019.github.io/papers/localizing-information.pdf",
+                "manuscript link": "https://par.nsf.gov/servlets/purl/10125022"
+            },
+            "status": "complete",
+            "namespace": "cosasi.multiple_source.fast_multisource_lisn"
+        },
+        "fast multi-source jordan centrality": {
+            "epidemic model": ["si", "ic", "siri", "sis"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "https://ieeexplore.ieee.org/iel7/18/4667673/07913632.pdf?casa_token=mfMyaXbQIQMAAAAA:p7AbElSgNndvy6e75fqinT0FjO9QYV1HKseEWhmFkmh8pTtTfGX5hnjx00DvS-pO6Yi_2mXA",
+                "manuscript link": "https://arxiv.org/abs/1411.2370"
+            },
+            "status": "complete",
+            "namespace": "cosasi.multiple_source.fast_multisource_jordan_centrality"
+        },
+        "fast multi-source lpsi": {
+            "epidemic model": ["si"],
+            "information type": "single snapshot",
+            "reference": {
+                "publication link": "",
+                "manuscript link": ""
+            },
+            "status": "complete",
+            "namespace": "cosasi.multiple_source.fast_multisource_lpsi"
+        }
+    }
+}

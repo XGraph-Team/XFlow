@@ -26,28 +26,32 @@ df = [SI, IC, LT]
 se = [seed_random, seed_degree, seed_eigen]
 
 
-# configurations of IM experiments
-from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, eigen as im_eigen, celf as im_celf,celfpp as im_celfpp, greedy as im_greedy
-me = [im_pi, im_eigen]
-rt = run (
-    graph = gs, diffusion = df, seeds = se,
-    method = me, eval = 'im', epoch = 10, 
-    budget = 10, 
-    output = [ 'animation', 'csv', 'fig'])
-
-# configurations of IBM experiments
-from xflow.method.ibm import pi as ibm_pi, degree as ibm_degree, sigma as ibm_sigma, eigen as im_eigen, greedy as ibm_greedy
-me = [ibm_sigma, ibm_degree]
-rt = run (
-    graph = gs, diffusion = df, seeds = se,
-    method = me, eval = 'ibm', epoch = 10,
-    budget = 10,
-    output = [ 'animation', 'csv', 'fig'])
-
-# todo
-# # configurations of SL experiments
+# # configurations of IM experiments
+# from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, eigen as im_eigen, celf as im_celf,celfpp as im_celfpp, greedy as im_greedy
+# me = [im_pi, im_eigen]
 # rt = run (
 #     graph = gs, diffusion = df, seeds = se,
-#     method = me, eval = 'sl', epoch = 10,
+#     method = me, eval = 'im', epoch = 10, 
+#     budget = 10, 
+#     output = [ 'animation', 'csv', 'fig'])
+
+# # configurations of IBM experiments
+# from xflow.method.ibm import pi as ibm_pi, degree as ibm_degree, sigma as ibm_sigma, eigen as im_eigen, greedy as ibm_greedy
+# me = [ibm_sigma, ibm_degree]
+# rt = run (
+#     graph = gs, diffusion = df, seeds = se,
+#     method = me, eval = 'ibm', epoch = 10,
 #     budget = 10,
 #     output = [ 'animation', 'csv', 'fig'])
+ 
+# configurations of SL experiments
+from xflow.method.cosasi.source_inference.multiple_source.netsleuth import netsleuth, fast_multisource_netsleuth
+from xflow.method.cosasi.source_inference.multiple_source.lisn import fast_multisource_lisn
+from xflow.method.cosasi.source_inference.multiple_source.jordan import 
+
+me = [netsleuth, fast_multisource_netsleuth, fast_multisource_lisn, fast_multisource_jordan_centrality]
+rt = run (
+    graph = gs, diffusion = df, seeds = se,
+    method = me, eval = 'sl', epoch = 10,
+    budget = 10,
+    output = [ 'animation', 'csv', 'fig'])
