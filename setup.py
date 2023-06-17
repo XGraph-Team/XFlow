@@ -18,6 +18,7 @@ REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '0.1.3'
 
 # What packages are required for this module to be executed?
+# TODO cosasi could be remove if no longer using our customized cosasi package
 REQUIRED = [
    'networkx', 'ndlib', 'torch_geometric', 'cosasi'
 ]
@@ -91,7 +92,7 @@ class UploadCommand(Command):
         sys.exit()
 
 # Where the magic happens:
-# todo package_data could be remove if no longer using our customized cosasi package
+# TODO package_data could be remove if no longer using our customized cosasi package
 setup(
     name=NAME,
     version=about['__version__'],
