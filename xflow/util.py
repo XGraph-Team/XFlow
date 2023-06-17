@@ -1,4 +1,6 @@
 import random
+import xflow.method.cosasi as cosasi
+import numpy as np
 
 def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
     print("Running " + eval.upper() + " :")
@@ -15,23 +17,51 @@ def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
                     print(method_fn.__name__)
                     baselines = ['eigen', 'degree', 'pi', 'sigma', 'Netshield', 'IMRank']
                     if method_fn.__name__ in baselines:
-                        m = method_fn(g, config, budget=10)
+                        sims = method_fn(g, config, budget=10)
                     baselines = ['RIS']
                     if method_fn.__name__ in baselines:
-                        m = method_fn(g, config, budget=10)
+                        sims = method_fn(g, config, budget=10)
                     baselines = ['greedy', 'celf', 'celfpp']
                     if method_fn.__name__ in baselines:
                         for diffusion_fn in diffusion:
                             try:
                                 print(diffusion_fn.__name__)
                                 if eval == 'im':
-                                    m = method_fn(g, config, budget, rounds=epoch, model=diffusion_fn.__name__, beta=0.1)
+                                    sims = method_fn(g, config, budget, rounds=epoch, model=diffusion_fn.__name__, beta=0.1)
                                 if eval == 'ibm':
-                                    m = method_fn(g, config, budget, seeds, rounds=epoch, model=diffusion_fn.__name__, beta=0.1)
+                                    sims = method_fn(g, config, budget, seeds, rounds=epoch, model=diffusion_fn.__name__, beta=0.1)
                             except Exception as e:
                                 print(f"Error when calling {diffusion_fn.__name__}: {str(e)}")
+
+                    if method_fn.__name__ == 'netsleuth':
+                        print("in netsleuth")
+                        # todo seed shoule be changable
+                        seed = 10
+                        random.seed(seed)
+                        np.random.seed(seed)
+
+                        contagion = cosasi.StaticNetworkContagion(
+                            G=g,
+                            model="si",
+                            infection_rate=0.1,
+                            # recovery_rate=0.005, # for SIS/SIR models
+                            number_infected = 2,
+                            seed=seed
+                        )
+
+                        contagion.forward(steps = 16)
                         
-                    
+                        step = 15
+
+                        # This obtains the indices of all vertices in the infected category at the 15th step of the simulation.
+                        I = contagion.get_infected_subgraph(step=step)
+                        print(I)
+                        sims = method_fn(I=I, G=g, hypotheses_per_step=1)
+                        true_source = contagion.get_source()
+                        evals = sims.evaluate(true_source)
+                        top_dis= evals["distance"]["top score's distance"]
+                        print(top_dis)
+                        
                 except Exception as e:
                     print(f"Error when calling {method_fn.__name__}: {str(e)}")    
 
