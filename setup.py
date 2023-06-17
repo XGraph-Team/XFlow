@@ -91,6 +91,7 @@ class UploadCommand(Command):
         sys.exit()
 
 # Where the magic happens:
+# todo package_data could be remove if no longer using our customized cosasi package
 setup(
     name=NAME,
     version=about['__version__'],
