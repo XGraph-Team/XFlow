@@ -1,5 +1,5 @@
 import random
-import xflow.method.cosasi as cosasi
+import xflow.method.cosasi as co
 import numpy as np
 
 def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
@@ -34,13 +34,12 @@ def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
                                 print(f"Error when calling {diffusion_fn.__name__}: {str(e)}")
 
                     if method_fn.__name__ == 'netsleuth':
-                        print("in netsleuth")
                         # todo seed shoule be changable
                         seed = 10
                         random.seed(seed)
                         np.random.seed(seed)
 
-                        contagion = cosasi.StaticNetworkContagion(
+                        contagion = co.StaticNetworkContagion(
                             G=g,
                             model="si",
                             infection_rate=0.1,
