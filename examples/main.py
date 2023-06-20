@@ -26,7 +26,7 @@ rt = run (
 
 # configurations of IBM experiments
 from xflow.method.ibm import pi as ibm_pi, degree as ibm_degree, sigma as ibm_sigma, eigen as im_eigen, greedy as ibm_greedy
-me = [ibm_sigma, ibm_degree]
+me = [ibm_pi, ibm_sigma, ibm_degree]
 rt = run (
     graph = gs, diffusion = df, 
     method = me, eval = 'ibm', epoch = 10,
