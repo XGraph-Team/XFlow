@@ -2,9 +2,7 @@ import xflow_loader
 
 from xflow.dataset.nx import BA, connSW
 from xflow.dataset.pyg import Cora
-from xflow.diffusion.SI import SI
-from xflow.diffusion.IC import IC
-from xflow.diffusion.LT import LT
+from xflow.diffusion import SI, IC, LT
 from xflow.seed import random as seed_random, degree as seed_degree, eigen as seed_eigen
 from xflow.util import run
 
