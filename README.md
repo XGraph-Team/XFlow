@@ -30,11 +30,7 @@ pip install xflow-net
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1N0gFLSOl1r4h0tvqzStssEZSnmNMvoHc?usp=sharing&pli=1#scrollTo=iXN5BYm4sh4T)
 
 ```python
-import sys
-import os
-current_script_directory = os.path.dirname(os.path.abspath(__file__))
-xflow_path = os.path.join(current_script_directory, '..', '..', 'xflow')
-sys.path.insert(1, xflow_path)
+import xflow_loader
 
 from xflow.dataset.nx import BA, connSW
 from xflow.dataset.pyg import Cora
@@ -49,15 +45,13 @@ fn = lambda: connSW(n=1000, beta=0.1)
 fn.__name__ = 'connSW'
 gs = [Cora, fn, BA]
 
-# diffusion models to test
+# Diffusion models to test
 df = [SI, IC, LT]
 
-# seed configurations to test
+# Seed configurations to test
 se = [seed_random, seed_degree, seed_eigen]
 
-# run
-
-# configurations of IM experiments
+# Configurations of IM experiments
 from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, celfpp as im_celfpp, greedy as im_greedy
 me = [im_pi]
 rt = run (
