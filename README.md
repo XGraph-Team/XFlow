@@ -35,7 +35,6 @@ import xflow
 from xflow.dataset.nx import BA, connSW
 from xflow.dataset.pyg import Cora
 from xflow.diffusion import SI, IC, LT
-from xflow.seed import random as seed_random, degree as seed_degree, eigen as seed_eigen
 from xflow.util import run
 
 # graphs to test
@@ -45,9 +44,6 @@ gs = [Cora, fn, BA]
 
 # Diffusion models to test
 df = [SI, IC, LT]
-
-# Seed configurations to test
-se = [seed_random, seed_degree, seed_eigen]
 
 # Configurations of IM experiments
 from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, celfpp as im_celfpp, greedy as im_greedy
