@@ -30,7 +30,7 @@ pip install xflow-net
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1N0gFLSOl1r4h0tvqzStssEZSnmNMvoHc?usp=sharing&pli=1#scrollTo=iXN5BYm4sh4T)
 
 ```python
-import xflow_loader
+import xflow
 
 from xflow.dataset.nx import BA, connSW
 from xflow.dataset.pyg import Cora
