@@ -15,7 +15,7 @@ URL = 'https://xflow.network/'
 EMAIL = 'zchen@cse.msstate.edu'
 AUTHOR = 'XGraphing'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.3'
+VERSION = '0.0.14'
 
 # What packages are required for this module to be executed?
 # TODO cosasi could be remove if no longer using our customized cosasi package
