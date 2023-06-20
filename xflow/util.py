@@ -2,7 +2,10 @@ import random
 import xflow.method.cosasi as co
 import numpy as np
 
-def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
+# TODO make seeds changable
+# def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
+def run (graph, diffusion, method, eval, epoch, budget, output):
+
     print("Running " + eval.upper() + " :")
 
     for graph_fn in graph:

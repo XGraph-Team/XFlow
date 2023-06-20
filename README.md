@@ -55,7 +55,7 @@ se = [seed_random, seed_degree, seed_eigen]
 from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, celfpp as im_celfpp, greedy as im_greedy
 me = [im_pi]
 rt = run (
-    graph = gs, diffusion = df, seeds = se,
+    graph = gs, diffusion = df,
     method = me, eval = 'im', epoch = 10, 
     budget = 10, 
     output = [ 'animation', 'csv', 'fig'])
