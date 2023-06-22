@@ -55,7 +55,6 @@ rt = run (
     output = [ 'animation', 'csv', 'fig'])
 ```
 
-[Result]
 
 # Create your own models
 
