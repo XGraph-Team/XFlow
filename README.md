@@ -56,7 +56,7 @@ rt = run (
 ```
 
 
-# Create your own models
+See more examples in folder `examples`
 
 
 
