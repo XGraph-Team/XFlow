@@ -78,7 +78,7 @@ See more examples in folder `examples`
 ## Source Localization
 - [NETSLEUTH](https://ieeexplore.ieee.org/document/6413787) (Legacy and Fast versions)
 - [Jordan Centrality](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=7913632)
-- [LISN](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8697898).
+- [LISN](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8697898)
 
 ## Experimental Configurations
 - Graphs: Compatiable with graph objects/class by [Networkx](https://networkx.org/) and [Pytorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest/)
