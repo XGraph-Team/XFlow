@@ -10,7 +10,7 @@
 ![Docs Status](https://badgen.net/badge/docs/passing/green?icon=)
 ![Contributing](https://badgen.net/badge/contributions/welcome/green?icon=github)
 
-**[XFlow Homepage](https://xflow.network)** | **[XFlow Paper]**(https://arxiv.org/abs/2308.03819) |**[Documentation](https://xflow.network/docs)** | **[Paper Collection](https://github.com/aquastar/awesome-network-flow)** 
+**[XFlow Homepage](https://xflow.network)** | **[XFlow Paper](https://arxiv.org/abs/2308.03819)** | **[Documentation](https://xflow.network/docs)** | **[Paper Collection](https://github.com/aquastar/awesome-network-flow)** 
 
 **XFlow** is a library built upon Python to easily write and train method for a wide range of applications related to graph flow problems. XFlow is organized task-wise, which provide datasets benchmarks, baselines and auxiliary implementation.
 
