@@ -18,7 +18,6 @@
 
 
 
-
 # Installation
 
 ```
@@ -83,6 +82,8 @@ See more examples in folder `examples`
 ## Experimental Configurations
 - Graphs: Compatiable with graph objects/class by [Networkx](https://networkx.org/) and [Pytorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest/)
 - Diffusion Models: Support [NDLib](https://ndlib.readthedocs.io/en/latest/)
+
+[![Stargazers repo roster for @XGraphing/XFlow](https://reporoster.com/stars/XGraphing/XFlow)](https://github.com/XGraphing/XFlow/stargazers)
 
 # Contact
 Feel free to [email us](mailto:zchen@cse.msstate.edu) if you wish your work to be listed in this repo.
