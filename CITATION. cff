@@ -1,14 +1,59 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+title: Xflow
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
 authors:
-- family-names: "Zhang"
-  given-names: "Zonghan"
-- family-names: "Zhang"
-  given-names: "Zijian"
-- family-names: "Chen"
-  given-names: "Zhiqian"
-title: "XFlow"
-version: 1.0.0
-doi: 10.5281/xflow.2022
-date-released: 2023-08-11
-url: "https://github.com/XGraphing"
+  - given-names: Zhiqian
+    family-names: Chen
+    email: zchen@cse.msstate.edusion
+    affiliation: Mississippi State
+    orcid: 'https://orcid.org/0000-0003-4112-9647'
+identifiers:
+  - type: doi
+    value: 10.48550/arXiv.2308.03819
+url: 'https://xflow.network'
+abstract: >-
+  The occurrence of diffusion on a graph is a prevalent and
+  significant phenomenon, as evidenced by the spread of
+  rumors, influenza-like viruses, smart grid failures, and
+  similar events. Comprehending the behaviors of flow is a
+  formidable task, due to the intricate interplay between
+  the distribution of seeds that initiate flow propagation,
+  the propagation model, and the topology of the graph. The
+  study of networks encompasses a diverse range of academic
+  disciplines, including mathematics, physics, social
+  science, and computer science. This interdisciplinary
+  nature of network research is characterized by a high
+  degree of specialization and compartmentalization, and the
+  cooperation facilitated by them is inadequate. From a
+  machine learning standpoint, there is a deficiency in a
+  cohesive platform for assessing algorithms across various
+  domains. One of the primary obstacles to current research
+  in this field is the absence of a comprehensive curated
+  benchmark suite to study the flow behaviors under network
+  scenarios.
+
+  To address this disparity, we propose the implementation
+  of a novel benchmark suite that encompasses a variety of
+  tasks, baseline models, graph datasets, and evaluation
+  tools. In addition, we present a comprehensive analytical
+  framework that offers a generalized approach to numerous
+  flow-related tasks across diverse domains, serving as a
+  blueprint and roadmap. Drawing upon the outcomes of our
+  empirical investigation, we analyze the advantages and
+  disadvantages of current foundational models, and we
+  underscore potential avenues for further study.
+keywords:
+  - network flow
+  - graph flow
+  - graph neural networks
+  - graph learning
+  - network science
+  - influence maximization
+  - source localization
+license: MIT
