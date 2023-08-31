@@ -8,4 +8,7 @@ authors:
 - family-names: "Chen"
   given-names: "Zhiqian"
 title: "XFlow"
+version: 1.0.0
+doi: 10.5281/xflow.2022
+date-released: 2023-08-11
 url: "https://github.com/XGraphing"
