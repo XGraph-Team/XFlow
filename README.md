@@ -88,10 +88,6 @@ We acknowledge the importance of good software to support research, and we note
 that research becomes more valuable when it is communicated effectively. To
 To demonstrate the value of XFlow, we ask that you cite XFlow in your work.
 
-Please go to the homepage of this GitHub repository and
-click the `cite this repository` button on the right sidebar. This will generate
-a citation in your preferred format and integrate well with citation managers. 
-Please also include the paper below.
 ```latex
 @article{zhang2023xflow,
   title={XFlow: Benchmarking Flow Behaviors over Graphs},
