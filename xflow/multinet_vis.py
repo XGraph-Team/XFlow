@@ -52,35 +52,71 @@ app = dash.Dash(
     ],
 )
 
-# Initialize the app layout
+# # Initialize the app layout
+# app.layout = html.Div(
+#     [
+#         html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
+#         html.P("The initial number of infected nodes in the graph."),
+#         dcc.Input(id="input-infected", type="number", value=1),
+#         html.Label("Beta (Infection rate):", style={"font-weight": "bold"}),
+#         html.P(
+#             "The probability of disease transmission from an infected node to a susceptible node."
+#         ),
+#         dcc.Slider(id="beta-slider", min=0, max=1, step=0.1, value=0.8),
+#         html.Label("Gamma (Recovery rate):", style={"font-weight": "bold"}),
+#         html.P(
+#             "The probability of an infected node moving into the recovered stage in each time step."
+#         ),
+#         dcc.Slider(id="gamma-slider", min=0, max=1, step=0.1, value=0.01),
+#         html.Label("Time:", style={"font-weight": "bold"}),
+#         html.P("The time step at which to view the state of the graph."),
+#         dcc.Slider(
+#             id="time-slider",
+#             min=0,
+#             max=TIME_STEPS - 1,
+#             value=0,
+#             marks={str(i): f"Time {i}" for i in range(TIME_STEPS)},
+#             step=None,
+#         ),
+#         dash_table.DataTable(id="status-table"),
+#         dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "800px"}),
+#     ]
+# )
+
 app.layout = html.Div(
     [
-        html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
-        html.P("The initial number of infected nodes in the graph."),
-        dcc.Input(id="input-infected", type="number", value=1),
-        html.Label("Beta (Infection rate):", style={"font-weight": "bold"}),
-        html.P(
-            "The probability of disease transmission from an infected node to a susceptible node."
-        ),
-        dcc.Slider(id="beta-slider", min=0, max=1, step=0.1, value=0.8),
-        html.Label("Gamma (Recovery rate):", style={"font-weight": "bold"}),
-        html.P(
-            "The probability of an infected node moving into the recovered stage in each time step."
-        ),
-        dcc.Slider(id="gamma-slider", min=0, max=1, step=0.1, value=0.01),
-        html.Label("Time:", style={"font-weight": "bold"}),
-        html.P("The time step at which to view the state of the graph."),
-        dcc.Slider(
-            id="time-slider",
-            min=0,
-            max=TIME_STEPS - 1,
-            value=0,
-            marks={str(i): f"Time {i}" for i in range(TIME_STEPS)},
-            step=None,
-        ),
-        dash_table.DataTable(id="status-table"),
-        dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "800px"}),
-    ]
+        html.Div([
+            dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "100%"})
+        ], className="col-9"),  # This div wraps the scatter plot
+
+        html.Div([
+            html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
+            html.P("The initial number of infected nodes in the graph."),
+            dcc.Input(id="input-infected", type="number", value=1),
+            html.Label("Beta (Infection rate):", style={"font-weight": "bold"}),
+            html.P(
+                "The probability of disease transmission from an infected node to a susceptible node."
+            ),
+            dcc.Slider(id="beta-slider", min=0, max=1, step=0.1, value=0.8),
+            html.Label("Gamma (Recovery rate):", style={"font-weight": "bold"}),
+            html.P(
+                "The probability of an infected node moving into the recovered stage in each time step."
+            ),
+            dcc.Slider(id="gamma-slider", min=0, max=1, step=0.1, value=0.01),
+            html.Label("Time:", style={"font-weight": "bold"}),
+            html.P("The time step at which to view the state of the graph."),
+            dcc.Slider(
+                id="time-slider",
+                min=0,
+                max=TIME_STEPS - 1,
+                value=0,
+                marks={str(i): f"Time {i}" for i in range(TIME_STEPS)},
+                step=None,
+            ),
+            dash_table.DataTable(id="status-table"),
+        ], className="col-3"),  # This div wraps the controls
+    ],
+    className="row"  # Bootstrap's row class to contain both of the above divs
 )
 
 
