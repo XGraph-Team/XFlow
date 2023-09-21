@@ -44,6 +44,22 @@ for G in network_layers:
     for node in G.nodes():
         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
 
+# # Randomly select 5 nodes from each layer
+# nodes_layer0 = random.sample(list(network_layers[0].nodes()), 5)
+# nodes_layer1 = random.sample(list(network_layers[1].nodes()), 5)
+
+# # Create edges between the selected nodes
+# for i in range(5):
+#     # Since layer 0 and layer 1 are separate graphs, we can use the node IDs directly
+#     network_layers[0].add_edge(nodes_layer0[i], nodes_layer1[i])
+#     network_layers[1].add_edge(nodes_layer0[i], nodes_layer1[i])
+
+# Pair each node in layer 0 with its corresponding node in layer 1
+for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
+    network_layers[0].add_edge(node0, node1)
+    network_layers[1].add_edge(node0, node1)
+
+
 # Initialize the app
 app = dash.Dash(
     __name__,
@@ -223,6 +239,34 @@ def update_graph(time_step, num_infected, beta, gamma):
             node_trace["marker"]["color"] += (color,)
 
         data.extend((edge_trace, node_trace))
+
+    # Add inter-layer edges to trace
+    inter_edge_trace = go.Scatter3d(
+        x=[],
+        y=[],
+        z=[],
+        line={"width": 0.5, "color": "#888"},
+        hoverinfo="none",
+        mode="lines",
+    )
+
+    # # Add inter-layer edges to trace
+    # for i in range(5):
+    #     x0, y0 = network_layers[0].nodes[nodes_layer0[i]]["pos"]
+    #     x1, y1 = network_layers[1].nodes[nodes_layer1[i]]["pos"]
+    #     inter_edge_trace["x"] += (x0, x1, None)
+    #     inter_edge_trace["y"] += (y0, y1, None)
+    #     inter_edge_trace["z"] += (0, 1, None)
+
+    # Add inter-layer edges to trace
+    for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
+        x0, y0 = network_layers[0].nodes[node0]["pos"]
+        x1, y1 = network_layers[1].nodes[node1]["pos"]
+        inter_edge_trace["x"] += (x0, x1, None)
+        inter_edge_trace["y"] += (y0, y1, None)
+        inter_edge_trace["z"] += (0, 1, None)
+
+    data.append(inter_edge_trace)
 
     # Define layout
     layout = go.Layout(
