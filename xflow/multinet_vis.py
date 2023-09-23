@@ -4,6 +4,7 @@ import random
 from dash import dcc
 from dash import html
 
+from dash.exceptions import PreventUpdate
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import networkx as nx
@@ -13,9 +14,10 @@ from ndlib.models.ModelConfig import Configuration
 import pandas as pd
 from dash import dash_table
 
+
 # - - - - - - - - - - - - - - - - - - - - -
 # Set the number of simulation time steps
-TIME_STEPS = 5
+TIME_STEPS = 4
 # - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -44,16 +46,6 @@ for G in network_layers:
     for node in G.nodes():
         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
 
-# # Randomly select 5 nodes from each layer
-# nodes_layer0 = random.sample(list(network_layers[0].nodes()), 5)
-# nodes_layer1 = random.sample(list(network_layers[1].nodes()), 5)
-
-# # Create edges between the selected nodes
-# for i in range(5):
-#     # Since layer 0 and layer 1 are separate graphs, we can use the node IDs directly
-#     network_layers[0].add_edge(nodes_layer0[i], nodes_layer1[i])
-#     network_layers[1].add_edge(nodes_layer0[i], nodes_layer1[i])
-
 # Pair each node in layer 0 with its corresponding node in layer 1
 for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
     network_layers[0].add_edge(node0, node1)
@@ -69,36 +61,6 @@ app = dash.Dash(
 )
 
 # # Initialize the app layout
-# app.layout = html.Div(
-#     [
-#         html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
-#         html.P("The initial number of infected nodes in the graph."),
-#         dcc.Input(id="input-infected", type="number", value=1),
-#         html.Label("Beta (Infection rate):", style={"font-weight": "bold"}),
-#         html.P(
-#             "The probability of disease transmission from an infected node to a susceptible node."
-#         ),
-#         dcc.Slider(id="beta-slider", min=0, max=1, step=0.1, value=0.8),
-#         html.Label("Gamma (Recovery rate):", style={"font-weight": "bold"}),
-#         html.P(
-#             "The probability of an infected node moving into the recovered stage in each time step."
-#         ),
-#         dcc.Slider(id="gamma-slider", min=0, max=1, step=0.1, value=0.01),
-#         html.Label("Time:", style={"font-weight": "bold"}),
-#         html.P("The time step at which to view the state of the graph."),
-#         dcc.Slider(
-#             id="time-slider",
-#             min=0,
-#             max=TIME_STEPS - 1,
-#             value=0,
-#             marks={str(i): f"Time {i}" for i in range(TIME_STEPS)},
-#             step=None,
-#         ),
-#         dash_table.DataTable(id="status-table"),
-#         dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "800px"}),
-#     ]
-# )
-
 app.layout = html.Div(
     [
         html.Div([
@@ -126,11 +88,20 @@ app.layout = html.Div(
                 min=0,
                 max=TIME_STEPS - 1,
                 value=0,
-                marks={str(i): f"Time {i}" for i in range(TIME_STEPS)},
+                marks={str(i): f"{i}" for i in range(TIME_STEPS)},
                 step=None,
             ),
             dash_table.DataTable(id="status-table"),
         ], className="col-3"),  # This div wraps the controls
+        
+        #Add the dcc.Interval and control buttons
+        dcc.Interval(
+            id='interval-component',
+            interval=1*1000, # in milliseconds, e.g. 1000 ms = 1 sec
+            n_intervals=0
+        ),
+        html.Button('Start', id='start-button', n_clicks=0),
+        html.Button('Stop', id='stop-button', n_clicks=0),
     ],
     className="row"  # Bootstrap's row class to contain both of the above divs
 )
@@ -172,15 +143,39 @@ def update_table(time_step, num_infected, beta, gamma):
 
 
 @app.callback(
-    Output("3d-scatter-plot", "figure"),
+    [
+        Output('3d-scatter-plot', 'figure'),
+        Output('interval-component', 'max_intervals')
+    ],
     [
         Input("time-slider", "value"),
         Input("input-infected", "value"),
         Input("beta-slider", "value"),
         Input("gamma-slider", "value"),
+        Input('interval-component', 'n_intervals'),
+        Input('start-button', 'n_clicks'),
+        Input('stop-button', 'n_clicks'),
     ],
 )
-def update_graph(time_step, num_infected, beta, gamma):
+
+
+def update_graph(time_step, num_infected, beta, gamma, n, start_clicks, stop_clicks):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        raise PreventUpdate
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id == 'start-button':
+        max_intervals = TIME_STEPS - 1
+    elif button_id == 'stop-button':
+        max_intervals = n
+    elif button_id == 'interval-component' and n < TIME_STEPS - 1:
+        time_step = n
+    else:
+        raise PreventUpdate
+    
+# def update_graph(time_step, num_infected, beta, gamma):
     models = [
         get_sir_model(layer, num_infected, beta, gamma) for layer in network_layers
     ]
@@ -250,14 +245,6 @@ def update_graph(time_step, num_infected, beta, gamma):
         mode="lines",
     )
 
-    # # Add inter-layer edges to trace
-    # for i in range(5):
-    #     x0, y0 = network_layers[0].nodes[nodes_layer0[i]]["pos"]
-    #     x1, y1 = network_layers[1].nodes[nodes_layer1[i]]["pos"]
-    #     inter_edge_trace["x"] += (x0, x1, None)
-    #     inter_edge_trace["y"] += (y0, y1, None)
-    #     inter_edge_trace["z"] += (0, 1, None)
-
     # Add inter-layer edges to trace
     for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
         x0, y0 = network_layers[0].nodes[node0]["pos"]
@@ -279,7 +266,9 @@ def update_graph(time_step, num_infected, beta, gamma):
         )
     )
 
-    return {"data": data, "layout": layout}
+    # return {"data": data, "layout": layout}
+    return {"data": data, "layout": layout}, max_intervals
+
 
 
 if __name__ == "__main__":
