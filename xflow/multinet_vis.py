@@ -236,18 +236,28 @@ def update_graph(time_step, num_infected, beta, gamma):
         x=[],
         y=[],
         z=[],
-        line={"width": 0.5, "color": "yellow"},
+        line=dict(width=2, color=[]),  # Set color dynamically
         hoverinfo="none",
         mode="lines",
     )
 
+    # Initialize a list to store the color of each link
+    inter_edge_colors = []
+
     # Add inter-layer edges to trace
-    for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
+    for index, (node0, node1) in enumerate(zip(network_layers[0].nodes(), network_layers[1].nodes())):
         x0, y0 = network_layers[0].nodes[node0]["pos"]
         x1, y1 = network_layers[1].nodes[node1]["pos"]
         inter_edge_trace["x"] += (x0, x1, None)
         inter_edge_trace["y"] += (y0, y1, None)
         inter_edge_trace["z"] += (0, 1, None)
+        
+        # Color the selected link red, and others light yellow
+        link_color = "red" if index == 0 else "blue"  # Change index as needed
+        inter_edge_colors.append(link_color)
+
+    # Assign the list of colors to the 'color' attribute of 'line' dictionary
+    inter_edge_trace["line"]["color"] = inter_edge_colors
 
     data.append(inter_edge_trace)
 
