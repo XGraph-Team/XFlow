@@ -126,7 +126,7 @@ app.layout = html.Div(
                 min=0,
                 max=TIME_STEPS - 1,
                 value=0,
-                marks={str(i): f"Time {i}" for i in range(TIME_STEPS)},
+                marks={str(i): f"{i}" for i in range(TIME_STEPS)},
                 step=None,
             ),
             dash_table.DataTable(id="status-table"),
