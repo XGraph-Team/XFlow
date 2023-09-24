@@ -44,15 +44,6 @@ for G in network_layers:
     for node in G.nodes():
         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
 
-# # Randomly select 5 nodes from each layer
-# nodes_layer0 = random.sample(list(network_layers[0].nodes()), 5)
-# nodes_layer1 = random.sample(list(network_layers[1].nodes()), 5)
-
-# # Create edges between the selected nodes
-# for i in range(5):
-#     # Since layer 0 and layer 1 are separate graphs, we can use the node IDs directly
-#     network_layers[0].add_edge(nodes_layer0[i], nodes_layer1[i])
-#     network_layers[1].add_edge(nodes_layer0[i], nodes_layer1[i])
 
 # Pair each node in layer 0 with its corresponding node in layer 1
 for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
