@@ -234,7 +234,7 @@ def update_graph(time_step, num_infected, beta, gamma):
             if node in model_results[idx][time_step]["status"]:
                 status = model_results[idx][time_step]["status"][node]
             color = (
-                "red" if status == 1 else "green" if status == 2 else "blue"
+                "red" if status == 1 else "green" if status == 2 else "grey"
             )  # Color based on the infection status
             node_trace["marker"]["color"] += (color,)
 
