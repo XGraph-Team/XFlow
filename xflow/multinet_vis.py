@@ -236,18 +236,10 @@ def update_graph(time_step, num_infected, beta, gamma):
         x=[],
         y=[],
         z=[],
-        line={"width": 0.5, "color": "#888"},
+        line={"width": 0.5, "color": "yellow"},
         hoverinfo="none",
         mode="lines",
     )
-
-    # # Add inter-layer edges to trace
-    # for i in range(5):
-    #     x0, y0 = network_layers[0].nodes[nodes_layer0[i]]["pos"]
-    #     x1, y1 = network_layers[1].nodes[nodes_layer1[i]]["pos"]
-    #     inter_edge_trace["x"] += (x0, x1, None)
-    #     inter_edge_trace["y"] += (y0, y1, None)
-    #     inter_edge_trace["z"] += (0, 1, None)
 
     # Add inter-layer edges to trace
     for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
