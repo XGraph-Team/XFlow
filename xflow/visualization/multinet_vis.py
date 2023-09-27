@@ -35,18 +35,20 @@ def run_sir_model(model, time_steps):
     """Runs the given SIR model for the given number of time steps."""
     return model.iteration_bunch(time_steps)
 
-
-# Create two random graphs
-network_layers = [nx.erdos_renyi_graph(100, 0.06), nx.erdos_renyi_graph(100, 0.06)]
+# Create two random graphs with different numbers of nodes
+network_layers = [nx.erdos_renyi_graph(60, 0.06), nx.erdos_renyi_graph(140, 0.06)]
 
 # Assign random positions for the nodes in each network layer
 for G in network_layers:
     for node in G.nodes():
         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
 
+# Get some of the nodes in layer 0
+num_nodes_to_connect = int(len(network_layers[0].nodes()) * 0.1)
+nodes_layer0_to_connect = random.sample(network_layers[0].nodes(), num_nodes_to_connect)
 
-# Pair each node in layer 0 with its corresponding node in layer 1
-for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
+# Pair each selected node in layer 0 with a node in layer 1
+for node0, node1 in zip(nodes_layer0_to_connect, network_layers[1].nodes()):
     network_layers[0].add_edge(node0, node1)
     network_layers[1].add_edge(node0, node1)
 
