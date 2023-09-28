@@ -46,7 +46,7 @@ network_layers = [nx.erdos_renyi_graph(60, 0.06), nx.erdos_renyi_graph(140, 0.06
 #Initialize the spin attribute for each node
 for G in network_layers:
     for node in G.nodes():
-        G.nodes[node]["spin"] = random.choice([-1, 1])  # for example, if spin can be -1 or 1
+        G.nodes[node]["spin"] = random.choice([0, 1])  # for example, if spin can be -1 or 1
         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
 
 
@@ -61,15 +61,24 @@ for node0, node1 in zip(nodes_layer0_to_connect, network_layers[1].nodes()):
 
 # ising
 # Check for the 'spin' attribute
-def calculate_energy(graph, J=1, H=0):
-    energy = 0
-    for node in graph.nodes():
-        si = graph.nodes[node].get("spin", 0)  # Use a default value if 'spin' is not present
-        energy -= H * si
-        for neighbor in graph.neighbors(node):
-            sj = graph.nodes[neighbor].get("spin", 0)
-            energy -= J * si * sj
-    return energy / 2  # Each pair is counted twice
+# def calculate_energy(graph, J=1, H=0):
+#     energy = 0
+#     for node in graph.nodes():
+#         si = graph.nodes[node].get("spin", 0)  # Use a default value if 'spin' is not present
+#         energy -= H * si
+#         for neighbor in graph.neighbors(node):
+#             sj = graph.nodes[neighbor].get("spin", 0)
+#             energy -= J * si * sj
+#     print (energy / 2)
+#     return energy / 2  # Each pair is counted twice
+
+# Add this function to calculate energy of a given layer at a specific timestep
+# def calculate_energy(model_result, layer_index, timestep):
+#     status_at_timestep = model_result[layer_index][timestep]["status"]
+#     #print(status_at_timestep)
+#     energy = sum(1 if status == 1 else 0 for status in status_at_timestep.values())
+#     #print (energy)
+#     return energy
 
 
 # Initialize the app
@@ -82,9 +91,9 @@ app = dash.Dash(
 
 app.layout = html.Div(
     [
-        html.Div([
-            dcc.Graph(id="energy-plot", style={"height": "400px", "width": "100%"})
-        ], className="col-9"), 
+        # html.Div([
+        #     dcc.Graph(id="energy-plot", style={"height": "400px", "width": "100%"})
+        # ], className="col-9"), 
 
         html.Div([
             dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "100%"}),
@@ -130,59 +139,128 @@ app.layout = html.Div(
         Input("gamma-slider", "value"),
     ],
 )
+
 def update_table(time_step, num_infected, beta, gamma):
+    for layer in network_layers:
+        print("layer", layer)
+
     models = [
         get_sir_model(layer, num_infected, beta, gamma) for layer in network_layers
     ]
+
+    # for model in models:
+    #     print("model", model)
+
     model_results = [run_sir_model(model, TIME_STEPS) for model in models]
+    # print("model_results", model_results)
+
 
     # Compute the counts of each status at the current time step
-    status_counts = {"Susceptible": 0, "Infected": 0, "Recovered": 0}
-    for result in model_results:
+    # status_counts = {"Susceptible": 0, "Infected": 0, "Recovered": 0}
+    # for result in model_results:
+    #     for status, count in result[time_step]["node_count"].items():
+    #         if status == 0:
+    #             status_counts["Susceptible"] += count
+    #         elif status == 1:
+    #             status_counts["Infected"] += count
+    #         elif status == 2:
+    #             status_counts["Recovered"] += count
+
+    # # Initialize status count dictionaries for each layer
+    status_counts_total = {"Susceptible": 0, "Infected": 0, "Recovered": 0}
+    status_counts_layer0 = {"Susceptible": 0, "Infected": 0, "Recovered": 0}
+    status_counts_layer1 = {"Susceptible": 0, "Infected": 0, "Recovered": 0}
+
+    # Compute the counts of each status at the current time step for each layer
+    for layer_index, result in enumerate(model_results):
         for status, count in result[time_step]["node_count"].items():
             if status == 0:
-                status_counts["Susceptible"] += count
+                status_counts_total["Susceptible"] += count
+                # print("layer_index", layer_index)
+                if layer_index == 0:
+                    status_counts_layer0["Susceptible"] += count
+                elif layer_index == 1:
+                    status_counts_layer1["Susceptible"] += count
             elif status == 1:
-                status_counts["Infected"] += count
+                status_counts_total["Infected"] += count
+                if layer_index == 0:
+                    status_counts_layer0["Infected"] += count
+                elif layer_index == 1:
+                    status_counts_layer1["Infected"] += count
             elif status == 2:
-                status_counts["Recovered"] += count
+                status_counts_total["Recovered"] += count
+                if layer_index == 0:
+                    status_counts_layer0["Recovered"] += count
+                elif layer_index == 1:
+                    status_counts_layer1["Recovered"] += count
 
     # Create a DataFrame and format it for use with DataTable
-    df = pd.DataFrame([status_counts])
+    df = pd.DataFrame([status_counts_total])
     data = df.to_dict("records")
     columns = [{"name": i, "id": i} for i in df.columns]
 
+    print("Step", time_step)
+    # print("Susceptible", status_counts["Susceptible"])
+    # print("Infected", status_counts["Infected"])
+    # print("Recovered", status_counts["Recovered"])
+
+    print("Susceptible status_counts_total", status_counts_total["Susceptible"])
+    print("Infected status_counts_total", status_counts_total["Infected"])
+    print("Recovered status_counts_total", status_counts_total["Recovered"])
+
+    print("Susceptible status_counts_layer0", status_counts_layer0["Susceptible"])
+    print("Infected status_counts_layer0", status_counts_layer0["Infected"])
+    print("Recovered status_counts_layer0", status_counts_layer0["Recovered"])
+
+    print("Susceptible status_counts_layer1", status_counts_layer1["Susceptible"])
+    print("Infected status_counts_layer1", status_counts_layer1["Infected"])
+    print("Recovered status_counts_layer1", status_counts_layer1["Recovered"])
+
+    # Calculate the energy for layer 0
+    high_energy_layer0 = status_counts_layer0["Infected"]
+    print ("high_energy_layer0", high_energy_layer0)
+
+    low_energy_layer0 = status_counts_layer0["Susceptible"] + status_counts_layer0["Recovered"]
+    print ("low_energy_layer0", low_energy_layer0)
+   
+    # Calculate the energy for layer 1
+    high_energy_layer1 = status_counts_layer1["Infected"]
+    print ("high_energy_layer1", high_energy_layer1)
+
+    low_energy_layer1 = status_counts_layer1["Susceptible"] + status_counts_layer1["Recovered"]
+    print ("low_energy_layer1", low_energy_layer1)
+
     return data, columns
 
-@app.callback(
-    Output("energy-plot", "figure"),
-    [
-        Input("time-slider", "value"),
-        Input("input-infected", "value"),
-        Input("beta-slider", "value"),
-        Input("gamma-slider", "value"),
-    ],
-)
+# @app.callback(
+#     Output("energy-plot", "figure"),
+#     [
+#         Input("time-slider", "value"),
+#         Input("input-infected", "value"),
+#         Input("beta-slider", "value"),
+#         Input("gamma-slider", "value"),
+#     ],
+# )
 
-def update_energy_plot(time_step, num_infected, beta, gamma):
-    # Run the SIR model with the provided parameters
-    models = [get_sir_model(layer, num_infected, beta, gamma) for layer in network_layers]
-    model_results = [run_sir_model(model, TIME_STEPS) for model in models]
+# def update_energy_plot(time_step, num_infected, beta, gamma):
+#     # Run the SIR model with the provided parameters
+#     models = [get_sir_model(layer, num_infected, beta, gamma) for layer in network_layers]
+#     model_results = [run_sir_model(model, TIME_STEPS) for model in models]
     
-    # Update the state of nodes based on the model results for the current time step
-    # ... (code for updating node states, if needed)
+#     # Update the state of nodes based on the model results for the current time step
+#     # ... (code for updating node states, if needed)
 
-    energies = []
-    for step in range(TIME_STEPS):
-        # Calculate the energy of the system at this step
-        energy = sum(calculate_energy(layer) for layer in network_layers)
-        energies.append(energy)
+#     energies = []
+#     for step in range(TIME_STEPS):
+#         # Calculate the energy of the system at this step
+#         energy = sum(calculate_energy(layer) for layer in network_layers)
+#         energies.append(energy)
 
-    # Create the energy plot
-    energy_trace = go.Scatter(x=list(range(TIME_STEPS)), y=energies, mode='lines', name='Energy')
-    layout = go.Layout(title='Energy of the System', xaxis=dict(title='Time Step'), yaxis=dict(title='Energy'))
+#     # Create the energy plot
+#     energy_trace = go.Scatter(x=list(range(TIME_STEPS)), y=energies, mode='lines', name='Energy')
+#     layout = go.Layout(title='Energy of the System', xaxis=dict(title='Time Step'), yaxis=dict(title='Energy'))
     
-    return {"data": [energy_trace], "layout": layout}
+#     return {"data": [energy_trace], "layout": layout}
 
 
 @app.callback(
