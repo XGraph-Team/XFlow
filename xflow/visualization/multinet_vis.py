@@ -38,10 +38,17 @@ def run_sir_model(model, time_steps):
 # Create two random graphs with different numbers of nodes
 network_layers = [nx.erdos_renyi_graph(60, 0.06), nx.erdos_renyi_graph(140, 0.06)]
 
-# Assign random positions for the nodes in each network layer
+# # Assign random positions for the nodes in each network layer
+# for G in network_layers:
+#     for node in G.nodes():
+#         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
+
+#Initialize the spin attribute for each node
 for G in network_layers:
     for node in G.nodes():
+        G.nodes[node]["spin"] = random.choice([-1, 1])  # for example, if spin can be -1 or 1
         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
+
 
 # Get some of the nodes in layer 0
 num_nodes_to_connect = int(len(network_layers[0].nodes()) * 0.1)
@@ -52,6 +59,18 @@ for node0, node1 in zip(nodes_layer0_to_connect, network_layers[1].nodes()):
     network_layers[0].add_edge(node0, node1)
     network_layers[1].add_edge(node0, node1)
 
+# ising
+# Check for the 'spin' attribute
+def calculate_energy(graph, J=1, H=0):
+    energy = 0
+    for node in graph.nodes():
+        si = graph.nodes[node].get("spin", 0)  # Use a default value if 'spin' is not present
+        energy -= H * si
+        for neighbor in graph.neighbors(node):
+            sj = graph.nodes[neighbor].get("spin", 0)
+            energy -= J * si * sj
+    return energy / 2  # Each pair is counted twice
+
 
 # Initialize the app
 app = dash.Dash(
@@ -61,41 +80,14 @@ app = dash.Dash(
     ],
 )
 
-# # Initialize the app layout
-# app.layout = html.Div(
-#     [
-#         html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
-#         html.P("The initial number of infected nodes in the graph."),
-#         dcc.Input(id="input-infected", type="number", value=1),
-#         html.Label("Beta (Infection rate):", style={"font-weight": "bold"}),
-#         html.P(
-#             "The probability of disease transmission from an infected node to a susceptible node."
-#         ),
-#         dcc.Slider(id="beta-slider", min=0, max=1, step=0.1, value=0.8),
-#         html.Label("Gamma (Recovery rate):", style={"font-weight": "bold"}),
-#         html.P(
-#             "The probability of an infected node moving into the recovered stage in each time step."
-#         ),
-#         dcc.Slider(id="gamma-slider", min=0, max=1, step=0.1, value=0.01),
-#         html.Label("Time:", style={"font-weight": "bold"}),
-#         html.P("The time step at which to view the state of the graph."),
-#         dcc.Slider(
-#             id="time-slider",
-#             min=0,
-#             max=TIME_STEPS - 1,
-#             value=0,
-#             marks={str(i): f"Time {i}" for i in range(TIME_STEPS)},
-#             step=None,
-#         ),
-#         dash_table.DataTable(id="status-table"),
-#         dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "800px"}),
-#     ]
-# )
-
 app.layout = html.Div(
     [
         html.Div([
-            dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "100%"})
+            dcc.Graph(id="energy-plot", style={"height": "400px", "width": "100%"})
+        ], className="col-9"), 
+
+        html.Div([
+            dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "100%"}),
         ], className="col-9"),  # This div wraps the scatter plot
 
         html.Div([
@@ -127,7 +119,6 @@ app.layout = html.Div(
     ],
     className="row"  # Bootstrap's row class to contain both of the above divs
 )
-
 
 @app.callback(
     Output("status-table", "data"),
@@ -162,6 +153,36 @@ def update_table(time_step, num_infected, beta, gamma):
     columns = [{"name": i, "id": i} for i in df.columns]
 
     return data, columns
+
+@app.callback(
+    Output("energy-plot", "figure"),
+    [
+        Input("time-slider", "value"),
+        Input("input-infected", "value"),
+        Input("beta-slider", "value"),
+        Input("gamma-slider", "value"),
+    ],
+)
+
+def update_energy_plot(time_step, num_infected, beta, gamma):
+    # Run the SIR model with the provided parameters
+    models = [get_sir_model(layer, num_infected, beta, gamma) for layer in network_layers]
+    model_results = [run_sir_model(model, TIME_STEPS) for model in models]
+    
+    # Update the state of nodes based on the model results for the current time step
+    # ... (code for updating node states, if needed)
+
+    energies = []
+    for step in range(TIME_STEPS):
+        # Calculate the energy of the system at this step
+        energy = sum(calculate_energy(layer) for layer in network_layers)
+        energies.append(energy)
+
+    # Create the energy plot
+    energy_trace = go.Scatter(x=list(range(TIME_STEPS)), y=energies, mode='lines', name='Energy')
+    layout = go.Layout(title='Energy of the System', xaxis=dict(title='Time Step'), yaxis=dict(title='Energy'))
+    
+    return {"data": [energy_trace], "layout": layout}
 
 
 @app.callback(
