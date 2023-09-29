@@ -15,7 +15,7 @@ from dash import dash_table
 
 # - - - - - - - - - - - - - - - - - - - - -
 # Set the number of simulation time steps
-TIME_STEPS = 5
+TIME_STEPS = 3
 # - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -36,18 +36,18 @@ def run_sir_model(model, time_steps):
     return model.iteration_bunch(time_steps)
 
 # Create two random graphs with different numbers of nodes
-network_layers = [nx.erdos_renyi_graph(60, 0.06), nx.erdos_renyi_graph(140, 0.06)]
+network_layers = [nx.erdos_renyi_graph(9, 0.06), nx.erdos_renyi_graph(11, 0.06)]
 
-# # Assign random positions for the nodes in each network layer
-# for G in network_layers:
-#     for node in G.nodes():
-#         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
-
-#Initialize the spin attribute for each node
+# Assign random positions for the nodes in each network layer
 for G in network_layers:
     for node in G.nodes():
-        G.nodes[node]["spin"] = random.choice([0, 1])  # for example, if spin can be -1 or 1
         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
+
+# #Initialize the spin attribute for each node
+# for G in network_layers:
+#     for node in G.nodes():
+#         G.nodes[node]["spin"] = random.choice([0, 1])  # for example, if spin can be -1 or 1
+#         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
 
 
 # Get some of the nodes in layer 0
@@ -60,7 +60,7 @@ for node0, node1 in zip(nodes_layer0_to_connect, network_layers[1].nodes()):
     network_layers[1].add_edge(node0, node1)
 
 # ising
-# Check for the 'spin' attribute
+#Check for the 'spin' attribute
 # def calculate_energy(graph, J=1, H=0):
 #     energy = 0
 #     for node in graph.nodes():
@@ -194,6 +194,61 @@ def update_table(time_step, num_infected, beta, gamma):
                 elif layer_index == 1:
                     status_counts_layer1["Recovered"] += count
 
+
+    print('model_results', model_results)
+    for layer_index, result in enumerate(model_results):
+        print('layer_index', layer_index)
+        print('result', result)
+        for status, count in result[time_step]["node_count"].items():
+            print('status', status)
+
+        # Iterating over the list of result dictionaries
+    for layer_index, result_dict in enumerate(model_results):
+        print('layer_index', layer_index)
+        
+        # Iterating over the dictionaries in the result list
+        for single_result in result_dict:
+            # Extracting the 'iteration' value
+            iteration = single_result.get('iteration')
+            print('iteration', iteration)
+            
+            # Extracting the 'status' value
+            status = single_result.get('status')
+            print('status', status)
+
+
+    # # Initialize the neighbor_energy counter
+    # neighbor_energy = 0
+
+    # # Assuming layer0 is the graph representing layer 0
+    # layer0 = network_layers[0]  # replace with the actual graph object if different
+
+    # # print('layer0', layer0)
+    # # print('layer0.nodes', layer0.nodes())
+
+    # # Iterate through each node in layer0
+    # for node in layer0.nodes():
+    #     print('node in layer0', node)
+    #     # Get the status of the current node
+    #     node_status = layer0.nodes[node].get("status")  # assuming status is stored with the key "status"
+    #     print('node_status', node_status)
+    #     # Check the status of each neighbor
+    #     for neighbor in layer0.neighbors(node):
+    #         neighbor_status = layer0.nodes[neighbor].get("status", -1)
+            
+    #         # Check if either the node or the neighbor is infected
+    #         if node_status == 1 or neighbor_status == 1:
+    #             # If either node is infected and the other is not,
+    #             # increment the neighbor_energy counter
+    #             if node_status != neighbor_status:
+    #                 neighbor_energy += 1
+
+    # # At this point, neighbor_energy holds the total neighbor energy for the entire layer 0
+    # print("Neighbor Energy for Layer 0:", neighbor_energy)
+
+
+    
+
     # Create a DataFrame and format it for use with DataTable
     df = pd.DataFrame([status_counts_total])
     data = df.to_dict("records")
@@ -229,6 +284,24 @@ def update_table(time_step, num_infected, beta, gamma):
 
     low_energy_layer1 = status_counts_layer1["Susceptible"] + status_counts_layer1["Recovered"]
     print ("low_energy_layer1", low_energy_layer1)
+
+    # # For Layer 0
+    # current_states_layer0 = model_results[0][time_step]["node_states"]
+    # graph0 = nx.Graph()
+    # for node, state in current_states_layer0.items():
+    #     graph0.add_node(node, state=state)
+    
+    # # For Layer 1
+    # current_states_layer1 = model_results[1][time_step]["node_states"]
+    # graph1 = nx.Graph()
+    # for node, state in current_states_layer1.items():
+    #     graph1.add_node(node, state=state)
+
+    # Calculate criteria_two
+    # criteria_two_result = criteria_two(graph0, graph1)
+
+    # # Print or return the criteria_two_result as needed
+    # print("Criteria Two Result:", criteria_two_result)
 
     return data, columns
 
