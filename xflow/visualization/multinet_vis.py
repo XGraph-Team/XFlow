@@ -15,7 +15,7 @@ from dash import dash_table
 
 # - - - - - - - - - - - - - - - - - - - - -
 # Set the number of simulation time steps
-TIME_STEPS = 10
+TIME_STEPS = 3
 # - - - - - - - - - - - - - - - - - - - - -
 
 def get_sir_model(graph, num_infected, beta, gamma):
@@ -34,7 +34,7 @@ def run_sir_model(model, time_steps):
     return model.iteration_bunch(time_steps)
 
 # Create two random graphs with different numbers of nodes
-network_layers = [nx.erdos_renyi_graph(10, 1), nx.erdos_renyi_graph(10, 1)]
+network_layers = [nx.erdos_renyi_graph(5, 1), nx.erdos_renyi_graph(5, 1)]
 
 # Assign random positions for the nodes in each network layer
 for G in network_layers:
@@ -370,9 +370,9 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     # Define layout
     layout = go.Layout(
         scene=dict(
-            xaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False),
-            yaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False),
-            zaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False),
+            xaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
+            yaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
+            zaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
             aspectratio=dict(x=1, y=1, z=1),
             camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
         )
