@@ -15,9 +15,8 @@ from dash import dash_table
 
 # - - - - - - - - - - - - - - - - - - - - -
 # Set the number of simulation time steps
-TIME_STEPS = 3
+TIME_STEPS = 10
 # - - - - - - - - - - - - - - - - - - - - -
-
 
 def get_sir_model(graph, num_infected, beta, gamma):
     """Returns a configured SIR model for the given graph."""
@@ -35,7 +34,7 @@ def run_sir_model(model, time_steps):
     return model.iteration_bunch(time_steps)
 
 # Create two random graphs with different numbers of nodes
-network_layers = [nx.erdos_renyi_graph(5, 1), nx.erdos_renyi_graph(6, 1)]
+network_layers = [nx.erdos_renyi_graph(10, 1), nx.erdos_renyi_graph(10, 1)]
 
 # Assign random positions for the nodes in each network layer
 for G in network_layers:
@@ -258,7 +257,6 @@ def update_table_graph(time_step, num_infected, beta, gamma):
         print(f"Number of nodes in Layer {layer_index} with different status from their neighbors: {different_status_counter}")
 
     # Part 2
-        # for layer_index, result in enumerate(model_results_modified):
     for result in model_results_modified:
         # Initialize an empty dictionary for 'updated_status' 
         # to hold status values across iterations
@@ -275,8 +273,44 @@ def update_table_graph(time_step, num_infected, beta, gamma):
 
             # Update our ongoing 'updated_status' with the current 'updated_status'
             updated_status = iteration['updated_status'].copy()
-        
-        print('model_results_modified', model_results_modified)
+    print('model_results_modified', model_results_modified)
+
+    model_results_diff = model_results_modified
+    for result in model_results_diff:
+        for iteration in result:
+            updated_status = iteration['updated_status']
+            
+            energy_diff_count = 0
+            keys = list(updated_status.keys())
+            
+            for i in range(len(keys)):
+                for j in range(i+1, len(keys)):
+                    val_i = updated_status[keys[i]]
+                    val_j = updated_status[keys[j]]
+                    
+                    # If val_i or val_j is 2, consider it as 0
+                    if val_i == 2:
+                        val_i = 0
+                    if val_j == 2:
+                        val_j = 0
+                    
+                    # Check if they're different
+                    if val_i != val_j:
+                        energy_diff_count += 1
+            
+            iteration['energy_diff_count'] = energy_diff_count
+
+    print('model_results_diff', model_results_diff)
+
+    model_results_self = model_results_diff
+    for result in model_results_self:
+        for iteration in result:
+            updated_status = iteration['updated_status']
+            
+            energy_self_count = sum([1 for value in updated_status.values() if value == 1])
+            
+            iteration['energy_self_count'] = energy_self_count
+    print('model_results_self', model_results_self)
 
     graph_data = []
     # Create traces for edges and nodes
