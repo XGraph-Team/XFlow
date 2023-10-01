@@ -15,7 +15,7 @@ from dash import dash_table
 
 # - - - - - - - - - - - - - - - - - - - - -
 # Set the number of simulation time steps
-TIME_STEPS = 3
+TIME_STEPS = 10
 # - - - - - - - - - - - - - - - - - - - - -
 
 def get_sir_model(graph, num_infected, beta, gamma):
@@ -60,9 +60,9 @@ app = dash.Dash(
 
 app.layout = html.Div(
     [
-        # html.Div([
-        #     dcc.Graph(id="energy-plot", style={"height": "400px", "width": "100%"})
-        # ], className="col-9"), 
+        html.Div([
+            dcc.Graph(id="energy-plot", style={"height": "400px", "width": "100%"})
+        ], className="col-9"), 
 
         html.Div([
             dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "100%"}),
@@ -103,6 +103,7 @@ app.layout = html.Div(
     Output("status-table", "data"),
     Output("status-table", "columns"),
     Output("3d-scatter-plot", "figure"),
+    Output("energy-plot", "figure"),
     [
         Input("time-slider", "value"),
         Input("input-infected", "value"),
@@ -379,7 +380,21 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     )
 
     figure = {"data": graph_data, "layout": layout}
-    return data, columns, figure
+
+    # Extracting the data
+    iterations = [entry['iteration'] for entry in model_results_self[0]]
+    y_values_1 = [entry['energy_diff_count'] + entry['energy_self_count'] for entry in model_results_self[0]]
+    y_values_2 = [entry['energy_diff_count'] + entry['energy_self_count'] for entry in model_results_self[1]]
+
+    # Plotting the data
+    energy = go.Figure()
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='List 1'))
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='List 2'))
+    energy.update_layout(title='Energy Counts vs. Iteration',
+                      xaxis_title='Iteration',
+                      yaxis_title='Total Energy Count')
+    
+    return data, columns, figure, energy
 
 # #backup
 # @app.callback(
