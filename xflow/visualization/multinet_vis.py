@@ -65,12 +65,12 @@ app = dash.Dash(
 app.layout = html.Div(
     [
         html.Div([
-            dcc.Graph(id="energy-plot", style={"height": "400px", "width": "100%"})
-        ], className="col-9"), 
+            dcc.Graph(id="energy-plot", style={"height": "800px", "width": "100%"})
+        ], className="col-6"), 
 
         html.Div([
             dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "100%"}),
-        ], className="col-9"),  # This div wraps the scatter plot
+        ], className="col-6"),  # This div wraps the scatter plot
 
         html.Div([
             html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
@@ -97,7 +97,7 @@ app.layout = html.Div(
                 step=None,
             ),
             dash_table.DataTable(id="status-table"),
-        ], className="col-3"),  # This div wraps the controls
+        ], className="col-12"),  # This div wraps the controls
     ],
     className="row"  # Bootstrap's row class to contain both of the above divs
 )
@@ -424,9 +424,16 @@ def update_table_graph(time_step, num_infected, beta, gamma):
 
     # Plotting the data
     energy = go.Figure()
-    energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Layer 0'))
-    energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1'))
-    energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Layer 2'))
+    # energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Layer 0'))
+    # energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1'))
+    # energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Layer 2'))
+
+    # blue
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Layer 0', fill='tozeroy', fillcolor='rgba(173, 216, 230, 0.3)'))
+    # red
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1', fill='tozeroy', fillcolor='rgba(255, 182, 193, 0.3)'))
+    # green
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Layer 2', fill='tozeroy', fillcolor='rgba(144, 238, 144, 0.3)'))
 
     energy.update_layout(title='Energy vs. Time Step',
                       xaxis_title='Time Step',
