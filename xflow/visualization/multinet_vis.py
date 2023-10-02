@@ -15,7 +15,7 @@ from dash import dash_table
 
 # - - - - - - - - - - - - - - - - - - - - -
 # Set the number of simulation time steps
-TIME_STEPS = 3
+TIME_STEPS = 10
 # - - - - - - - - - - - - - - - - - - - - -
 
 def get_sir_model(graph, num_infected, beta, gamma):
@@ -34,19 +34,23 @@ def run_sir_model(model, time_steps):
     return model.iteration_bunch(time_steps)
 
 # Create two random graphs with different numbers of nodes
-network_layers = [nx.erdos_renyi_graph(5, 1), nx.erdos_renyi_graph(5, 1)]
+network_layers = [nx.erdos_renyi_graph(20, 1), nx.erdos_renyi_graph(20, 1)]
 
 # Assign random positions for the nodes in each network layer
 for G in network_layers:
     for node in G.nodes():
         G.nodes[node]["pos"] = (random.uniform(-1, 1), random.uniform(-1, 1))
 
-# Get some of the nodes in layer 0
-num_nodes_to_connect = int(len(network_layers[0].nodes()) * 0.1)
-nodes_layer0_to_connect = random.sample(network_layers[0].nodes(), num_nodes_to_connect)
+# Get some of the nodes in layer 0 and layer 1
+nodes_pool_layer0 = int(len(network_layers[0].nodes()) * 1)
+nodes_pool_layer1 = int(len(network_layers[1].nodes()) * 1)
 
-# Pair each selected node in layer 0 with a node in layer 1
-for node0, node1 in zip(nodes_layer0_to_connect, network_layers[1].nodes()):
+# Randomly sample nodes from both layers
+nodes_layer0_to_connect = random.sample(network_layers[0].nodes(), nodes_pool_layer0)
+nodes_layer1_to_connect = random.sample(network_layers[1].nodes(), nodes_pool_layer1)
+
+# Pair and connect selected nodes
+for node0, node1 in zip(nodes_layer0_to_connect, nodes_layer1_to_connect):
     network_layers[0].add_edge(node0, node1)
     network_layers[1].add_edge(node0, node1)
 
@@ -287,15 +291,52 @@ def update_table_graph(time_step, num_infected, beta, gamma):
             iteration['energy_self_count'] = energy_self_count
     print('model_results_self', model_results_self)
 
+    layer2_results = []
+
+    for iteration in range(len(model_results_self[0])):  # Assuming both lists have the same length
+        layer2_energy_self_count = 0
+        layer2_energy_diff_count = 0
+        
+        # Check self energy for nodes in layer 0
+        for node in nodes_layer0_to_connect:
+            if model_results_self[0][iteration]["updated_status"].get(node) == 1:
+                layer2_energy_self_count += 1
+                
+        # Check self energy for nodes in layer 1
+        for node in nodes_layer1_to_connect:
+            if model_results_self[1][iteration]["updated_status"].get(node) == 1:
+                layer2_energy_self_count += 1
+
+        # Check diff energy between pairs of nodes
+        for node0, node1 in zip(nodes_layer0_to_connect, nodes_layer1_to_connect):
+            status_node0 = model_results_self[0][iteration]["updated_status"].get(node0)
+            status_node1 = model_results_self[1][iteration]["updated_status"].get(node1)
+            
+            # Check the cases
+            if (status_node0 == 1 and status_node1 in [0, 2]) or (status_node1 == 1 and status_node0 in [0, 2]):
+                layer2_energy_diff_count += 1
+
+        # Store the results
+        layer2_results.append({
+            'iteration': iteration,
+            'layer2_energy_self_count': layer2_energy_self_count,
+            'layer2_energy_diff_count': layer2_energy_diff_count
+        })
+
+    print('layer2_results', layer2_results)
+
     graph_data = []
+
     # Create traces for edges and nodes
     for idx, network in enumerate(network_layers):
-    
+        
+        edge_color = "orange" if idx == 0 else "pink" if idx == 1 else "#888"  # Default color is #888
+        
         edge_trace = go.Scatter3d(
             x=[],
             y=[],
             z=[],
-            line={"width": 0.5, "color": "#888"},
+            line={"width": 0.5, "color": edge_color},
             hoverinfo="none",
             mode="lines",
         )
@@ -332,8 +373,8 @@ def update_table_graph(time_step, num_infected, beta, gamma):
             node_trace["y"] += (y,)
             node_trace["z"] += (idx,)
             status = 0
-            if node in model_results_modified[idx][time_step]["updated_status"]:
-                status = model_results_modified[idx][time_step]["updated_status"][node]
+            if node in model_results_self[idx][time_step]["updated_status"]:
+                status = model_results_self[idx][time_step]["updated_status"][node]
             color = (
                 "red" if status == 1 else "green" if status == 2 else "grey"
             )  # Color based on the infection status
@@ -341,6 +382,26 @@ def update_table_graph(time_step, num_infected, beta, gamma):
 
         graph_data.extend((edge_trace, node_trace))
 
+
+    # Add inter-layer edges to trace
+    inter_edge_trace = go.Scatter3d(
+        x=[],
+        y=[],
+        z=[],
+        line={"width": 0.5, "color": "#888"},
+        hoverinfo="none",
+        mode="lines",
+    )
+
+    # Add inter-layer edges to trace
+    for node0, node1 in zip(network_layers[0].nodes(), network_layers[1].nodes()):
+        x0, y0 = network_layers[0].nodes[node0]["pos"]
+        x1, y1 = network_layers[1].nodes[node1]["pos"]
+        inter_edge_trace["x"] += (x0, x1, None)
+        inter_edge_trace["y"] += (y0, y1, None)
+        inter_edge_trace["z"] += (0, 1, None)
+
+    graph_data.append(inter_edge_trace)
 
     # Define layout
     layout = go.Layout(
@@ -357,17 +418,20 @@ def update_table_graph(time_step, num_infected, beta, gamma):
 
     # Extracting the data
     iterations = [entry['iteration'] for entry in model_results_self[0]]
-    y_values_1 = [entry['energy_diff_count'] + entry['energy_self_count'] for entry in model_results_self[0]]
-    y_values_2 = [entry['energy_diff_count'] + entry['energy_self_count'] for entry in model_results_self[1]]
+    y_values_0 = [entry['energy_diff_count'] + entry['energy_self_count'] for entry in model_results_self[0]]
+    y_values_1 = [entry['energy_diff_count'] + entry['energy_self_count'] for entry in model_results_self[1]]
+    y_values_2 = [entry['layer2_energy_self_count'] + entry['layer2_energy_diff_count'] for entry in layer2_results]
 
     # Plotting the data
     energy = go.Figure()
-    energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='List 1'))
-    energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='List 2'))
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Layer 0'))
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1'))
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Layer 2'))
+
     energy.update_layout(title='Energy Counts vs. Iteration',
                       xaxis_title='Iteration',
                       yaxis_title='Total Energy Count')
-    
+
     return data, columns, figure, energy
 
 def run_simulations(network_layers, num_infected, beta, gamma, TIME_STEPS):
