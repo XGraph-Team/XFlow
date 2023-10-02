@@ -1,0 +1,15 @@
+body {
+    background-color: #2f2f2f; /* This is a dark grey color */
+    color: #e0e0e0; /* This is a light grey color for text */
+}
+
+.row, .col-6, .col-12 {
+    background-color: #2f2f2f; /* Ensuring inner containers also have the dark background */
+}
+
+table {
+    background-color: #444;
+    border-color: #555;
+}
+
+/* ... add more styles as needed ... */

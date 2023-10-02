@@ -58,8 +58,9 @@ for node0, node1 in zip(nodes_layer0_to_connect, nodes_layer1_to_connect):
 app = dash.Dash(
     __name__,
     external_stylesheets=[
-        "https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-    ],
+        "https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css",
+        'styles.css'
+    ]
 )
 
 app.layout = html.Div(
@@ -71,7 +72,7 @@ app.layout = html.Div(
                 # Initial infected nodes label and input
                 html.Div([
                     html.Label("Initial infected nodes:", style={"font-weight": "bold", "margin-right": "10px"}),
-                    dcc.Input(id="input-infected", type="number", value=1)
+                    dcc.Input(id="input-infected", type="number", value=1, style={'backgroundColor': '#404040', 'color': '#e0e0e0'})
                 ], className="col-12"),  # This div will ensure its content is on one line
 
                 # Beta (Infection rate) label and slider
@@ -426,13 +427,39 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     graph_data.append(inter_edge_trace)
 
     # Define layout
+    # layout = go.Layout(
+    #     scene=dict(
+    #         xaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
+    #         yaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
+    #         zaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
+    #         aspectratio=dict(x=1, y=1, z=1),
+    #         camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
+    #     )
+    # )
+
     layout = go.Layout(
+        # title="3D Scatter Plot",
+        paper_bgcolor="rgba(44, 58, 71, 1)",  # This will set the surrounding background to a dark color.
+        plot_bgcolor="rgba(34, 46, 56, 1)",   # This will set the plot background to an even darker color.
         scene=dict(
-            xaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
-            yaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
-            zaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
-            aspectratio=dict(x=1, y=1, z=1),
-            camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
+            xaxis=dict(
+                backgroundcolor="rgba(34, 46, 56, 1)",
+                gridcolor="rgba(68, 81, 90, 1)",
+                zerolinecolor="rgba(68, 81, 90, 1)",
+                showbackground=True
+            ),
+            yaxis=dict(
+                backgroundcolor="rgba(34, 46, 56, 1)",
+                gridcolor="rgba(68, 81, 90, 1)",
+                zerolinecolor="rgba(68, 81, 90, 1)",
+                showbackground=True
+            ),
+            zaxis=dict(
+                backgroundcolor="rgba(34, 46, 56, 1)",
+                gridcolor="rgba(68, 81, 90, 1)",
+                zerolinecolor="rgba(68, 81, 90, 1)",
+                showbackground=True
+            )
         )
     )
 
@@ -450,6 +477,12 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     # energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1'))
     # energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Layer 2'))
 
+    energy.update_layout(
+        plot_bgcolor='#2f2f2f', 
+        paper_bgcolor='#2f2f2f',
+        font=dict(color='#e0e0e0')
+    )
+    
     # blue
     energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Layer 0', fill='tozeroy', fillcolor='rgba(173, 216, 230, 0.3)'))
     # red
