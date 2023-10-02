@@ -64,43 +64,65 @@ app = dash.Dash(
 
 app.layout = html.Div(
     [
+        # Left side of the screen (col-6)
         html.Div([
-            dcc.Graph(id="energy-plot", style={"height": "800px", "width": "100%"})
-        ], className="col-6"), 
+            # Controls and Status Information section
+            html.Div([
+                # Initial infected nodes label and input
+                html.Div([
+                    html.Label("Initial infected nodes:", style={"font-weight": "bold", "margin-right": "10px"}),
+                    dcc.Input(id="input-infected", type="number", value=1)
+                ], className="col-12"),  # This div will ensure its content is on one line
 
-        html.Div([
-            dcc.Graph(id="3d-scatter-plot", style={"height": "800px", "width": "100%"}),
-        ], className="col-6"),  # This div wraps the scatter plot
+                # Beta (Infection rate) label and slider
+                html.Div([
+                    html.Label("Beta (Infection rate):", style={"font-weight": "bold"}),
+                    dcc.Slider(id="beta-slider", min=0, max=1, step=0.1, value=0.8)
+                ], className="col-12"),  # This div will ensure its content starts on a new line
 
+                # Gamma (Recovery rate) label and slider
+                html.Div([
+                    html.Label("Gamma (Recovery rate):", style={"font-weight": "bold"}),
+                    dcc.Slider(id="gamma-slider", min=0, max=1, step=0.1, value=0.01)
+                ], className="col-12"),
+
+                # Time Step label and slider
+                html.Div([
+                    html.Label("Time Step:", style={"font-weight": "bold"}),
+                    dcc.Slider(
+                        id="time-slider",
+                        min=0,
+                        max=TIME_STEPS - 1,
+                        value=0,
+                        marks={str(i): f"{i}" for i in range(TIME_STEPS)},
+                        step=None,
+                    )
+                ], className="col-12"),
+            ], style={"height": "250px", "width": "100%", "padding-top": "20px"}),
+
+            # Energy Plot section
+            html.Div([
+                dcc.Graph(id="energy-plot", style={"height": "550px", "width": "100%"})
+            ], className="col-12"),
+        ], className="col-6"),
+
+        # Right side of the screen (col-6)
         html.Div([
-            html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
-            # html.P("The initial number of infected nodes in the graph."),
-            dcc.Input(id="input-infected", type="number", value=1),
-            html.Label("Beta (Infection rate):", style={"font-weight": "bold"}),
-            # html.P(
-            #     "The probability of disease transmission from an infected node to a susceptible node."
-            # ),
-            dcc.Slider(id="beta-slider", min=0, max=1, step=0.1, value=0.8),
-            html.Label("Gamma (Recovery rate):", style={"font-weight": "bold"}),
-            # html.P(
-            #     "The probability of an infected node moving into the recovered stage in each time step."
-            # ),
-            dcc.Slider(id="gamma-slider", min=0, max=1, step=0.1, value=0.01),
-            html.Label("Time Step:", style={"font-weight": "bold"}),
-            # html.P("The time step at which to view the state of the graph."),
-            dcc.Slider(
-                id="time-slider",
-                min=0,
-                max=TIME_STEPS - 1,
-                value=0,
-                marks={str(i): f"{i}" for i in range(TIME_STEPS)},
-                step=None,
-            ),
-            dash_table.DataTable(id="status-table"),
-        ], className="col-12"),  # This div wraps the controls
+            # DataTable
+            html.Div([
+                dash_table.DataTable(id="status-table"),
+            ], className="col-12", style={"height": "100px", "width": "100%", "padding-top": "30px"}),
+
+            # 3D Scatter Plot section
+            html.Div([
+                dcc.Graph(id="3d-scatter-plot", style={"height": "700px", "width": "100%"})
+            ], className="col-12"),
+    
+        ], className="col-6"),
     ],
-    className="row"  # Bootstrap's row class to contain both of the above divs
+    className="row"
 )
+
 
 # for both table and graph
 @app.callback(
