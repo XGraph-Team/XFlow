@@ -74,20 +74,20 @@ app.layout = html.Div(
 
         html.Div([
             html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
-            html.P("The initial number of infected nodes in the graph."),
+            # html.P("The initial number of infected nodes in the graph."),
             dcc.Input(id="input-infected", type="number", value=1),
             html.Label("Beta (Infection rate):", style={"font-weight": "bold"}),
-            html.P(
-                "The probability of disease transmission from an infected node to a susceptible node."
-            ),
+            # html.P(
+            #     "The probability of disease transmission from an infected node to a susceptible node."
+            # ),
             dcc.Slider(id="beta-slider", min=0, max=1, step=0.1, value=0.8),
             html.Label("Gamma (Recovery rate):", style={"font-weight": "bold"}),
-            html.P(
-                "The probability of an infected node moving into the recovered stage in each time step."
-            ),
+            # html.P(
+            #     "The probability of an infected node moving into the recovered stage in each time step."
+            # ),
             dcc.Slider(id="gamma-slider", min=0, max=1, step=0.1, value=0.01),
-            html.Label("Time:", style={"font-weight": "bold"}),
-            html.P("The time step at which to view the state of the graph."),
+            html.Label("Time Step:", style={"font-weight": "bold"}),
+            # html.P("The time step at which to view the state of the graph."),
             dcc.Slider(
                 id="time-slider",
                 min=0,
@@ -428,9 +428,9 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1'))
     energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Layer 2'))
 
-    energy.update_layout(title='Energy Counts vs. Iteration',
-                      xaxis_title='Iteration',
-                      yaxis_title='Total Energy Count')
+    energy.update_layout(title='Energy vs. Time Step',
+                      xaxis_title='Time Step',
+                      yaxis_title='Energy')
 
     return data, columns, figure, energy
 
