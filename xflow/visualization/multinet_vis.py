@@ -302,7 +302,7 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     # Create traces for edges and nodes
     for idx, network in enumerate(network_layers):
         
-        edge_color = "orange" if idx == 0 else "pink" if idx == 1 else "#888"  # Default color is #888
+        edge_color = "pink" if idx == 0 else "lightblue" if idx == 1 else "#888"  # Default color is #888
         
         edge_trace = go.Scatter3d(
             x=[],
@@ -410,22 +410,23 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     energy = go.Figure()
 
     # blue
-    energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Layer 0', fill='tozeroy', fillcolor='rgba(173, 216, 230, 0.3)'))
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Lower Layer', fill='tozeroy', fillcolor='rgba(173, 216, 230, 0.3)'))
     # red
-    energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1', fill='tozeroy', fillcolor='rgba(255, 182, 193, 0.3)'))
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Upper Layer', fill='tozeroy', fillcolor='rgba(255, 182, 193, 0.3)'))
     # green
     energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Inter-Layer', fill='tozeroy', fillcolor='rgba(144, 238, 144, 0.3)'))
 
     energy.update_layout(title='Energy vs. Time Step',
-                      xaxis_title='Time Step',
-                      yaxis_title='Energy')
-    
+                        xaxis_title='Time Step',
+                        yaxis_title='Energy',
+                        title_x=0.5)  # This centers the title
+        
     energy.update_layout(
-    legend=dict(
-        x=0.5,   # this centers the legend horizontally
-        y=1.1,   # this positions the legend just above the chart
-        xanchor='center',  # this is to ensure the 'x' value refers to the center of the legend
-        orientation='h'    # this ensures the legend items are arranged horizontally
+        legend=dict(
+            x=0.5,   # this centers the legend horizontally
+            y=1.1,   # this positions the legend just above the chart
+            xanchor='center',  # this is to ensure the 'x' value refers to the center of the legend
+            orientation='h'    # this ensures the legend items are arranged horizontally
         )
     )
 
