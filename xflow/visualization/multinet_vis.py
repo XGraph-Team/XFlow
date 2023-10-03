@@ -427,41 +427,41 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     graph_data.append(inter_edge_trace)
 
     # Define layout
-    # layout = go.Layout(
-    #     scene=dict(
-    #         xaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
-    #         yaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
-    #         zaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
-    #         aspectratio=dict(x=1, y=1, z=1),
-    #         camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
-    #     )
-    # )
-
     layout = go.Layout(
-        # title="3D Scatter Plot",
-        paper_bgcolor="rgba(44, 58, 71, 1)",  # This will set the surrounding background to a dark color.
-        plot_bgcolor="rgba(34, 46, 56, 1)",   # This will set the plot background to an even darker color.
         scene=dict(
-            xaxis=dict(
-                backgroundcolor="rgba(34, 46, 56, 1)",
-                gridcolor="rgba(68, 81, 90, 1)",
-                zerolinecolor="rgba(68, 81, 90, 1)",
-                showbackground=True
-            ),
-            yaxis=dict(
-                backgroundcolor="rgba(34, 46, 56, 1)",
-                gridcolor="rgba(68, 81, 90, 1)",
-                zerolinecolor="rgba(68, 81, 90, 1)",
-                showbackground=True
-            ),
-            zaxis=dict(
-                backgroundcolor="rgba(34, 46, 56, 1)",
-                gridcolor="rgba(68, 81, 90, 1)",
-                zerolinecolor="rgba(68, 81, 90, 1)",
-                showbackground=True
-            )
+            xaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
+            yaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
+            zaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
+            aspectratio=dict(x=1, y=1, z=1),
+            camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
         )
     )
+
+    # layout = go.Layout(
+    #     # title="3D Scatter Plot",
+    #     paper_bgcolor="rgba(44, 58, 71, 1)",  # This will set the surrounding background to a dark color.
+    #     plot_bgcolor="rgba(34, 46, 56, 1)",   # This will set the plot background to an even darker color.
+    #     scene=dict(
+    #         xaxis=dict(
+    #             backgroundcolor="rgba(34, 46, 56, 1)",
+    #             gridcolor="rgba(68, 81, 90, 1)",
+    #             zerolinecolor="rgba(68, 81, 90, 1)",
+    #             showbackground=True
+    #         ),
+    #         yaxis=dict(
+    #             backgroundcolor="rgba(34, 46, 56, 1)",
+    #             gridcolor="rgba(68, 81, 90, 1)",
+    #             zerolinecolor="rgba(68, 81, 90, 1)",
+    #             showbackground=True
+    #         ),
+    #         zaxis=dict(
+    #             backgroundcolor="rgba(34, 46, 56, 1)",
+    #             gridcolor="rgba(68, 81, 90, 1)",
+    #             zerolinecolor="rgba(68, 81, 90, 1)",
+    #             showbackground=True
+    #         )
+    #     )
+    # )
 
     figure = {"data": graph_data, "layout": layout}
 
