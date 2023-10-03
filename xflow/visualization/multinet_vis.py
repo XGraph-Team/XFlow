@@ -311,6 +311,7 @@ def update_table_graph(time_step, num_infected, beta, gamma):
             line={"width": 0.5, "color": edge_color},
             hoverinfo="none",
             mode="lines",
+            name="Edges"  # Assign a name for the edges trace
         )
 
         node_trace = go.Scatter3d(
@@ -328,6 +329,7 @@ def update_table_graph(time_step, num_infected, beta, gamma):
                 "opacity": 0.8,
                 "line": {"width": 0.5, "color": "#888"},
             },
+            name="Nodes"  # Assign a name for the nodes trace
         )
 
         # Add edges to trace
@@ -362,6 +364,7 @@ def update_table_graph(time_step, num_infected, beta, gamma):
         line={"width": 0.5, "color": "#888"},
         hoverinfo="none",
         mode="lines",
+        name="Inter-Layer-Edges"
     )
 
     # Add inter-layer edges to trace
