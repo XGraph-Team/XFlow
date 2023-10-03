@@ -3,13 +3,11 @@ import dash
 import random
 from dash import dcc
 from dash import html
-
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import networkx as nx
 import ndlib.models.epidemics as ep
 from ndlib.models.ModelConfig import Configuration
-
 import pandas as pd
 from dash import dash_table
 
@@ -69,11 +67,30 @@ app.layout = html.Div(
         html.Div([
             # Controls and Status Information section
             html.Div([
-                # Initial infected nodes label and input
+                # Row for "Initial infected nodes" and DataTable
                 html.Div([
-                    html.Label("Initial infected nodes:", style={"font-weight": "bold", "margin-right": "10px"}),
-                    dcc.Input(id="input-infected", type="number", value=1, style={'backgroundColor': '#404040', 'color': '#e0e0e0'})
-                ], className="col-12"),  # This div will ensure its content is on one line
+
+                    # Column for Initial infected nodes
+                    html.Div([
+                        
+                        # Label for Initial infected nodes
+                        html.Div([
+                            html.Label("Initial infected nodes:", style={"font-weight": "bold"}),
+                        ], className="col-12"),  # This div ensures the label takes up the full width of its parent column
+                        
+                        # Input for Initial infected nodes
+                        html.Div([
+                            dcc.Input(id="input-infected", type="number", value=1)
+                        ], className="col-12"),  # This div ensures the input takes up the full width of its parent column
+
+                    ], className="col-6"),  # This column takes up half of the left-hand side
+
+                    # DataTable column with padding to the right
+                    html.Div([
+                        dash_table.DataTable(id="status-table"),
+                    ], className="col-6", style={"padding-right": "100px"}),  # This column also takes up half of the left-hand side and has padding to the right
+
+                ], className="row"), 
 
                 # Beta (Infection rate) label and slider
                 html.Div([
@@ -99,31 +116,25 @@ app.layout = html.Div(
                         step=None,
                     )
                 ], className="col-12"),
-            ], style={"height": "250px", "width": "100%", "padding-top": "20px"}),
+            ], style={"height": "400px", "width": "100%", "padding-top": "20px"}),
 
             # Energy Plot section
             html.Div([
                 dcc.Graph(id="energy-plot", style={"height": "550px", "width": "100%"})
             ], className="col-12"),
-        ], className="col-6"),
+        ], className="col-4"),
 
         # Right side of the screen (col-6)
         html.Div([
-            # DataTable
-            html.Div([
-                dash_table.DataTable(id="status-table"),
-            ], className="col-12", style={"height": "100px", "width": "100%", "padding-top": "30px"}),
-
             # 3D Scatter Plot section
             html.Div([
-                dcc.Graph(id="3d-scatter-plot", style={"height": "700px", "width": "100%"})
+                dcc.Graph(id="3d-scatter-plot", style={"height": "1200px", "width": "100%"})
             ], className="col-12"),
     
-        ], className="col-6"),
+        ], className="col-8"),
     ],
     className="row"
 )
-
 
 # for both table and graph
 @app.callback(
@@ -371,34 +382,18 @@ def update_table_graph(time_step, num_infected, beta, gamma):
             zaxis=dict(title="", showticklabels=False, range=[-1, 1], autorange=False, zeroline=False, showline=False, showbackground=False, showgrid=False),
             aspectratio=dict(x=1, y=1, z=1),
             camera=dict(eye=dict(x=1.2, y=1.2, z=1.2)),
+        ),
+        legend=dict(
+            x=0.5,
+            y=1.1,
+            xanchor='center',
+            yanchor='middle',
+            orientation='h',
+            font=dict(
+                size=20
+            )
         )
     )
-
-    # layout = go.Layout(
-    #     # title="3D Scatter Plot",
-    #     paper_bgcolor="rgba(44, 58, 71, 1)",  # This will set the surrounding background to a dark color.
-    #     plot_bgcolor="rgba(34, 46, 56, 1)",   # This will set the plot background to an even darker color.
-    #     scene=dict(
-    #         xaxis=dict(
-    #             backgroundcolor="rgba(34, 46, 56, 1)",
-    #             gridcolor="rgba(68, 81, 90, 1)",
-    #             zerolinecolor="rgba(68, 81, 90, 1)",
-    #             showbackground=True
-    #         ),
-    #         yaxis=dict(
-    #             backgroundcolor="rgba(34, 46, 56, 1)",
-    #             gridcolor="rgba(68, 81, 90, 1)",
-    #             zerolinecolor="rgba(68, 81, 90, 1)",
-    #             showbackground=True
-    #         ),
-    #         zaxis=dict(
-    #             backgroundcolor="rgba(34, 46, 56, 1)",
-    #             gridcolor="rgba(68, 81, 90, 1)",
-    #             zerolinecolor="rgba(68, 81, 90, 1)",
-    #             showbackground=True
-    #         )
-    #     )
-    # )
 
     figure = {"data": graph_data, "layout": layout}
 
@@ -411,22 +406,25 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     # Plotting the data
     energy = go.Figure()
 
-    energy.update_layout(
-        plot_bgcolor='#2f2f2f', 
-        paper_bgcolor='#2f2f2f',
-        font=dict(color='#e0e0e0')
-    )
-    
     # blue
     energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Layer 0', fill='tozeroy', fillcolor='rgba(173, 216, 230, 0.3)'))
     # red
     energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1', fill='tozeroy', fillcolor='rgba(255, 182, 193, 0.3)'))
     # green
-    energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Layer 2', fill='tozeroy', fillcolor='rgba(144, 238, 144, 0.3)'))
+    energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Inter-Layer', fill='tozeroy', fillcolor='rgba(144, 238, 144, 0.3)'))
 
     energy.update_layout(title='Energy vs. Time Step',
                       xaxis_title='Time Step',
                       yaxis_title='Energy')
+    
+    energy.update_layout(
+    legend=dict(
+        x=0.5,   # this centers the legend horizontally
+        y=1.1,   # this positions the legend just above the chart
+        xanchor='center',  # this is to ensure the 'x' value refers to the center of the legend
+        orientation='h'    # this ensures the legend items are arranged horizontally
+        )
+    )
 
     return data, columns, figure, energy
 
