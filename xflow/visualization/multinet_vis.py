@@ -196,68 +196,6 @@ def update_table_graph(time_step, num_infected, beta, gamma):
     data = df.to_dict("records")
     columns = [{"name": i, "id": i} for i in df.columns]
 
-    print("Step", time_step)
-
-    # print("Susceptible status_counts_total", status_counts_total["Susceptible"])
-    # print("Infected status_counts_total", status_counts_total["Infected"])
-    # print("Recovered status_counts_total", status_counts_total["Recovered"])
-
-    # print("Susceptible status_counts_layer0", status_counts_layer0["Susceptible"])
-    # print("Infected status_counts_layer0", status_counts_layer0["Infected"])
-    # print("Recovered status_counts_layer0", status_counts_layer0["Recovered"])
-
-    # print("Susceptible status_counts_layer1", status_counts_layer1["Susceptible"])
-    # print("Infected status_counts_layer1", status_counts_layer1["Infected"])
-    # print("Recovered status_counts_layer1", status_counts_layer1["Recovered"])
-
-    # Calculate the energy for layer 0
-    # high_energy_layer0 = status_counts_layer0["Infected"]
-    # print ("high_energy_layer0", high_energy_layer0)
-
-    # low_energy_layer0 = status_counts_layer0["Susceptible"] + status_counts_layer0["Recovered"]
-    # print ("low_energy_layer0", low_energy_layer0)
-   
-    # # Calculate the energy for layer 1
-    # high_energy_layer1 = status_counts_layer1["Infected"]
-    # print ("high_energy_layer1", high_energy_layer1)
-
-    # low_energy_layer1 = status_counts_layer1["Susceptible"] + status_counts_layer1["Recovered"]
-    # print ("low_energy_layer1", low_energy_layer1)
-
-    # Assuming network_layers is a list of NetworkX graph objects
-    # for layer_index, graph in enumerate(network_layers):
-    #     print(f"Layer {layer_index}:")
-        
-    #     for node in graph.nodes():
-    #         status = graph.nodes[node].get('status')  # Replace 'status' with the actual attribute name if it's different
-    #         num_neighbors = len(list(graph.neighbors(node)))
-            
-    #         print(f"Node {node}: Status {status}, Number of Neighbors {num_neighbors}")
-
-    # Assuming network_layers is a list of NetworkX graph objects
-    # for layer_index, graph in enumerate(network_layers):
-    #     print(f"Layer {layer_index}:")
-        
-    #     # Initialize the counter for nodes with different status from their neighbors
-    #     different_status_counter = 0
-        
-    #     for node in graph.nodes():
-    #         status = graph.nodes[node].get('status')  # Replace 'status' with the actual attribute name if it's different
-    #         num_neighbors = len(list(graph.neighbors(node)))
-            
-    #         print(f"Node {node}: Status {status}, Number of Neighbors {num_neighbors}")
-            
-    #         # Iterate through the neighbors of the current node
-    #         for neighbor in graph.neighbors(node):
-    #             neighbor_status = graph.nodes[neighbor].get('status')
-                
-    #             # Check if the status of the node and its neighbor are not the same
-    #             if status != neighbor_status:
-    #                 different_status_counter += 1
-        
-    #     # Print the count of nodes with different status from their neighbors in this layer
-    #     print(f"Number of nodes in Layer {layer_index} with different status from their neighbors: {different_status_counter}")
-
     # Part 2
     for result in model_results_modified:
         # Initialize an empty dictionary for 'updated_status' 
@@ -405,7 +343,6 @@ def update_table_graph(time_step, num_infected, beta, gamma):
 
         graph_data.extend((edge_trace, node_trace))
 
-
     # Add inter-layer edges to trace
     inter_edge_trace = go.Scatter3d(
         x=[],
@@ -473,9 +410,6 @@ def update_table_graph(time_step, num_infected, beta, gamma):
 
     # Plotting the data
     energy = go.Figure()
-    # energy.add_trace(go.Scatter(x=iterations, y=y_values_0, mode='lines', name='Layer 0'))
-    # energy.add_trace(go.Scatter(x=iterations, y=y_values_1, mode='lines', name='Layer 1'))
-    # energy.add_trace(go.Scatter(x=iterations, y=y_values_2, mode='lines', name='Layer 2'))
 
     energy.update_layout(
         plot_bgcolor='#2f2f2f', 
