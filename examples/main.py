@@ -3,7 +3,7 @@ import xflow_loader
 from xflow.dataset.nx import BA, connSW
 from xflow.dataset.pyg import Cora
 from xflow.diffusion import SI, IC, LT
-# from xflow.seed import random as seed_random, degree as seed_degree, eigen as seed_eigen
+from xflow.seed import random as seed_random, degree as seed_degree, eigen as seed_eigen
 from xflow.util import run
 
 # graphs to test
@@ -22,7 +22,8 @@ rt = run (
     graph = gs, diffusion = df, 
     method = me, eval = 'im', epoch = 10, 
     budget = 10, 
-    output = [ 'animation', 'csv', 'fig'])
+    output = [ 'animation', 'csv', 'fig'],
+    seeds = seed_random)
 
 # configurations of IBM experiments
 from xflow.method.ibm import pi as ibm_pi, degree as ibm_degree, sigma as ibm_sigma, eigen as im_eigen, greedy as ibm_greedy
@@ -31,7 +32,8 @@ rt = run (
     graph = gs, diffusion = df, 
     method = me, eval = 'ibm', epoch = 10,
     budget = 10,
-    output = [ 'animation', 'csv', 'fig'])
+    output = [ 'animation', 'csv', 'fig'],
+    seeds = seed_random)
  
 # configurations of SL experiments
 from xflow.method.cosasi.source_inference.multiple_source.netsleuth import netsleuth, fast_multisource_netsleuth
@@ -43,4 +45,5 @@ rt = run (
     graph = gs, diffusion = df, 
     method = me, eval = 'sl', epoch = 10,
     budget = 10,
-    output = [ 'animation', 'csv', 'fig'])
+    output = [ 'animation', 'csv', 'fig'],
+    seeds = seed_random)
