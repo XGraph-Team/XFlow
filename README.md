@@ -14,6 +14,8 @@
 
 **XFlow** is a library built upon Python to easily write and train method for a wide range of applications related to graph flow problems. XFlow is organized task-wise, which provide datasets benchmarks, baselines and auxiliary implementation.
 
+**Update**: [FlowGPT](https://chat.openai.com/g/g-2jt5LFYXE-flowgpt): a custom GPT for graph dynamics analysis.
+
 [comment]: <> (add icons https://css-tricks.com/adding-custom-github-badges-to-your-repo/)
 
 
