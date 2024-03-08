@@ -82,7 +82,7 @@ See more examples in folder `examples`
 - [LISN](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8697898)
 
 ## Experimental Configurations
-- Graphs: Compatiable with graph objects/class by [Networkx](https://networkx.org/) and [Pytorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest/)
+- Graphs: Compatible with graph objects/class by [Networkx](https://networkx.org/) and [Pytorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest/)
 - Diffusion Models: Support [NDLib](https://ndlib.readthedocs.io/en/latest/)
 
 ## How to Cite
