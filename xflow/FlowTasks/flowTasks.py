@@ -268,13 +268,22 @@ def forward(distance, interval_lower = -1, num_results=10, obs_storage = 'numpy'
     return actual_results
 
 def backward(distance, interval_lower = -1, num_results=10, obs_storage = 'numpy', graph_size=1000, graph_beta = 0.1, infection_beta = None, gamma = None):
-    
+    if isinstance(distance,int):
+        distance = [distance]
+
     #generate results
-    actual_results = forward(distance, interval_lower, num_results, obs_storage, graph_size, graph_beta, infection_beta, gamma)
-    
-    for result in actual_results:
-        result.reverse()
-        
+    actual_results = []
+    for n in range(num_results):
+        (g,s,beta,gamma,diameter) = setup(graph_size, graph_beta, infection_beta, gamma)
+        simulation_result = run_sim(distance, interval_lower, obs_storage, g, s, beta, gamma, diameter)
+
+        intervals =[len(simulation_result) - 1]
+        for d in distance:
+            intervals.append(intervals[0] - d)
+
+        #append two results that are distance apart
+        actual_results.append([simulation_result[t] for t in intervals])
+
     return actual_results
 
 
