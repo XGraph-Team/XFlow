@@ -15,7 +15,6 @@ from networkx import Graph
 from torch_geometric.data.data import Data, torch
 import xflow
 from xflow.dataset.nx import connSW
-from xflow.FlowTasks import forward, backward, graph_eval 
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
 import warnings
