@@ -380,6 +380,22 @@ def IMRank(g, config, budget):
     print(selected)
     return selected
 
+# updates to the Mr vector occur simultaneously:
+def LFA(matrix):
+    """
+    Linear Feedback Algorithm to update the ranks of the nodes.
+    """
+    n = len(matrix)
+    Mr = [1 for _ in range(n)]
+    Mr_next = Mr.copy()
+    for i_ in range(1, n):
+        i = n - i_
+        for j in range(0, i + 1):
+            Mr_next[j] = Mr_next[j] + matrix[j][i] * Mr[i]
+            Mr_next[i] = (1 - matrix[j][i]) * Mr_next[i]
+        Mr = Mr_next.copy()
+    return Mr
+
 # baselines: sketch based
 
 #RIS
@@ -407,75 +423,59 @@ def RIS(g, config, budget, rounds=100):
     print(selected)
     return (selected)
 
-# def IMM(g, config, budget, rounds=100, model='SI', beta=0.1):
-#     l = 1
-#     epsilon = 0.1
-#     l = l * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
-#     k = budget
+####################
+# IMM
+def IMM(g, config, budget, rounds=100, model='SI', beta=0.1):
+    l = 1
+    epsilon = 0.1
+    l = l * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
+    k = budget
     
-#     R = Sampling(g, config, epsilon, l, model, rounds, beta)
+    R = Sampling(g, config, epsilon, l, model, rounds, beta)
     
-#     S = NodeSelection(R, k)
-#     print(S)
-#     return S
+    S = NodeSelection(R, k)
+    print(S)
+    return S
 
-# def Sampling(g, config, epsilon, l, model='SI', rounds=100, beta=0.1):
-#     R = []
-#     n = len(g.nodes())
-#     LB = 1
-#     eps_prime = np.sqrt(2) * epsilon
-#     for i in range(1, int(np.log2(n))):
-#         x = n / (2 ** i)
-#         theta_i = (l / eps_prime ** 2) * np.log(n) / x
-#         while len(R) <= theta_i:
-#             v = random.choice(list(g.nodes()))
-#             R.append(get_RRS(g, config))
-#         S_i = NodeSelection(R, int(x))  # Changed budget to int(x) here
-#         if n * len(S_i) >= (1 + eps_prime) * x:  
-#             LB = n * len(S_i) / (1 + eps_prime)
-#             break
-#     theta = (l / (epsilon ** 2)) * np.log(n) / LB
-#     while len(R) <= theta:
-#         v = random.choice(list(g.nodes()))
-#         R.append(get_RRS(g, config))
-#     return R
+def Sampling(g, config, epsilon, l, model='SI', rounds=100, beta=0.1):
+    R = []
+    n = len(g.nodes())
+    LB = 1
+    eps_prime = np.sqrt(2) * epsilon
+    for i in range(1, int(np.log2(n))):
+        x = n / (2 ** i)
+        theta_i = (l / eps_prime ** 2) * np.log(n) / x
+        while len(R) <= theta_i:
+            v = random.choice(list(g.nodes()))
+            R.append(get_RRS(g, config))
+        S_i = NodeSelection(R, int(x))  # Changed budget to int(x) here
+        if n * len(S_i) >= (1 + eps_prime) * x:  
+            LB = n * len(S_i) / (1 + eps_prime)
+            break
+    theta = (l / (epsilon ** 2)) * np.log(n) / LB
+    while len(R) <= theta:
+        v = random.choice(list(g.nodes()))
+        R.append(get_RRS(g, config))
+    return R
 
-# def NodeSelection(R, k):
-#     S = []
-#     RR_sets_covered = set()
-#     for _ in range(k):
-#         max_spread = 0
-#         best_node = None
-#         for v in set().union(*R):  
-#             if v not in S:
-#                 RR_sets_can_cover = sum([v in RR for RR in R if tuple(RR) not in RR_sets_covered])
-#                 if RR_sets_can_cover > max_spread:
-#                     max_spread = RR_sets_can_cover
-#                     best_node = v
-#         if best_node is not None:
-#             S.append(best_node)
-#             RR_sets_covered |= set([tuple(RR) for RR in R if best_node in RR])
-#         else:
-#             print("No suitable node found!")
-#     return S
-
-
-# updates to the Mr vector occur simultaneously:
-def LFA(matrix):
-    """
-    Linear Feedback Algorithm to update the ranks of the nodes.
-    """
-    n = len(matrix)
-    Mr = [1 for _ in range(n)]
-    Mr_next = Mr.copy()
-    for i_ in range(1, n):
-        i = n - i_
-        for j in range(0, i + 1):
-            Mr_next[j] = Mr_next[j] + matrix[j][i] * Mr[i]
-            Mr_next[i] = (1 - matrix[j][i]) * Mr_next[i]
-        Mr = Mr_next.copy()
-    return Mr
-
+def NodeSelection(R, k):
+    S = []
+    RR_sets_covered = set()
+    for _ in range(k):
+        max_spread = 0
+        best_node = None
+        for v in set().union(*R):  
+            if v not in S:
+                RR_sets_can_cover = sum([v in RR for RR in R if tuple(RR) not in RR_sets_covered])
+                if RR_sets_can_cover > max_spread:
+                    max_spread = RR_sets_can_cover
+                    best_node = v
+        if best_node is not None:
+            S.append(best_node)
+            RR_sets_covered |= set([tuple(RR) for RR in R if best_node in RR])
+        else:
+            print("No suitable node found!")
+    return S
 
 def get_RRS(g, config):
     """
@@ -495,6 +495,8 @@ def get_RRS(g, config):
     # perform a depth-first traversal from the source node to get the RRS
     RRS = list(nx.dfs_preorder_nodes(g_sub, source))
     return RRS
+
+####################
 
 # diffusion models
 def IC(g, config, seed, rounds=100):
