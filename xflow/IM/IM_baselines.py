@@ -342,6 +342,8 @@ def Netshield(g, config, budget):
 
     return nodes
 
+####################################
+
 # IMRank
 # https://github.com/Braylon1002/IMTool
 def IMRank(g, config, budget):
@@ -381,22 +383,6 @@ def IMRank(g, config, budget):
     print(selected)
     return selected
 
-# updates to the Mr vector occur simultaneously:
-def LFA(matrix):
-    """
-    Linear Feedback Algorithm to update the ranks of the nodes.
-    """
-    n = len(matrix)
-    Mr = [1 for _ in range(n)]
-    Mr_next = Mr.copy()
-    for i_ in range(1, n):
-        i = n - i_
-        for j in range(0, i + 1):
-            Mr_next[j] = Mr_next[j] + matrix[j][i] * Mr[i]
-            Mr_next[i] = (1 - matrix[j][i]) * Mr_next[i]
-        Mr = Mr_next.copy()
-    return Mr
-
 # baselines: sketch based
 
 #RIS
@@ -424,9 +410,24 @@ def RIS(g, config, budget, rounds=100):
     print(selected)
     return (selected)
 
-####################
-# IMM
-def IMM(g, config, budget, rounds=100, model='SI', beta=0.1):
+def LFA(matrix):
+    """
+    Linear Feedback Algorithm to update the ranks of the nodes.
+    """
+    n = len(matrix)
+    Mr = [1 for _ in range(n)]
+    Mr_next = Mr.copy()
+    for i_ in range(1, n):
+        i = n - i_
+        for j in range(0, i + 1):
+            Mr_next[j] = Mr_next[j] + matrix[j][i] * Mr[i]
+            Mr_next[i] = (1 - matrix[j][i]) * Mr_next[i]
+        Mr = Mr_next.copy()
+    return Mr
+
+############### IMM ################
+
+def IMM(g, config, budget, rounds=100, model='IC', beta=0.1):
     l = 1
     epsilon = 0.1
     l = l * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
@@ -438,17 +439,17 @@ def IMM(g, config, budget, rounds=100, model='SI', beta=0.1):
     print(S)
     return S
 
-def Sampling(g, config, epsilon, l, model='SI', rounds=100, beta=0.1):
+def Sampling(g, config, epsilon, l, model='IC', rounds=100, beta=0.1):
     R = []
     n = len(g.nodes())
     LB = 1
     eps_prime = np.sqrt(2) * epsilon
-    for i in range(1, int(np.log2(n))):
+    for i in range(1, int(np.log2(n)) + 1):
         x = n / (2 ** i)
-        theta_i = (l / eps_prime ** 2) * np.log(n) / x
+        theta_i = (l / (eps_prime ** 2)) * np.log(n) / x
         while len(R) <= theta_i:
             v = random.choice(list(g.nodes()))
-            R.append(get_RRS(g, config))
+            R.append(get_rrs(g, config, v, model, rounds, beta))
         S_i = NodeSelection(R, int(x))  # Changed budget to int(x) here
         if n * len(S_i) >= (1 + eps_prime) * x:  
             LB = n * len(S_i) / (1 + eps_prime)
@@ -456,27 +457,18 @@ def Sampling(g, config, epsilon, l, model='SI', rounds=100, beta=0.1):
     theta = (l / (epsilon ** 2)) * np.log(n) / LB
     while len(R) <= theta:
         v = random.choice(list(g.nodes()))
-        R.append(get_RRS(g, config))
+        R.append(get_rrs(g, config, v, model, rounds, beta))
     return R
 
-def NodeSelection(R, k):
-    S = []
-    RR_sets_covered = set()
-    for _ in range(k):
-        max_spread = 0
-        best_node = None
-        for v in set().union(*R):  
-            if v not in S:
-                RR_sets_can_cover = sum([v in RR for RR in R if tuple(RR) not in RR_sets_covered])
-                if RR_sets_can_cover > max_spread:
-                    max_spread = RR_sets_can_cover
-                    best_node = v
-        if best_node is not None:
-            S.append(best_node)
-            RR_sets_covered |= set([tuple(RR) for RR in R if best_node in RR])
-        else:
-            print("No suitable node found!")
-    return S
+def get_rrs(g, config, v, model='IC', rounds=100, beta=0.1):
+    if model.lower() == 'ic':
+        return IC_RRS(g, config, v, rounds)
+    elif model.lower() == 'lt':
+        return LT_RRS(g, config, v, rounds)
+    elif model.lower() == 'si':
+        return SI_RRS(g, config, v, rounds, beta)
+    else:
+        raise ValueError(f"Unknown model: {model}")
 
 def get_RRS(g, config):
     """
@@ -497,6 +489,79 @@ def get_RRS(g, config):
     RRS = list(nx.dfs_preorder_nodes(g_sub, source))
     return RRS
 
+def IC_RRS(g, config, v, rounds):
+    RRS = set()
+    for _ in range(rounds):
+        activated = set([v])
+        to_be_activated = [v]
+        while to_be_activated:
+            current = to_be_activated.pop()
+            for neighbor in g.neighbors(current):
+                if ((current, neighbor) in config.config['edges']['threshold'] and
+                    neighbor not in activated and random.random() < config.config['edges']['threshold'][(current, neighbor)]):
+                    activated.add(neighbor)
+                    to_be_activated.append(neighbor)
+                elif ((neighbor, current) in config.config['edges']['threshold'] and
+                      neighbor not in activated and random.random() < config.config['edges']['threshold'][(neighbor, current)]):
+                    activated.add(neighbor)
+                    to_be_activated.append(neighbor)
+        RRS.update(activated)
+    return list(RRS)
+
+def LT_RRS(g, config, v, rounds):
+    RRS = set()
+    for _ in range(rounds):
+        activated = set([v])
+        thresholds = {node: random.random() for node in g.nodes()}
+        weights = {node: 0 for node in g.nodes()}
+        to_be_activated = [v]
+        while to_be_activated:
+            current = to_be_activated.pop()
+            for neighbor in g.neighbors(current):
+                if neighbor not in activated:
+                    if (current, neighbor) in config.config['edges']['threshold']:
+                        weights[neighbor] += config.config['edges']['threshold'][(current, neighbor)]
+                    elif (neighbor, current) in config.config['edges']['threshold']:
+                        weights[neighbor] += config.config['edges']['threshold'][(neighbor, current)]
+                    if weights[neighbor] >= thresholds[neighbor]:
+                        activated.add(neighbor)
+                        to_be_activated.append(neighbor)
+        RRS.update(activated)
+    return list(RRS)
+
+def SI_RRS(g, config, v, rounds, beta):
+    RRS = set()
+    for _ in range(rounds):
+        activated = set([v])
+        to_be_activated = [v]
+        while to_be_activated:
+            current = to_be_activated.pop()
+            for neighbor in g.neighbors(current):
+                if neighbor not in activated and random.random() < beta:
+                    activated.add(neighbor)
+                    to_be_activated.append(neighbor)
+        RRS.update(activated)
+    return list(RRS)
+
+def NodeSelection(R, k):
+    S = []
+    RR_sets_covered = set()
+    for _ in range(k):
+        max_spread = 0
+        best_node = None
+        for v in set().union(*R):
+            if v not in S:
+                RR_sets_can_cover = sum([1 for RR in R if v in RR and tuple(RR) not in RR_sets_covered])
+                if RR_sets_can_cover > max_spread:
+                    max_spread = RR_sets_can_cover
+                    best_node = v
+        if best_node is not None:
+            S.append(best_node)
+            RR_sets_covered |= set([tuple(RR) for RR in R if best_node in RR])
+        # else:
+        #     print("No suitable node found!")
+    return S
+    
 ####################
 
 # diffusion models
