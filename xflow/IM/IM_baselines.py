@@ -20,27 +20,35 @@ import copy
 # baselines: simulation based
 
 # greedy
+
 def greedy(g, config, budget, rounds=100, model='SI', beta=0.1):
+    model = model.upper()
 
     selected = []
     candidates = list(g.nodes())
 
     for i in range(budget):
-        max = 0
+        max_spread = 0
         index = -1
         for node in candidates:
             seed = selected + [node]
 
-            if (model == "IC"):
+            if model == "IC":
                 result = IC(g, config, seed, rounds)
-            elif (model == "LT"):
+            elif model == "LT":
                 result = LT(g, config, seed, rounds)
-            elif (model == "SI"):
+            elif model == "SI":
                 result = SI(g, config, seed, rounds, beta=beta)
-            
-            if s.mean(result) > max:
-                max = s.mean(result)
+            else:
+                raise ValueError(f"Unknown model: {model}")
+
+            mean_result = s.mean(result)
+            if mean_result > max_spread:
+                max_spread = mean_result
                 index = node
+
+        if index == -1:
+            raise ValueError("No valid node found to select. Check the model implementation and input graph.")
 
         selected.append(index)
         candidates.remove(index)
@@ -48,7 +56,10 @@ def greedy(g, config, budget, rounds=100, model='SI', beta=0.1):
     print(selected)
     return selected
 
+
 def celf(g, config, budget, rounds=100, model='SI', beta=0.1): 
+    model = model.upper()
+
     # Find the first node with greedy algorithm
     
     # Compute marginal gain for each node
@@ -104,6 +115,7 @@ def celf(g, config, budget, rounds=100, model='SI', beta=0.1):
     # return(sorted(S),timelapse)
 
 def celfpp(g, config, budget, rounds=100, model='SI', beta=0.1):
+    model = model.upper()
 
     # Compute marginal gain for each node
     candidates = list(g.nodes())
