@@ -308,7 +308,6 @@ def sigma(g, config, budget):
     return result
 
 def Netshield(g, config, budget):
-
     g_greedy = g.__class__()
     g_greedy.add_nodes_from(g)
     g_greedy.add_edges_from(g.edges)
@@ -324,14 +323,16 @@ def Netshield(g, config, budget):
     lam = lam[-1]
 
     u = u[:, -1]
-
     u = np.abs(np.real(u).flatten())
     v = (2 * lam * np.ones(len(u))) * np.power(u, 2)
 
     nodes = []
     for i in range(budget):
-        B = A[:, nodes]
-        b = B * u[nodes]
+        if nodes:
+            B = A[:, nodes].toarray()
+            b = np.dot(B, u[nodes])
+        else:
+            b = np.zeros_like(u)
 
         score = v - 2 * b * u
         score[nodes] = -1
