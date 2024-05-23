@@ -427,48 +427,143 @@ def LFA(matrix):
 
 ############### IMM ################
 
-def IMM(g, config, budget, rounds=100, model='IC', beta=0.1):
-    l = 1
-    epsilon = 0.1
-    l = l * (1 + np.log(2) / np.log(len(g.nodes()))) # Update l
-    k = budget
-    
-    R = Sampling(g, config, epsilon, l, model, rounds, beta)
-    
-    S = NodeSelection(R, k)
-    print(S)
-    return S
-
-def Sampling(g, config, epsilon, l, model='IC', rounds=100, beta=0.1):
+import torch
+import random
+import time
+import sys
+import math
+from torch_geometric.datasets import Planetoid
+from torch_geometric.utils import to_networkx
+from methods import *
+def sampling(epsoid, l, graph, node_num, seed_size, model):
     R = []
-    n = len(g.nodes())
     LB = 1
-    eps_prime = np.sqrt(2) * epsilon
-    for i in range(1, int(np.log2(n)) + 1):
-        x = n / (2 ** i)
-        theta_i = (l / (eps_prime ** 2)) * np.log(n) / x
-        while len(R) <= theta_i:
-            v = random.choice(list(g.nodes()))
-            R.append(get_rrs(g, config, v, model, rounds, beta))
-        S_i = NodeSelection(R, int(x))  # Changed budget to int(x) here
-        if n * len(S_i) >= (1 + eps_prime) * x:  
-            LB = n * len(S_i) / (1 + eps_prime)
+    n = node_num
+    k = seed_size
+    epsoid_p = epsoid * math.sqrt(2)
+
+    for i in range(1, int(math.log2(n-1))+1):
+        s = time.time()
+        x = n/(math.pow(2, i))
+        lambda_p = ((2+2*epsoid_p/3)*(logcnk(n, k) + l*math.log(n) + math.log(math.log2(n)))*n)/pow(epsoid_p, 2)
+        theta = lambda_p/x
+
+        for _ in range(int(theta) - len(R)):
+            v = random.randint(0, node_num - 1)
+            rr = generate_rr(v, graph, node_num, model)
+            R.append(rr)
+
+        end = time.time()
+        print('time to find rr', end - s)
+        start = time.time()
+        Si, f = node_selection(R, k, node_num)
+        print(f)
+        end = time.time()
+        print('node selection time', time.time() - start)
+
+        if n * f >= (1 + epsoid_p) * x:
+            LB = n * f / (1 + epsoid_p)
             break
-    theta = (l / (epsilon ** 2)) * np.log(n) / LB
-    while len(R) <= theta:
-        v = random.choice(list(g.nodes()))
-        R.append(get_rrs(g, config, v, model, rounds, beta))
+
+    alpha = math.sqrt(l * math.log(n) + math.log(2))
+    beta = math.sqrt((1 - 1 / math.e) * (logcnk(n, k) + l * math.log(n) + math.log(2)))
+    lambda_aster = 2 * n * pow(((1 - 1 / math.e) * alpha + beta), 2) * pow(epsoid, -2)
+    theta = lambda_aster / LB
+    length_r = len(R)
+    diff = int(theta - length_r)
+
+    if diff > 0:
+        for _ in range(diff):
+            v = random.randint(0, node_num - 1)
+            rr = generate_rr(v, graph, node_num, model)
+            R.append(rr)
+
     return R
 
-def get_rrs(g, config, v, model='IC', rounds=100, beta=0.1):
-    if model.lower() == 'ic':
-        return IC_RRS(g, config, v, rounds)
-    elif model.lower() == 'lt':
-        return LT_RRS(g, config, v, rounds)
-    elif model.lower() == 'si':
-        return SI_RRS(g, config, v, rounds, beta)
-    else:
-        raise ValueError(f"Unknown model: {model}")
+def generate_rr(v, graph, node_num, model):
+    if model == 'IC':
+        return generate_rr_ic(v, graph)
+    elif model == 'LT':
+        return generate_rr_lt(v, graph)
+
+def node_selection(R, k, node_num):
+    Sk = []
+    rr_degree = [0 for _ in range(node_num)]
+    node_rr_set = dict()
+    matched_count = 0
+
+    for j in range(len(R)):
+        rr = R[j]
+        for rr_node in rr:
+            rr_degree[rr_node] += 1
+            if rr_node not in node_rr_set:
+                node_rr_set[rr_node] = list()
+            node_rr_set[rr_node].append(j)
+
+    for _ in range(k):
+        max_point = rr_degree.index(max(rr_degree))
+        Sk.append(max_point)
+        matched_count += len(node_rr_set[max_point])
+        index_set = list(node_rr_set[max_point])
+        for jj in index_set:
+            rr = R[jj]
+            for rr_node in rr:
+                rr_degree[rr_node] -= 1
+                node_rr_set[rr_node].remove(jj)
+
+    return Sk, matched_count / len(R)
+
+def generate_rr_ic(node, graph):
+    activity_set = [node]
+    activity_nodes = [node]
+
+    while activity_set:
+        new_activity_set = []
+        for seed in activity_set:
+            for neighbor in graph.neighbors(seed):
+                weight = graph.edges[seed, neighbor].get('weight', 1.0)
+                if neighbor not in activity_nodes and random.random() < weight:
+                    activity_nodes.append(neighbor)
+                    new_activity_set.append(neighbor)
+        activity_set = new_activity_set
+
+    return activity_nodes
+
+def generate_rr_lt(node, graph):
+    activity_nodes = [node]
+    activity_set = node
+
+    while activity_set != -1:
+        new_activity_set = -1
+        neighbors = list(graph.neighbors(activity_set))
+        if len(neighbors) == 0:
+            break
+        candidate = random.sample(neighbors, 1)[0]
+        if candidate not in activity_nodes:
+            activity_nodes.append(candidate)
+            new_activity_set = candidate
+        activity_set = new_activity_set
+
+    return activity_nodes
+
+def logcnk(n, k):
+    res = 0
+    for i in range(n - k + 1, n + 1):
+        res += math.log(i)
+    for i in range(1, k + 1):
+        res -= math.log(i)
+    return res
+
+def IMM(graph, config, seed_size, model):
+    model = model.upper()
+    l = 1
+    epsoid = 0.5
+    n = graph.number_of_nodes()
+    k = seed_size
+    l = l * (1 + math.log(2) / math.log(n))
+    R = sampling(epsoid, l, graph, n, seed_size, model)
+    Sk, z = node_selection(R, k, n)
+    return Sk
 
 def get_RRS(g, config):
     """
@@ -489,45 +584,6 @@ def get_RRS(g, config):
     RRS = list(nx.dfs_preorder_nodes(g_sub, source))
     return RRS
 
-def IC_RRS(g, config, v, rounds):
-    RRS = set()
-    for _ in range(rounds):
-        activated = set([v])
-        to_be_activated = [v]
-        while to_be_activated:
-            current = to_be_activated.pop()
-            for neighbor in g.neighbors(current):
-                if ((current, neighbor) in config.config['edges']['threshold'] and
-                    neighbor not in activated and random.random() < config.config['edges']['threshold'][(current, neighbor)]):
-                    activated.add(neighbor)
-                    to_be_activated.append(neighbor)
-                elif ((neighbor, current) in config.config['edges']['threshold'] and
-                      neighbor not in activated and random.random() < config.config['edges']['threshold'][(neighbor, current)]):
-                    activated.add(neighbor)
-                    to_be_activated.append(neighbor)
-        RRS.update(activated)
-    return list(RRS)
-
-def LT_RRS(g, config, v, rounds):
-    RRS = set()
-    for _ in range(rounds):
-        activated = set([v])
-        thresholds = {node: random.random() for node in g.nodes()}
-        weights = {node: 0 for node in g.nodes()}
-        to_be_activated = [v]
-        while to_be_activated:
-            current = to_be_activated.pop()
-            for neighbor in g.neighbors(current):
-                if neighbor not in activated:
-                    if (current, neighbor) in config.config['edges']['threshold']:
-                        weights[neighbor] += config.config['edges']['threshold'][(current, neighbor)]
-                    elif (neighbor, current) in config.config['edges']['threshold']:
-                        weights[neighbor] += config.config['edges']['threshold'][(neighbor, current)]
-                    if weights[neighbor] >= thresholds[neighbor]:
-                        activated.add(neighbor)
-                        to_be_activated.append(neighbor)
-        RRS.update(activated)
-    return list(RRS)
 
 def SI_RRS(g, config, v, rounds, beta):
     RRS = set()
@@ -542,25 +598,6 @@ def SI_RRS(g, config, v, rounds, beta):
                     to_be_activated.append(neighbor)
         RRS.update(activated)
     return list(RRS)
-
-def NodeSelection(R, k):
-    S = []
-    RR_sets_covered = set()
-    for _ in range(k):
-        max_spread = 0
-        best_node = None
-        for v in set().union(*R):
-            if v not in S:
-                RR_sets_can_cover = sum([1 for RR in R if v in RR and tuple(RR) not in RR_sets_covered])
-                if RR_sets_can_cover > max_spread:
-                    max_spread = RR_sets_can_cover
-                    best_node = v
-        if best_node is not None:
-            S.append(best_node)
-            RR_sets_covered |= set([tuple(RR) for RR in R if best_node in RR])
-        # else:
-        #     print("No suitable node found!")
-    return S
     
 ####################
 
