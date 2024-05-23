@@ -432,9 +432,7 @@ import random
 import time
 import sys
 import math
-from torch_geometric.datasets import Planetoid
-from torch_geometric.utils import to_networkx
-from methods import *
+
 def sampling(epsoid, l, graph, node_num, seed_size, model):
     R = []
     LB = 1
@@ -485,6 +483,8 @@ def generate_rr(v, graph, node_num, model):
         return generate_rr_ic(v, graph)
     elif model == 'LT':
         return generate_rr_lt(v, graph)
+    elif model == 'SI':
+        return generate_rr_si(v, graph)
 
 def node_selection(R, k, node_num):
     Sk = []
@@ -546,6 +546,21 @@ def generate_rr_lt(node, graph):
 
     return activity_nodes
 
+def generate_rr_si(node, graph):
+    activity_set = [node]
+    activity_nodes = [node]
+
+    while activity_set:
+        new_activity_set = []
+        for seed in activity_set:
+            for neighbor in graph.neighbors(seed):
+                if neighbor not in activity_nodes:
+                    activity_nodes.append(neighbor)
+                    new_activity_set.append(neighbor)
+        activity_set = new_activity_set
+
+    return activity_nodes
+
 def logcnk(n, k):
     res = 0
     for i in range(n - k + 1, n + 1):
@@ -565,40 +580,6 @@ def IMM(graph, config, seed_size, model):
     Sk, z = node_selection(R, k, n)
     return Sk
 
-def get_RRS(g, config):
-    """
-    Inputs: g: Network graph
-            config: Configuration object for the IC model
-    Outputs: A random reverse reachable set expressed as a list of nodes
-    """
-    # get edges according to the propagation probability
-    edges = [(u, v) for (u, v, d) in g.edges(data=True) if uniform(0, 1) < config.config["edges"]['threshold'][(u, v)]]
-    
-    # create a subgraph based on the edges
-    g_sub = g.edge_subgraph(edges)
-    
-    # select a random node as the starting point that is part of the subgraph
-    source = random.choice(list(g_sub.nodes()))
-    
-    # perform a depth-first traversal from the source node to get the RRS
-    RRS = list(nx.dfs_preorder_nodes(g_sub, source))
-    return RRS
-
-
-def SI_RRS(g, config, v, rounds, beta):
-    RRS = set()
-    for _ in range(rounds):
-        activated = set([v])
-        to_be_activated = [v]
-        while to_be_activated:
-            current = to_be_activated.pop()
-            for neighbor in g.neighbors(current):
-                if neighbor not in activated and random.random() < beta:
-                    activated.add(neighbor)
-                    to_be_activated.append(neighbor)
-        RRS.update(activated)
-    return list(RRS)
-    
 ####################
 
 # diffusion models
