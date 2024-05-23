@@ -426,6 +426,7 @@ def LFA(matrix):
     return Mr
 
 ############### IMM ################
+# https://github.com/snowgy/Influence_Maximization/blob/master/IMP.py
 
 import torch
 import random
