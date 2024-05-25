@@ -21,6 +21,8 @@ import warnings
 from torch_geometric.utils.convert import from_networkx
 from sklearn.metrics import classification_report, ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
+from torch_geometric.utils import to_networkx
+
 
 def connSW(n, beta=None):
     g = nx.connected_watts_strogatz_graph(n, 10, 0.1) #Generate connSW graph
@@ -137,51 +139,57 @@ def run_sim(distance, interval_lower, g, model):
 def format_sim_result(intervals, iterations, obs_type, g):
     simulation_result = []
     if obs_type == 'numpy':
-        #get result at each timestep
+        # Get result at each timestep
         for interval in intervals:
             node_states = iterations[interval]
 
             obs = np.array(list(node_states.values()))
-            #build the snapshot using the observation at this iteration
+            # Build the snapshot using the observation at this iteration
             snapshot = {
-                'time' : interval,
-                'observation' : obs
+                'time': interval,
+                'observation': obs
             }
-            #append the snapshot to sim result
+            # Append the snapshot to sim result
             simulation_result.append(snapshot)
 
         return simulation_result
 
-
-    if obs_type == 'torch' or obs_type == 'networkx':
+    if obs_type == 'torch':
         start = intervals[0]
         node_states = iterations[start]
-        #node_states = {node: status for node, status in iteration['status'].items()}
-        nx.set_node_attributes(g, node_states, name = 'state_x')
-        nx.set_node_attributes(g, start, name = 'time_x')
+        nx.set_node_attributes(g, node_states, name='state_x')
+        nx.set_node_attributes(g, start, name='time_x')
 
-        #get result at each timestep
-        simulation_result = []
-        for interval in intervals[1:]:
+        # Get result at each timestep
+        for interval in intervals:
             node_states = iterations[interval]
-            #node_states = {node: status for node, status in iteration['status'].items()}
+            nx.set_node_attributes(g, node_states, name='state_y')
+            nx.set_node_attributes(g, interval, name='time_y')
 
-            if obs_type == 'networkx':
-                nx.set_node_attributes(g, node_states, name = 'state_y')
-                nx.set_node_attributes(g, interval, name = 'time_y')
-                obs = g.copy()
-            elif obs_type == 'torch':
-                nx.set_node_attributes(g, interval, name = 'time_y')
-                obs = from_networkx(g.copy(), group_node_attrs=['state_x','time_x','time_y'], group_edge_attrs=['weight'])
-                state = np.array(list(node_states.values()))
-                obs.y = torch.tensor(state)
+            obs = from_networkx(g.copy(), group_node_attrs=['state_x', 'time_x', 'time_y'], group_edge_attrs=['weight'])
+            state = np.array(list(node_states.values()))
+            obs.y = torch.tensor(state)
+            obs.time_y = torch.tensor(interval)  # Add the time_y attribute
 
-
-            #append the snapshot to sim result
+            # Append the snapshot to sim result
             simulation_result.append(obs)
         return simulation_result
+    
+    if obs_type == 'networkx':
+        # Get result at each timestep
+        for interval in intervals:
+            node_states = iterations[interval]
+            g_copy = g.copy()
+            nx.set_node_attributes(g_copy, node_states, name='state_y')
+            g_copy.graph['time_y'] = interval  # Store time in graph metadata
 
-    raise Exception("Acceptable values for obs_storage are: 'numpy', 'networkx', 'torch' ")
+            # Append the graph snapshot to sim result
+            simulation_result.append(g_copy)
+        return simulation_result
+
+    # raise Exception("Acceptable values for obs_storage are: 'numpy', 'networkx', 'torch'")
+
+
 
 def forward(distance,
             num_results=10,

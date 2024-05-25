@@ -1,0 +1,90 @@
+2023-11-17 14:42:22,017 - INFO - ------------------------------------------------
+2023-11-17 14:42:22,017 - INFO - Analyzing connected small world
+2023-11-17 14:42:22,017 - INFO - round : 6
+2023-11-17 14:42:22,017 - INFO - seed : 60
+2023-11-17 14:42:22,230 - INFO - Infected Subgraph : Graph with 1000 nodes and 10000 edges
+2023-11-17 14:42:22,232 - INFO - True Source : [290, 315, 591]
+2023-11-17 14:42:22,232 - INFO - multisource netsleuth hypotheses_per_step=1
+2023-11-17 14:42:24,022 - INFO - top score distance : {(574, 676): 10}
+2023-11-17 14:42:24,022 - INFO - time : 1.7904853820800781
+2023-11-17 14:42:24,023 - INFO - fast multisource netsleuth assuming 2 sources
+2023-11-17 14:51:48,425 - INFO - top score distance : {(140, 500): 10}
+2023-11-17 14:51:48,428 - INFO - time : 564.4048728942871
+2023-11-17 14:51:48,428 - INFO - fast multisource jordan centrality assuming 2 sources
+2023-11-17 15:01:37,475 - INFO - top score distance : {(46, 5): 12}
+2023-11-17 15:01:37,477 - INFO - time : 589.0494768619537
+2023-11-17 15:01:37,478 - INFO - fast multisource lisn assuming 2 sources
+2023-11-17 15:12:51,496 - INFO - top score distance : {(199, 518): 10}
+2023-11-17 15:12:51,498 - INFO - time : 674.0205850601196
+2023-11-17 15:12:51,559 - INFO - ------------------------------------------------
+2023-11-17 15:12:51,559 - INFO - Analyzing connected small world
+2023-11-17 15:12:51,559 - INFO - round : 7
+2023-11-17 15:12:51,559 - INFO - seed : 70
+2023-11-17 15:12:51,702 - INFO - Infected Subgraph : Graph with 1000 nodes and 10000 edges
+2023-11-17 15:12:51,703 - INFO - True Source : [121, 301, 931]
+2023-11-17 15:12:51,703 - INFO - multisource netsleuth hypotheses_per_step=1
+2023-11-17 15:12:53,471 - INFO - top score distance : {(15, 560): 10}
+2023-11-17 15:12:53,471 - INFO - time : 1.7677295207977295
+2023-11-17 15:12:53,471 - INFO - fast multisource netsleuth assuming 2 sources
+2023-11-17 15:20:36,624 - INFO - top score distance : {(15, 560): 10}
+2023-11-17 15:20:36,626 - INFO - time : 463.15479946136475
+2023-11-17 15:20:36,626 - INFO - fast multisource jordan centrality assuming 2 sources
+2023-11-17 15:28:48,757 - INFO - top score distance : {(25, 15): 12}
+2023-11-17 15:28:48,759 - INFO - time : 492.132940530777
+2023-11-17 15:28:48,759 - INFO - fast multisource lisn assuming 2 sources
+2023-11-17 15:38:14,440 - INFO - top score distance : {(677, 97): 12}
+2023-11-17 15:38:14,442 - INFO - time : 565.6829025745392
+2023-11-17 15:38:14,497 - INFO - ------------------------------------------------
+2023-11-17 15:38:14,498 - INFO - Analyzing connected small world
+2023-11-17 15:38:14,498 - INFO - round : 8
+2023-11-17 15:38:14,498 - INFO - seed : 80
+2023-11-17 15:38:14,642 - INFO - Infected Subgraph : Graph with 1000 nodes and 10000 edges
+2023-11-17 15:38:14,643 - INFO - True Source : [278, 403, 554]
+2023-11-17 15:38:14,643 - INFO - multisource netsleuth hypotheses_per_step=1
+2023-11-17 15:38:19,010 - INFO - top score distance : {(935, 73, 842, 927, 383): 16}
+2023-11-17 15:38:19,011 - INFO - time : 4.367274761199951
+2023-11-17 15:38:19,011 - INFO - fast multisource netsleuth assuming 2 sources
+2023-11-17 15:45:26,826 - INFO - top score distance : {(935, 428): 11}
+2023-11-17 15:45:26,828 - INFO - time : 427.8173155784607
+2023-11-17 15:45:26,828 - INFO - fast multisource jordan centrality assuming 2 sources
+2023-11-17 15:53:05,086 - INFO - top score distance : {(375, 8): 11}
+2023-11-17 15:53:05,087 - INFO - time : 458.2590055465698
+2023-11-17 15:53:05,088 - INFO - fast multisource lisn assuming 2 sources
+2023-11-17 16:01:58,897 - INFO - top score distance : {(286, 470): 9}
+2023-11-17 16:01:58,899 - INFO - time : 533.8114857673645
+2023-11-17 16:01:58,952 - INFO - ------------------------------------------------
+2023-11-17 16:01:58,952 - INFO - Analyzing connected small world
+2023-11-17 16:01:58,952 - INFO - round : 9
+2023-11-17 16:01:58,952 - INFO - seed : 90
+2023-11-17 16:01:59,097 - INFO - Infected Subgraph : Graph with 1000 nodes and 10000 edges
+2023-11-17 16:01:59,098 - INFO - True Source : [94, 208, 730]
+2023-11-17 16:01:59,098 - INFO - multisource netsleuth hypotheses_per_step=1
+2023-11-17 16:02:00,841 - INFO - top score distance : {(373, 12): 12}
+2023-11-17 16:02:00,842 - INFO - time : 1.7437248229980469
+2023-11-17 16:02:00,842 - INFO - fast multisource netsleuth assuming 2 sources
+2023-11-17 16:11:43,345 - INFO - top score distance : {(19, 461): 12}
+2023-11-17 16:11:43,347 - INFO - time : 582.5052666664124
+2023-11-17 16:11:43,347 - INFO - fast multisource jordan centrality assuming 2 sources
+2023-11-17 16:21:45,798 - INFO - top score distance : {(236, 1): 12}
+2023-11-17 16:21:45,801 - INFO - time : 602.4534428119659
+2023-11-17 16:21:45,801 - INFO - fast multisource lisn assuming 2 sources
+2023-11-17 16:33:07,227 - INFO - top score distance : {(535, 995): 12}
+2023-11-17 16:33:07,230 - INFO - time : 681.4286386966705
+2023-11-17 16:33:07,303 - INFO - ------------------------------------------------
+2023-11-17 16:33:07,303 - INFO - Analyzing connected small world
+2023-11-17 16:33:07,303 - INFO - round : 10
+2023-11-17 16:33:07,303 - INFO - seed : 100
+2023-11-17 16:33:07,446 - INFO - Infected Subgraph : Graph with 1000 nodes and 10000 edges
+2023-11-17 16:33:07,447 - INFO - True Source : [149, 465, 470]
+2023-11-17 16:33:07,447 - INFO - multisource netsleuth hypotheses_per_step=1
+2023-11-17 16:33:09,238 - INFO - top score distance : {(214, 756): 11}
+2023-11-17 16:33:09,238 - INFO - time : 1.7903063297271729
+2023-11-17 16:33:09,238 - INFO - fast multisource netsleuth assuming 2 sources
+2023-11-17 16:40:51,552 - INFO - top score distance : {(236, 756): 11}
+2023-11-17 16:40:51,555 - INFO - time : 462.3166608810425
+2023-11-17 16:40:51,555 - INFO - fast multisource jordan centrality assuming 2 sources
+2023-11-17 16:48:56,310 - INFO - top score distance : {(22, 168): 8}
+2023-11-17 16:48:56,312 - INFO - time : 484.75718927383423
+2023-11-17 16:48:56,312 - INFO - fast multisource lisn assuming 2 sources
+2023-11-17 16:58:18,286 - INFO - top score distance : {(984, 253): 13}
+2023-11-17 16:58:18,288 - INFO - time : 561.9755806922913
