@@ -22,16 +22,14 @@ infection_gamma = None
 
 # example code using forward function
 # generate a dataset of 5 forward flow simulations with observations saved as numpy lists at time intervals 0 and 1
-output = forward(distance=1, 
-                 interval_lower=0, 
-                 obs_type='numpy', 
-                 num_results=5,
-                 graph_size=graph_size, 
-                 graph_beta=graph_beta, 
-                 inf_beta=infection_beta, 
-                 inf_gamma=infection_gamma)
-
-# print("output", output)
+output = backward(distance=1, 
+                interval_lower=0, 
+                obs_type='numpy', 
+                num_results=5,
+                graph_size=graph_size, 
+                graph_beta=graph_beta, 
+                inf_beta=infection_beta, 
+                inf_gamma=infection_gamma)
 
 # display general information about these simulation results
 print('Observations are of type:', type(output[0]['observations'][0]['observation']), end='\n\n')
@@ -56,10 +54,9 @@ for result in output:
     print('\n')
 
 ############################################################################################################
-
-# example code using forward function
-# generate a dataset of 5 forward flow simulations with observations saved as torch data objects at time intervals 0, 1 and 4
-output = forward(distance=[1, 4], 
+# example code using backward function
+# generate a dataset of 5 backward flow simulations with observations saved as torch at time intervals t, t-1, t-4
+output = backward(distance=[1, 4], 
                  interval_lower=0, 
                  obs_type='torch', 
                  num_results=5,
@@ -67,8 +64,6 @@ output = forward(distance=[1, 4],
                  graph_beta=graph_beta, 
                  inf_beta=infection_beta, 
                  inf_gamma=infection_gamma)
-
-# print("output", output)
 
 # Display general information about these simulation results
 print('Observations are of type:', type(output[0]['observations'][0]), end='\n\n')
@@ -94,9 +89,9 @@ for result in output:
     print('\n')
 
 ############################################################################################################
-# Example code using forward function
-# Generate a dataset of 5 forward flow simulations with observations saved as networkx graphs at time intervals t, t-1, t-4
-output = forward(distance=[1, 4], 
+# example code using backward function
+# generate a dataset of 5 backward flow simulations with observations saved as networkx graphs at time intervals t, t-1, t-4
+output = backward(distance=[1, 4], 
                  interval_lower=0, 
                  obs_type='networkx', 
                  num_results=5,
@@ -126,75 +121,3 @@ for result in output:
     for ss in observations:
         print(f'{ss.graph["time_y"]}, ', end='')  # Access the time attribute directly from the graph metadata
     print('\n')
-
-# ############################################################################################################
-# # example code using backward function
-# # generate a dataset of 5 backward flow simulations with observations saved as torch at time intervals t, t-1, t-4
-# output = backward(distance = [1,4],
-#                 obs_type = 'torch',
-#                 num_results=5,
-#                 graph_size=graph_size, 
-#                 graph_beta=graph_beta, 
-#                 inf_beta=infection_beta, 
-#                 inf_gamma=infection_gamma)
-
-# # display general information about these simulation results
-# print('Observations are of type:', type(output[0]['observations'][0]), end='\n\n')
-
-# for result in output:
-#     observations = result['observations']
-#     graph = result['base_graph']
-#     sir = result['SIR_config']
-
-#     # Retrieve beta and gamma values from the Configuration object
-#     beta = sir_config.config["model"]["beta"]
-#     gamma = sir_config.config["model"]["gamma"]
-
-#     # Print SIR values for this result
-#     print('SIR model has values: ', sep='', end='')
-#     print(f'beta = {round(beta, 3)}, gamma = {round(gamma, 3)}')
-
-#     # Print observation time intervals for this result
-#     print('Observations at time intervals: ', sep='', end='')
-#     for ss in observations:
-#         print(f'{ss.time_y}, ', end='')  # Access the time attribute directly from the data object
-#     print('\n')
-
-# ############################################################################################################
-# # example code using backward function
-# # generate a dataset of 5 backward flow simulations with observations saved as networkx graphs at time intervals t, t-1, t-4
-# output = backward(distance = [1,4],
-#                 obs_type = 'networkx',
-#                 num_results=5,
-#                 graph_size=graph_size, 
-#                 graph_beta=graph_beta, 
-#                 inf_beta=infection_beta, 
-#                 inf_gamma=infection_gamma)
-
-# # display general information about these simulation results
-# print('Observations are of type:', type(output[0]['observations'][0]), end='\n\n')
-
-# for result in output:
-#     observations = result['observations']
-#     graph = result['base_graph']
-#     sir = result['SIR_config']
-
-#     # Retrieve beta and gamma values from the Configuration object
-#     beta = sir_config.config["model"]["beta"]
-#     gamma = sir_config.config["model"]["gamma"]
-
-#     # Print SIR values for this result
-#     print('SIR model has values: ', sep='', end='')
-#     print(f'beta = {round(beta, 3)}, gamma = {round(gamma, 3)}')
-
-#     # Print observation time intervals for this result
-#     print('Observations at time intervals: ', sep='', end='')
-#     for ss in observations:
-#         if isinstance(ss, nx.Graph):
-#             times = nx.get_node_attributes(ss, 'time_y')
-#             unique_times = set(times.values())
-#             for t in unique_times:
-#                 print(f'{t}, ', end='')
-#         else:
-#             print(f'{ss.time_y}, ', end='')  # Access the time attribute directly from the data object
-#     print('\n')

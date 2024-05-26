@@ -261,6 +261,38 @@ def backward(distance,
     return results
 
 
+# def graph_eval(obs_true, obs_pred, display=False):
+#     from sklearn.metrics import classification_report, ConfusionMatrixDisplay
+#     import matplotlib.pyplot as plt
+
+#     if not isinstance(obs_true, np.ndarray) or not isinstance(obs_pred, np.ndarray):
+#         raise Exception('Observation inputs must be numpy arrays')
+
+
+#     cr = classification_report(obs_true, obs_pred, zero_division=0)
+
+#     if display:
+#         ConfusionMatrixDisplay.from_predictions(obs_true, obs_pred)
+#         plt.show()
+#         print(cr)
+
+#     return cr
+def parse_classification_report(cr):
+    """
+    Parse the sklearn classification report into a dictionary.
+    """
+    report = {}
+    lines = cr.split('\n')
+    for line in lines[2:-3]:
+        row = line.split()
+        if len(row) < 2:
+            continue
+        if row[0] == 'accuracy':
+            report['accuracy'] = float(row[1])
+        else:
+            report[row[0]] = {'precision': float(row[1]), 'recall': float(row[2]), 'f1-score': float(row[3]), 'support': int(row[4])}
+    return report
+
 def graph_eval(obs_true, obs_pred, display=False):
     from sklearn.metrics import classification_report, ConfusionMatrixDisplay
     import matplotlib.pyplot as plt
@@ -268,13 +300,12 @@ def graph_eval(obs_true, obs_pred, display=False):
     if not isinstance(obs_true, np.ndarray) or not isinstance(obs_pred, np.ndarray):
         raise Exception('Observation inputs must be numpy arrays')
 
-
     cr = classification_report(obs_true, obs_pred, zero_division=0)
+    report_dict = parse_classification_report(cr)
 
     if display:
         ConfusionMatrixDisplay.from_predictions(obs_true, obs_pred)
         plt.show()
         print(cr)
 
-    return cr
-
+    return report_dict
