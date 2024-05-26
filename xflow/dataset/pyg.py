@@ -110,3 +110,66 @@ def coms():
         g[a][b]['weight'] = weight
 
     return g, config
+
+def bitcoin_otc():
+    dataset = SNAPDataset(root='./SNAP', name='BitcoinOTC')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
+
+def email_eu_core():
+    dataset = SNAPDataset(root='./SNAP', name='email-Eu-core')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
+
+def hydro_net():
+    dataset = ds.SuiteSparseMatrixCollection(root='./SuiteSparse', name='HydroNet')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
+
+def gdelt():
+    dataset = SNAPDataset(root='./SNAP', name='GDELT')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
+
+def icews18():
+    dataset = SNAPDataset(root='./SNAP', name='ICEWS18')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
+
+def pol_blogs():
+    dataset = SNAPDataset(root='./SNAP', name='polBlogs')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
+
+def reddit():
+    dataset = JODIEDataset(root='./JODIE', name='Reddit')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
+
+def last_fm():
+    dataset = JODIEDataset(root='./JODIE', name='LastFM')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
+
+def myket():
+    dataset = SNAPDataset(root='./SNAP', name='Myket')
+    G = convert_to_graph(dataset)
+    G = nx.convert_node_labels_to_integers(G, first_label=0)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
