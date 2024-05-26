@@ -8,6 +8,21 @@ import ndlib.models.ModelConfig as mc
 
 from torch_geometric.datasets import Planetoid
 
+def convert_to_graph(dataset):
+    data = dataset[0]
+    edges = (data.edge_index.numpy()).T.tolist()
+    G = nx.from_edgelist(edges)
+    return G
+
+def add_edge_weights(G, min_weight, max_weight):
+    config = mc.Configuration()
+    for a, b in G.edges():
+        weight = random.uniform(min_weight, max_weight)
+        weight = round(weight, 2)
+        config.add_edge_configuration("threshold", (a, b), weight)
+        G[a][b]['weight'] = weight
+    return G, config
+    
 def CiteSeer():
     dataset = Planetoid(root='./Planetoid', name='CiteSeer')  # Cora, CiteSeer, PubMed
     data = dataset[0]
