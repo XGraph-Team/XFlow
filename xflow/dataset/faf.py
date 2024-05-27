@@ -50,5 +50,5 @@ def faf5_6():
 
     return G
 
-# Example usage
-G = faf5_6()
+# # Example usage
+# G = faf5_6()

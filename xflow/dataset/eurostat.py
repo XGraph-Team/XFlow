@@ -56,6 +56,6 @@ def eurostat_road_go_ta_tg():
     print(f"eurostat_road_go_ta_tg has {G.number_of_nodes()} nodes and {G.number_of_edges()} edges.")
     return G
 
-# Example usage
-if __name__ == "__main__":
-    G = eurostat_road_go_ta_tg()
+# # Example usage
+# if __name__ == "__main__":
+#     G = eurostat_road_go_ta_tg()

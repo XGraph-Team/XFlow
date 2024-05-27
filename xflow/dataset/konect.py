@@ -74,12 +74,12 @@ def infectious():
     return load_graph(tsv_filename)
 
 
-def main():
-    g_chesapeake, config_chesapeake = chesapeake_bay()
-    print("Chesapeake Bay: Nodes = {}, Edges = {}".format(len(g_chesapeake.nodes()), len(g_chesapeake.edges())))
+# def main():
+#     g_chesapeake, config_chesapeake = chesapeake_bay()
+#     print("Chesapeake Bay: Nodes = {}, Edges = {}".format(len(g_chesapeake.nodes()), len(g_chesapeake.edges())))
 
-    g_infectious, config_infectious = infectious()
-    print("Infectious: Nodes = {}, Edges = {}".format(len(g_infectious.nodes()), len(g_infectious.edges())))
+#     g_infectious, config_infectious = infectious()
+#     print("Infectious: Nodes = {}, Edges = {}".format(len(g_infectious.nodes()), len(g_infectious.edges())))
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
