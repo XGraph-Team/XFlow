@@ -4,3 +4,4 @@
 .conda
 .github
 Planetoid
+/xflow/dataset/snap_datasets
