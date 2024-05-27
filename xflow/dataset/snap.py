@@ -14,6 +14,18 @@ def download_snap_dataset(url, filename):
     with open(filename, 'wb') as f:
         f.write(response.content)
 
+def check_and_download(url, filename):
+    create_folder("snap_datasets")  # Ensure the folder is created
+    if not os.path.exists(filename):
+        print(f"Downloading {filename}...")
+        download_snap_dataset(url, filename)
+    try:
+        with gzip.open(filename, 'rt') as f:
+            f.read(1)
+    except (OSError, gzip.BadGzipFile):
+        print(f"{filename} is corrupted. Re-downloading...")
+        download_snap_dataset(url, filename)
+
 def add_edge_weights(G, min_weight, max_weight):
     config = mc.Configuration()
     for a, b in G.edges():
@@ -31,73 +43,55 @@ def load_graph(filename):
 def soc_epinions1():
     url = "https://snap.stanford.edu/data/soc-Epinions1.txt.gz"
     filename = "snap_datasets/soc-Epinions1.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def soc_livejournal1():
     url = "https://snap.stanford.edu/data/soc-LiveJournal1.txt.gz"
     filename = "snap_datasets/soc-LiveJournal1.txt.gz"
-    download_snap_dataset(url, filename)
-    return load_graph(filename)
-
-def soc_pokec():
-    url = "https://snap.stanford.edu/data/soc-pokec.txt.gz"
-    filename = "snap_datasets/soc-pokec.txt.gz"
-    download_snap_dataset(url, filename)
-    return load_graph(filename)
-
-def soc_sign_bitcoin_otc():
-    url = "https://snap.stanford.edu/data/soc-sign-bitcoinotc.txt.gz"
-    filename = "snap_datasets/soc-sign-bitcoinotc.txt.gz"
-    download_snap_dataset(url, filename)
-    return load_graph(filename)
-
-def soc_sign_bitcoin_alpha():
-    url = "https://snap.stanford.edu/data/soc-sign-bitcoinalpha.txt.gz"
-    filename = "snap_datasets/soc-sign-bitcoinalpha.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def wiki_vote():
     url = "https://snap.stanford.edu/data/wiki-Vote.txt.gz"
     filename = "snap_datasets/wiki-Vote.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def email_euall():
     url = "https://snap.stanford.edu/data/email-EuAll.txt.gz"
     filename = "snap_datasets/email-EuAll.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def email_enron():
     url = "https://snap.stanford.edu/data/email-Enron.txt.gz"
     filename = "snap_datasets/email-Enron.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def wiki_talk():
     url = "https://snap.stanford.edu/data/wiki-Talk.txt.gz"
     filename = "snap_datasets/wiki-Talk.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def cit_hepph():
     url = "https://snap.stanford.edu/data/cit-HepPh.txt.gz"
     filename = "snap_datasets/cit-HepPh.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def cit_hepth():
     url = "https://snap.stanford.edu/data/cit-HepTh.txt.gz"
     filename = "snap_datasets/cit-HepTh.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def cit_patents():
     url = "https://snap.stanford.edu/data/cit-Patents.txt.gz"
     filename = "snap_datasets/cit-Patents.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     return load_graph(filename)
 
 def preprocess_stackoverflow(filename):
@@ -116,7 +110,7 @@ def preprocess_stackoverflow(filename):
 def sx_stackoverflow():
     url = "https://snap.stanford.edu/data/sx-stackoverflow.txt.gz"
     filename = "snap_datasets/sx-stackoverflow.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     preprocess_stackoverflow(filename)
     return load_graph("snap_datasets/stackoverflow_preprocessed.txt")
 
@@ -136,62 +130,52 @@ def preprocess_temporal(filename, output_filename):
 def sx_mathoverflow():
     url = "https://snap.stanford.edu/data/sx-mathoverflow.txt.gz"
     filename = "snap_datasets/sx-mathoverflow.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     preprocess_temporal(filename, "snap_datasets/mathoverflow_preprocessed.txt")
     return load_graph("snap_datasets/mathoverflow_preprocessed.txt")
 
 def sx_superuser():
     url = "https://snap.stanford.edu/data/sx-superuser.txt.gz"
     filename = "snap_datasets/sx-superuser.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     preprocess_temporal(filename, "snap_datasets/superuser_preprocessed.txt")
     return load_graph("snap_datasets/superuser_preprocessed.txt")
 
 def sx_askubuntu():
     url = "https://snap.stanford.edu/data/sx-askubuntu.txt.gz"
     filename = "snap_datasets/sx-askubuntu.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     preprocess_temporal(filename, "snap_datasets/askubuntu_preprocessed.txt")
     return load_graph("snap_datasets/askubuntu_preprocessed.txt")
 
 def wiki_talk_temporal():
     url = "https://snap.stanford.edu/data/wiki-talk-temporal.txt.gz"
     filename = "snap_datasets/wiki-talk-temporal.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     preprocess_temporal(filename, "snap_datasets/wiki_talk_temporal_preprocessed.txt")
     return load_graph("snap_datasets/wiki_talk_temporal_preprocessed.txt")
 
 def email_eu_core_temporal():
     url = "https://snap.stanford.edu/data/email-Eu-core-temporal.txt.gz"
     filename = "snap_datasets/email-Eu-core-temporal.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     preprocess_temporal(filename, "snap_datasets/email_eu_core_temporal_preprocessed.txt")
     return load_graph("snap_datasets/email_eu_core_temporal_preprocessed.txt")
 
 def college_msg():
     url = "https://snap.stanford.edu/data/CollegeMsg.txt.gz"
     filename = "snap_datasets/CollegeMsg.txt.gz"
-    download_snap_dataset(url, filename)
+    check_and_download(url, filename)
     preprocess_temporal(filename, "snap_datasets/CollegeMsg_preprocessed.txt")
     return load_graph("snap_datasets/CollegeMsg_preprocessed.txt")
 
 def main():
-    create_folder("snap_datasets")
 
     g_epinions, config_epinions = soc_epinions1()
     print("Epinions: Nodes = {}, Edges = {}".format(len(g_epinions.nodes()), len(g_epinions.edges())))
 
     g_livejournal, config_livejournal = soc_livejournal1()
     print("LiveJournal: Nodes = {}, Edges = {}".format(len(g_livejournal.nodes()), len(g_livejournal.edges())))
-
-    g_pokec, config_pokec = soc_pokec()
-    print("Pokec: Nodes = {}, Edges = {}".format(len(g_pokec.nodes()), len(g_pokec.edges())))
-
-    g_bitcoin_otc, config_bitcoin_otc = soc_sign_bitcoin_otc()
-    print("Bitcoin OTC: Nodes = {}, Edges = {}".format(len(g_bitcoin_otc.nodes()), len(g_bitcoin_otc.edges())))
-
-    g_bitcoin_alpha, config_bitcoin_alpha = soc_sign_bitcoin_alpha()
-    print("Bitcoin Alpha: Nodes = {}, Edges = {}".format(len(g_bitcoin_alpha.nodes()), len(g_bitcoin_alpha.edges())))
 
     g_wiki_vote, config_wiki_vote = wiki_vote()
     print("Wiki Vote: Nodes = {}, Edges = {}".format(len(g_wiki_vote.nodes()), len(g_wiki_vote.edges())))

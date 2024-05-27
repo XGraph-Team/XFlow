@@ -5,3 +5,7 @@
 .github
 Planetoid
 /xflow/dataset/snap_datasets
+# Ignore FAF related files
+xflow/dataset/FAF5.6.zip
+xflow/dataset/FAF5.6.csv
+xflow/dataset/FAF5_metadata.xlsx
