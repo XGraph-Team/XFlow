@@ -5,6 +5,9 @@ import random
 import ndlib.models.ModelConfig as mc
 import gzip
 
+# TODO add CAIDA 
+# https://snap.stanford.edu/data/as-caida.html
+
 def create_folder(folder_name):
     if not os.path.exists(folder_name):
         os.makedirs(folder_name)

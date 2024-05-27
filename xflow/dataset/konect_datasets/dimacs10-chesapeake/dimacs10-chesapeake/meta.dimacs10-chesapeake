@@ -1,0 +1,12 @@
+name:  Chesapeake Bay 
+code:  CB
+category:  Trophic
+long-description:  This is the mesohaline trophic network of Chesapeake Bay, an estuary in the United States of America.  Nodes are groups of organisms such as phytoplankton or ciliates.  Edges denote carbon exchange.  The direction of exchange is not stored in this dataset.  Neither are weights, i.e., amounts of exchange. 
+entity-names:  organism type
+relationship-names:  carbon exchange
+extr:  dimacs10
+url:  https://www.cc.gatech.edu/dimacs10/archive/clustering.shtml
+timeiso:  1989
+tags:  #incomplete #missingmultiplicity #missingorientation 
+cite:  konect:chesapeake
+
