@@ -7,15 +7,41 @@ import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
 import torch_geometric
 
-from torch_geometric.datasets import Planetoid, EmailEUCore, MyketDataset, BitcoinOTC, HydroNet, GDELTLite, ICEWS18, PolBlogs
+from torch_geometric.datasets import Planetoid, EmailEUCore, MyketDataset, BitcoinOTC, PolBlogs, KarateClub
 from torch_geometric.utils import to_networkx
 
+print(torch_geometric.__version__)
 print(torch_geometric.__version__)
 
 def convert_to_graph(dataset):
     data = dataset[0]
     edges = (data.edge_index.numpy()).T.tolist()
     G = nx.from_edgelist(edges)
+    return G
+
+def convert_temporal_to_graph(dataset):
+    G = nx.DiGraph()  # Directed graph since temporal data often implies direction
+    data = dataset[0]
+    
+    # Assuming 'src', 'dst', 'ts' are attributes in the temporal data
+    edges = zip(data.src.numpy(), data.dst.numpy())
+    G.add_edges_from(edges)
+    
+    return G
+
+def convert_temporal_to_graph_attr(data):
+    G = nx.DiGraph()  # Directed graph since temporal data often implies direction
+    
+    # Check available attributes and construct edges accordingly
+    if hasattr(data, 'src') and hasattr(data, 'dst'):
+        edges = zip(data.src.numpy(), data.dst.numpy())
+    elif hasattr(data, 'edge_index') and data.edge_index is not None:
+        edges = zip(data.edge_index[0].numpy(), data.edge_index[1].numpy())
+    else:
+        raise AttributeError("The dataset does not have expected edge attributes.")
+
+    G.add_edges_from(edges)
+    
     return G
 
 def convert_temporal_to_graph(dataset):
@@ -142,11 +168,15 @@ def coms():
 
 def email_eu_core():
     dataset = EmailEUCore(root='./EmailEUCore')
+    dataset = EmailEUCore(root='./EmailEUCore')
     G = convert_to_graph(dataset)
     G = nx.convert_node_labels_to_integers(G, first_label=0)
     G, config = add_edge_weights(G, 0.1, 0.5)
     return G, config
 
+def reddit():
+    dataset = ds.JODIEDataset(root='./JODIE', name='Reddit')
+    G = convert_temporal_to_graph(dataset)
 def reddit():
     dataset = ds.JODIEDataset(root='./JODIE', name='Reddit')
     G = convert_temporal_to_graph(dataset)
@@ -157,10 +187,19 @@ def reddit():
 def last_fm():
     dataset = ds.JODIEDataset(root='./JODIE', name='LastFM')
     G = convert_temporal_to_graph(dataset)
+def last_fm():
+    dataset = ds.JODIEDataset(root='./JODIE', name='LastFM')
+    G = convert_temporal_to_graph(dataset)
     G = nx.convert_node_labels_to_integers(G, first_label=0)
     G, config = add_edge_weights(G, 0.1, 0.5)
     return G, config
 
+def bitcoin_otc():
+    dataset = BitcoinOTC(root='./BitcoinOTC')
+    data = dataset[0]
+    if data.edge_index is None:
+        raise ValueError("The edge_index is None for BitcoinOTC dataset")
+    G = convert_temporal_to_graph_attr(data)
 def bitcoin_otc():
     dataset = BitcoinOTC(root='./BitcoinOTC')
     data = dataset[0]
@@ -186,32 +225,41 @@ def myket():
     G, config = add_edge_weights(G, 0.1, 0.5)
     return G, config
 
-# def main():
-#     # Generate and configure graphs for different datasets
-#     g_citeseer, config_citeseer = CiteSeer()
-#     g_pubmed, config_pubmed = PubMed()
-#     g_cora, config_cora = Cora()
-#     g_photo, config_photo = photo()
-#     g_coms, config_coms = coms()
-#     g_bitcoin_otc, config_bitcoin_otc = bitcoin_otc()
-#     g_email_eu_core, config_email_eu_core = email_eu_core()
-#     g_polblogs, config_polblogs = polblogs()
-#     g_reddit, config_reddit = reddit()
-#     g_last_fm, config_last_fm = last_fm()
-#     g_myket, config_myket = myket()
+def karate_club():
+    dataset = KarateClub()
+    data = dataset[0]
+    G = to_networkx(data, to_undirected=True)
+    G, config = add_edge_weights(G, 0.1, 0.5)
+    return G, config
 
-#     # Print the number of nodes and edges in each graph as a simple verification
-#     print("CiteSeer: Nodes = {}, Edges = {}".format(len(g_citeseer.nodes()), len(g_citeseer.edges())))
-#     print("PubMed: Nodes = {}, Edges = {}".format(len(g_pubmed.nodes()), len(g_pubmed.edges())))
-#     print("Cora: Nodes = {}, Edges = {}".format(len(g_cora.nodes()), len(g_cora.edges())))
-#     print("Photo: Nodes = {}, Edges = {}".format(len(g_photo.nodes()), len(g_photo.edges())))
-#     print("Computers: Nodes = {}, Edges = {}".format(len(g_coms.nodes()), len(g_coms.edges())))
-#     print("Bitcoin OTC: Nodes = {}, Edges = {}".format(len(g_bitcoin_otc.nodes()), len(g_bitcoin_otc.edges())))
-#     print("Email EU Core: Nodes = {}, Edges = {}".format(len(g_email_eu_core.nodes()), len(g_email_eu_core.edges())))
-#     print("PolBlogs: Nodes = {}, Edges = {}".format(len(g_polblogs.nodes()), len(g_polblogs.edges())))
-#     print("Reddit: Nodes = {}, Edges = {}".format(len(g_reddit.nodes()), len(g_reddit.edges())))
-#     print("LastFM: Nodes = {}, Edges = {}".format(len(g_last_fm.nodes()), len(g_last_fm.edges())))
-#     print("Myket: Nodes = {}, Edges = {}".format(len(g_myket.nodes()), len(g_myket.edges())))
+def main():
+    # Generate and configure graphs for different datasets
+    g_citeseer, config_citeseer = CiteSeer()
+    g_pubmed, config_pubmed = PubMed()
+    g_cora, config_cora = Cora()
+    g_photo, config_photo = photo()
+    g_coms, config_coms = coms()
+    g_bitcoin_otc, config_bitcoin_otc = bitcoin_otc()
+    g_email_eu_core, config_email_eu_core = email_eu_core()
+    g_polblogs, config_polblogs = polblogs()
+    g_reddit, config_reddit = reddit()
+    g_last_fm, config_last_fm = last_fm()
+    g_myket, config_myket = myket()
+    g_karate, config_karate = karate_club()
 
-# if __name__ == "__main__":
-#     main()
+    # Print the number of nodes and edges in each graph as a simple verification
+    print("CiteSeer: Nodes = {}, Edges = {}".format(len(g_citeseer.nodes()), len(g_citeseer.edges())))
+    print("PubMed: Nodes = {}, Edges = {}".format(len(g_pubmed.nodes()), len(g_pubmed.edges())))
+    print("Cora: Nodes = {}, Edges = {}".format(len(g_cora.nodes()), len(g_cora.edges())))
+    print("Photo: Nodes = {}, Edges = {}".format(len(g_photo.nodes()), len(g_photo.edges())))
+    print("Computers: Nodes = {}, Edges = {}".format(len(g_coms.nodes()), len(g_coms.edges())))
+    print("Bitcoin OTC: Nodes = {}, Edges = {}".format(len(g_bitcoin_otc.nodes()), len(g_bitcoin_otc.edges())))
+    print("Email EU Core: Nodes = {}, Edges = {}".format(len(g_email_eu_core.nodes()), len(g_email_eu_core.edges())))
+    print("PolBlogs: Nodes = {}, Edges = {}".format(len(g_polblogs.nodes()), len(g_polblogs.edges())))
+    print("Reddit: Nodes = {}, Edges = {}".format(len(g_reddit.nodes()), len(g_reddit.edges())))
+    print("LastFM: Nodes = {}, Edges = {}".format(len(g_last_fm.nodes()), len(g_last_fm.edges())))
+    print("Myket: Nodes = {}, Edges = {}".format(len(g_myket.nodes()), len(g_myket.edges())))
+    print("Karate Club: Nodes = {}, Edges = {}".format(len(g_karate.nodes()), len(g_karate.edges())))
+
+if __name__ == "__main__":
+    main()
