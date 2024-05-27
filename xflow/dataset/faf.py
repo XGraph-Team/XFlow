@@ -46,7 +46,8 @@ def faf5_6():
         # Add edge with weight
         G.add_edge(origin, destination, weight=weight)
 
-    print(f"Graph has {G.number_of_nodes()} nodes and {G.number_of_edges()} edges.")
+    print(f"faf5_6 has {G.number_of_nodes()} nodes and {G.number_of_edges()} edges.")
+
     return G
 
 # Example usage
