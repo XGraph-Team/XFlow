@@ -171,36 +171,10 @@ def bitcoin_otc():
     G, config = add_edge_weights(G, 0.1, 0.5)
     return G, config
 
-def hydro_net():
-    dataset = HydroNet(root='./HydroNet', name='medium')
-    data = dataset[0]
-    if data.edge_index is None:
-        raise ValueError("The edge_index is None for HydroNet dataset")
-    G = convert_temporal_to_graph_attr(data)
-    G = nx.convert_node_labels_to_integers(G, first_label=0)
-    G, config = add_edge_weights(G, 0.1, 0.5)
-    return G, config
-
-def gdelt_lite():
-    dataset = GDELTLite(root='./GDELTLite')
-    data = dataset[0]
-    G = convert_temporal_to_graph(dataset)
-    G = nx.convert_node_labels_to_integers(G, first_label=0)
-    G, config = add_edge_weights(G, 0.1, 0.5)
-    return G, config
-
-def icews18():
-    dataset = ICEWS18(root='./ICEWS18', split='train')
-    data = dataset[0]
-    G = convert_temporal_to_graph(dataset)
-    G = nx.convert_node_labels_to_integers(G, first_label=0)
-    G, config = add_edge_weights(G, 0.1, 0.5)
-    return G, config
-
 def polblogs():
     dataset = PolBlogs(root='./PolBlogs')
     data = dataset[0]
-    G = convert_temporal_to_graph(dataset)
+    G = convert_to_graph(dataset)
     G = nx.convert_node_labels_to_integers(G, first_label=0)
     G, config = add_edge_weights(G, 0.1, 0.5)
     return G, config
@@ -221,9 +195,6 @@ def myket():
 #     g_coms, config_coms = coms()
 #     g_bitcoin_otc, config_bitcoin_otc = bitcoin_otc()
 #     g_email_eu_core, config_email_eu_core = email_eu_core()
-#     # g_hydro_net, config_hydro_net = hydro_net()
-#     g_gdelt_lite, config_gdelt_lite = gdelt_lite()
-#     g_icews18, config_icews18 = icews18()
 #     g_polblogs, config_polblogs = polblogs()
 #     g_reddit, config_reddit = reddit()
 #     g_last_fm, config_last_fm = last_fm()
@@ -237,9 +208,6 @@ def myket():
 #     print("Computers: Nodes = {}, Edges = {}".format(len(g_coms.nodes()), len(g_coms.edges())))
 #     print("Bitcoin OTC: Nodes = {}, Edges = {}".format(len(g_bitcoin_otc.nodes()), len(g_bitcoin_otc.edges())))
 #     print("Email EU Core: Nodes = {}, Edges = {}".format(len(g_email_eu_core.nodes()), len(g_email_eu_core.edges())))
-#     # print("HydroNet: Nodes = {}, Edges = {}".format(len(g_hydro_net.nodes()), len(g_hydro_net.edges())))
-#     print("GDELT: Nodes = {}, Edges = {}".format(len(g_gdelt_lite.nodes()), len(g_gdelt_lite.edges())))
-#     print("ICEWS18: Nodes = {}, Edges = {}".format(len(g_icews18.nodes()), len(g_icews18.edges())))
 #     print("PolBlogs: Nodes = {}, Edges = {}".format(len(g_polblogs.nodes()), len(g_polblogs.edges())))
 #     print("Reddit: Nodes = {}, Edges = {}".format(len(g_reddit.nodes()), len(g_reddit.edges())))
 #     print("LastFM: Nodes = {}, Edges = {}".format(len(g_last_fm.nodes()), len(g_last_fm.edges())))
