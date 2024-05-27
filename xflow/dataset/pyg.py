@@ -7,7 +7,7 @@ import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
 import torch_geometric
 
-from torch_geometric.datasets import Planetoid, EmailEUCore, MyketDataset, BitcoinOTC, HydroNet, GDELTLite, ICEWS18, PolBlogs
+from torch_geometric.datasets import Planetoid, EmailEUCore, MyketDataset, BitcoinOTC, PolBlogs, KarateClub
 from torch_geometric.utils import to_networkx
 
 print(torch_geometric.__version__)
