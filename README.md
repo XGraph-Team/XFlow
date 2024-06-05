@@ -33,27 +33,34 @@ pip install xflow-net
 ```python
 import xflow
 
-from xflow.dataset.nx import BA, connSW
-from xflow.dataset.pyg import Cora
-from xflow.diffusion import SI, IC, LT
-from xflow.util import run
+import xflow.dataset.nx as nx_datasets
+import xflow.dataset.pyg as pyg_datasets
+import xflow.diffusion as diffusion_models
+import xflow.seed as seeds
+import xflow.util as util
+import xflow.method.im as im_methods
+import xflow.method.ibm as ibm_methods
+import xflow.method.cosasi.source_inference.multiple_source as source_inference
 
-# graphs to test
-fn = lambda: connSW(n=1000, beta=0.1)
+# Graphs to test
+fn = lambda: nx_datasets.connSW(n=1000, beta=0.1)
 fn.__name__ = 'connSW'
-gs = [Cora, fn, BA]
+gs = [fn, pyg_datasets.Cora]
 
 # Diffusion models to test
-df = [SI, IC, LT]
+df = [diffusion_models.SI, diffusion_models.IC, diffusion_models.LT]
+
+# Seed configurations to test
+se = [seeds.random, seeds.degree, seeds.eigen]
 
 # Configurations of IM experiments
-from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, celfpp as im_celfpp, greedy as im_greedy
-me = [im_pi]
-rt = run (
-    graph = gs, diffusion = df,
-    method = me, eval = 'im', epoch = 10, 
-    budget = 10, 
-    output = [ 'animation', 'csv', 'fig'])
+im_experiments = [im_methods.pi, im_methods.eigen]
+rt = util.run(
+    graph=gs, diffusion=df, seeds=se,
+    method=im_experiments, eval='im', epoch=10,
+    budget=10,
+    output=['animation', 'csv', 'fig']
+)
 ```
 
 
