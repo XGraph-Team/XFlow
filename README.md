@@ -5,7 +5,7 @@
 
 
 
-![PyPI](https://badgen.net/badge/pypi/0.0.10/green?icon=pypi)
+![PyPI](https://badgen.net/badge/pypi/0.0.28/green?icon=pypi)
 ![Testing Status](https://badgen.net/badge/testing/passing/green?icon=github)
 ![Docs Status](https://badgen.net/badge/docs/passing/green?icon=)
 ![Contributing](https://badgen.net/badge/contributions/welcome/green?icon=github)
