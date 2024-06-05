@@ -30,9 +30,8 @@ pip install xflow-net
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1N0gFLSOl1r4h0tvqzStssEZSnmNMvoHc?usp=sharing&pli=1#scrollTo=iXN5BYm4sh4T)
 
+## Import XFlow
 ```python
-import xflow
-
 import xflow.dataset.nx as nx_datasets
 import xflow.dataset.pyg as pyg_datasets
 import xflow.diffusion as diffusion_models
@@ -41,7 +40,11 @@ import xflow.util as util
 import xflow.method.im as im_methods
 import xflow.method.ibm as ibm_methods
 import xflow.method.cosasi.source_inference.multiple_source as source_inference
+```
 
+## Influence Maximization
+
+```python
 # Graphs to test
 fn = lambda: nx_datasets.connSW(n=1000, beta=0.1)
 fn.__name__ = 'connSW'
@@ -63,6 +66,16 @@ rt = util.run(
 )
 ```
 
+## Maximizing Blocking
+```python
+ibm_experiments = [ibm_methods.sigma, ibm_methods.degree]
+rt = util.run(
+    graph=gs, diffusion=df, seeds=se,
+    method=ibm_experiments, eval='ibm', epoch=10,
+    budget=10,
+    output=['animation', 'csv', 'fig']
+)
+```
 
 See more examples in folder `examples`
 
