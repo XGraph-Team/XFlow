@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/polyconvertConfiguration.xsd">
+    <input>
+        <osm-files value=""/>
+        <net-file value=""/>
+    </input>
+    <output>
+        <output-file value=""/>
+    </output>
+    <processing>
+        <osm.keep-full-type value="true"/>
+        <osm.sidewalks value="true"/>
+        <osm.crossings value="true"/>
+    </processing>
+</configuration> 

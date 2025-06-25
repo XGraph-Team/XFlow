@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2025-06-11 10:51:42.090253 by osmWebWizard.py v1_23_1+0000-676720d13f6
+  options: 
+-->
+
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+   <edgeData id="wizard_example" period="3600" file="edgeData.xml"/>
+</additional>

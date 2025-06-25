@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes>
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.5" length="5" minGap="2.5" maxSpeed="55" guiShape="passenger"/>
+    
+    <!-- Main flows using actual edge IDs -->
+    <flow id="flow0" type="car" begin="0" end="3600" vehsPerHour="800" from=":10001058424_0" to=":10038323439_0"/>
+    <flow id="flow1" type="car" begin="0" end="3600" vehsPerHour="600" from=":10038323439_0" to=":10049007836_0"/>
+    <flow id="flow2" type="car" begin="0" end="3600" vehsPerHour="700" from=":10049007836_0" to=":10049007836_1"/>
+</routes> 

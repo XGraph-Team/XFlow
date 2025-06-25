@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
+    <input>
+        <net-file value="osm.net.xml.gz"/>
+        <route-files value="osm.passenger.trips.xml"/>
+        <additional-files value="osm.poly.xml.gz,traffic_lights.add.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="3600"/>
+        <step-length value="0.1"/>
+    </time>
+    <processing>
+        <ignore-junction-blocker value="5"/>
+        <time-to-teleport value="5"/>
+        <max-depart-delay value="5"/>
+        <routing-algorithm value="dijkstra"/>
+        <collision.action value="none"/>
+        <collision.stoptime value="0"/>
+        <collision.mingap-factor value="0.5"/>
+        <eager-insert value="true"/>
+        <ignore-junction-blocker.fringe value="true"/>
+        <ignore-junction-blocker.keep-clear value="false"/>
+        <ignore-junction-blocker.keep-clear.fringe value="false"/>
+    </processing>
+    <report>
+        <verbose value="true"/>
+        <no-step-log value="true"/>
+        <log-file value="simulation.log"/>
+    </report>
+    <gui_only>
+        <gui-settings-file value="view.xml"/>
+    </gui_only>
+</configuration> 

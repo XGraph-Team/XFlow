@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<additional>
+    <tlLogic id="intersection" type="static" programID="0" offset="0">
+        <phase duration="11" state="GGggrrrrGGggrrrr"/>
+        <phase duration="3" state="yyyyrrrryyyyrrrr"/>
+        <phase duration="11" state="rrrrGGggrrrrGGgg"/>
+        <phase duration="3" state="rrrryyyyrrrryyyy"/>
+    </tlLogic>
+</additional> 

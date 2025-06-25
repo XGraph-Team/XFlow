@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/polyconvertConfiguration.xsd">
+    <input>
+        <osm-files value="osm_nyc_bbox.osm.xml.gz"/>
+        <net-file value="osm.net.xml.gz"/>
+    </input>
+    <output>
+        <output-file value="osm.poly.xml.gz"/>
+    </output>
+    <processing>
+        <osm.keep-full-type value="true"/>
+        <osm.use-name value="false"/>
+        <osm.merge-relations value="0"/>
+    </processing>
+</configuration> 

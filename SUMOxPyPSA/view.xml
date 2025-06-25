@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<viewsettings>
+    <scheme name="real world"/>
+    <delay value="100"/>
+    <viewport zoom="100" x="0" y="0"/>
+    <decal filename="background.jpg" centerX="0" centerY="0" rotation="0" scale="1"/>
+</viewsettings> 

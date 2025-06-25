@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUMO Traffic Simulation</title>
+    
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+
+    <style>
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: Arial, sans-serif;
+        }
+        #map { 
+            position: absolute; 
+            top: 0; 
+            bottom: 0; 
+            width: 100%; 
+            height: 100vh; 
+        }
+        .car-marker {
+            width: 8px;
+            height: 18px;
+        }
+        .leaflet-marker-icon {
+            transition: transform 0.05s linear, left 0.05s linear, top 0.05s linear;
+            will-change: transform, left, top;
+        }
+        .control-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            min-width: 200px;
+        }
+        .control-panel h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .control-panel button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .control-panel button:hover {
+            background-color: #45a049;
+        }
+        .control-panel button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .stat-item {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+        }
+        .city-marker {
+            width: 12px;
+            height: 12px;
+            background-color: #ff4444;
+            border: 2px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .traffic-light {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+        .traffic-light.red {
+            background-color: #ff0000;
+            box-shadow: 0 0 10px #ff0000;
+        }
+        .traffic-light.yellow {
+            background-color: #ffff00;
+            box-shadow: 0 0 10px #ffff00;
+        }
+        .traffic-light.green {
+            background-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        .traffic-light.off {
+            background-color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="control-panel">
+        <h3>Simulation Controls</h3>
+        <select id="citySelector" class="form-select">
+            <option value="">Select a city...</option>
+            <option value="newyork">New York, USA</option>
+            <option value="miami">Miami, USA</option>
+            <option value="losangeles">Los Angeles, USA</option>
+        </select>
+        <div class="stat-item">
+            <span>Time Step:</span>
+            <span id="time-step">0</span>
+        </div>
+        <div class="stat-item">
+            <span>Total Vehicles:</span>
+            <span id="total-vehicles">0</span>
+        </div>
+        <div class="stat-item">
+            <span>Active Vehicles:</span>
+            <span id="active-vehicles">0</span>
+        </div>
+        <button id="start-btn" disabled>Start Simulation</button>
+        <button id="restart-btn" style="display: none;">Restart Simulation</button>
+    </div>
+    
+    <script>
+        // City coordinates
+        const cityConfigs = {
+            newyork: { lat: 40.7128, lng: -74.0060, zoom: 15 },
+            miami: { lat: 25.7617, lng: -80.1918, zoom: 15 },
+            losangeles: { lat: 34.0522, lng: -118.2437, zoom: 15 }
+        };
+        
+        // Get the current city from dropdown
+        const citySelector = document.getElementById('citySelector');
+        let currentCity = citySelector.value;
+        
+        // Initialize the Leaflet map with USA view
+        const map = L.map('map').setView([39.8283, -98.5795], 4);
+        
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add city markers
+        Object.entries(cityConfigs).forEach(([city, coords]) => {
+            const marker = L.circleMarker([coords.lat, coords.lng], {
+                radius: 8,
+                fillColor: "#ff4444",
+                color: "#fff",
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map);
+            
+            marker.bindPopup(city.charAt(0).toUpperCase() + city.slice(1));
+            
+            marker.on('click', () => {
+                citySelector.value = city;
+                handleCitySelection();
+            });
+        });
+
+        const markers = {};
+        const carIcon = L.icon({
+            iconUrl: '/static/car-icon.PNG',
+            iconSize: [8, 18],
+            iconAnchor: [4, 9],
+        });
+
+        // Traffic light markers
+        const trafficLightMarkers = {};
+        
+        // Create traffic light icon with color
+        function createTrafficLightIcon(color) {
+            return L.divIcon({
+                className: `traffic-light ${color}`,
+                iconSize: [6, 6],
+                iconAnchor: [3, 3]
+            });
+        }
+
+        // UI elements
+        const timeStepElement = document.getElementById('time-step');
+        const totalVehiclesElement = document.getElementById('total-vehicles');
+        const activeVehiclesElement = document.getElementById('active-vehicles');
+        const startButton = document.getElementById('start-btn');
+        const restartButton = document.getElementById('restart-btn');
+        
+        // Stats
+        let totalVehicles = 0;
+        let timeStep = 0;
+        let simulationStarted = false;
+        
+        // Connect to the server
+        const socket = io();
+        
+        function handleCitySelection() {
+            currentCity = citySelector.value;
+            if (currentCity) {
+                // Update map view to selected city
+                map.setView(
+                    [cityConfigs[currentCity].lat, cityConfigs[currentCity].lng],
+                    cityConfigs[currentCity].zoom
+                );
+                startButton.disabled = false;
+            } else {
+                // Reset to USA view
+                map.setView([39.8283, -98.5795], 4);
+                startButton.disabled = true;
+            }
+        }
+        
+        // Handle city selection change
+        citySelector.addEventListener('change', handleCitySelection);
+        
+        // Handle start button
+        startButton.addEventListener('click', function() {
+            if (!simulationStarted) {
+                // Start simulation
+                socket.emit('change_city', { city: currentCity });
+                simulationStarted = true;
+                startButton.style.display = 'none';
+                restartButton.style.display = 'block';
+            }
+        });
+        
+        // Reset simulation stats and markers
+        function resetSimulation() {
+            timeStep = 0;
+            totalVehicles = 0;
+            timeStepElement.textContent = '0';
+            totalVehiclesElement.textContent = '0';
+            activeVehiclesElement.textContent = '0';
+            
+            // Clear all vehicle markers from the map
+            for (const id in markers) {
+                markers[id].remove();
+                delete markers[id];
+            }
+            
+            // Clear all traffic light markers from the map
+            for (const id in trafficLightMarkers) {
+                trafficLightMarkers[id].remove();
+                delete trafficLightMarkers[id];
+            }
+        }
+        
+        // Update simulation data
+        socket.on('update', (data) => {
+            console.log("Received update:", data);
+            // Handle both old format (just vehicles) and new format (vehicles + traffic_lights)
+            const vehicles = data.vehicles || data; // Backward compatibility
+            const traffic_lights = data.traffic_lights || [];
+            
+            // Update the time step
+            timeStep++;
+            timeStepElement.textContent = timeStep;
+            
+            // Update vehicle counts
+            activeVehiclesElement.textContent = vehicles.length;
+            if (vehicles.length > 0 && totalVehicles < vehicles.length) {
+                totalVehicles = Math.max(totalVehicles, vehicles.length);
+                totalVehiclesElement.textContent = totalVehicles;
+            }
+            
+            // Track vehicles that need to be removed
+            const activeVehicleIds = vehicles.map(v => v.id);
+            Object.keys(markers).forEach(id => {
+                if (!activeVehicleIds.includes(id)) {
+                    markers[id].remove();
+                    delete markers[id];
+                }
+            });
+            
+            // Update vehicle positions on the map
+            vehicles.forEach(vehicle => {
+                if (!markers[vehicle.id]) {
+                    // Create new marker
+                    markers[vehicle.id] = L.marker([vehicle.y, vehicle.x], {
+                        icon: carIcon
+                    }).addTo(map);
+                    
+                    // Initial rotation
+                    const icon = markers[vehicle.id].getElement();
+                    if (icon) {
+                        icon.style.transform = `${icon.style.transform} rotate(${vehicle.angle}deg)`;
+                    }
+                } else {
+                    // Update existing marker position
+                    markers[vehicle.id].setLatLng([vehicle.y, vehicle.x]);
+                    
+                    // Update rotation
+                    const icon = markers[vehicle.id].getElement();
+                    if (icon) {
+                        // Extract current rotation if it exists
+                        let currentTransform = icon.style.transform || '';
+                        // Remove any existing rotation
+                        currentTransform = currentTransform.replace(/\s*rotate\([^)]*\)/g, '');
+                        // Add the new rotation
+                        icon.style.transform = `${currentTransform} rotate(${vehicle.angle}deg)`;
+                    }
+                }
+            });
+            
+            // Handle traffic lights
+            const activeTrafficLightIds = traffic_lights.map(tl => tl.id);
+            
+            // Remove traffic lights that are no longer active
+            Object.keys(trafficLightMarkers).forEach(id => {
+                if (!activeTrafficLightIds.includes(id)) {
+                    trafficLightMarkers[id].remove();
+                    delete trafficLightMarkers[id];
+                }
+            });
+            
+            // Update traffic light positions and states
+            traffic_lights.forEach(traffic_light => {
+                const color = getTrafficLightColor(traffic_light.state);
+                console.log(`Traffic Light ${traffic_light.id}: state='${traffic_light.state}', color='${color}'`);
+                if (!trafficLightMarkers[traffic_light.id]) {
+                    // Create new traffic light marker
+                    trafficLightMarkers[traffic_light.id] = L.marker([traffic_light.y, traffic_light.x], {
+                        icon: createTrafficLightIcon(color)
+                    }).addTo(map);
+                } else {
+                    // Update existing traffic light marker
+                    trafficLightMarkers[traffic_light.id].setLatLng([traffic_light.y, traffic_light.x]);
+                    trafficLightMarkers[traffic_light.id].setIcon(createTrafficLightIcon(color));
+                }
+            });
+        });
+        
+        // Helper function to convert SUMO traffic light states to colors
+        function getTrafficLightColor(state) {
+            if (!state) return 'off';
+            if (state.toLowerCase().includes('g')) return 'green';
+            if (state.toLowerCase().includes('y')) return 'yellow';
+            if (state.toLowerCase().includes('r')) return 'red';
+            return 'off';
+        }
+        
+        // Handle restart button
+        restartButton.addEventListener('click', function() {
+            resetSimulation();
+            
+            // Tell the server to restart the simulation
+            socket.emit('restart', { city: currentCity });
+        });
+    </script>
+</body>
+</html> 

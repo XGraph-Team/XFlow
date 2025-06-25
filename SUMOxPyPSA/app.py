@@ -1,0 +1,221 @@
+from flask import Flask, render_template, send_from_directory
+from flask_socketio import SocketIO, emit
+import traci
+import time
+import threading
+import os
+import sys
+import tempfile
+from config import *
+from sumo_config import SUMO_COMMON_CONFIG, CITY_CONFIGS as SUMO_CITY_CONFIGS
+
+app = Flask(__name__, static_url_path='/static', static_folder='static')
+app.config['SECRET_KEY'] = 'A34F6g7JK0c5N'
+socketio = SocketIO(app, async_mode='threading')
+
+# Get SUMO binary path from config
+SUMO_BINARY = os.path.join(SUMO_PATH, "bin/sumo")  # or "sumo-gui" for the GUI version
+
+# Global variables
+simulation_running = False
+simulation_thread = None
+stop_event = threading.Event()
+CURRENT_CITY = DEFAULT_CITY
+
+def create_temp_sumocfg(city):
+    """Create a temporary SUMO configuration file for the city"""
+    city_dir = CITY_CONFIGS[city]["working_dir"]
+    city_sumo_config = SUMO_CITY_CONFIGS[city.upper()]
+    
+    # Create temporary file in the city directory
+    temp_path = os.path.join(city_dir, "temp.sumocfg")
+    with open(temp_path, 'w') as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        f.write('<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">\n')
+        
+        # Input files
+        f.write('    <input>\n')
+        f.write(f'        <net-file value="{os.path.basename(city_sumo_config["net-file"])}"/>\n')
+        f.write(f'        <route-files value="{os.path.basename(city_sumo_config["route-files"])}"/>\n')
+        f.write(f'        <additional-files value="{os.path.basename(city_sumo_config["additional-files"])}"/>\n')
+        f.write('    </input>\n')
+        
+        # Processing
+        f.write('    <processing>\n')
+        for key, value in SUMO_COMMON_CONFIG["processing"].items():
+            f.write(f'        <{key} value="{value}"/>\n')
+        f.write('    </processing>\n')
+        
+        # Time
+        f.write('    <time>\n')
+        for key, value in SUMO_COMMON_CONFIG["time"].items():
+            f.write(f'        <{key} value="{value}"/>\n')
+        f.write('    </time>\n')
+        
+        f.write('</configuration>\n')
+        return temp_path
+
+def sumo_simulation(city=DEFAULT_CITY):
+    global simulation_running
+    
+    if city not in CITY_CONFIGS:
+        print(f"City {city} not found in configurations.")
+        return
+    
+    city_config = CITY_CONFIGS[city]
+    working_dir = city_config["working_dir"]
+    
+    print(f"Starting simulation for {city_config['name']}")
+    print(f"Working directory: {working_dir}")
+    
+    # Store current directory to restore later
+    original_dir = os.getcwd()
+    temp_cfg = None
+    
+    try:
+        # Change to the city's working directory
+        os.chdir(working_dir)
+        print(f"Changed to directory: {os.getcwd()}")
+        
+        # Create temporary SUMO configuration
+        temp_cfg = create_temp_sumocfg(city)
+        print(f"Created temporary config at: {temp_cfg}")
+        
+        simulation_running = True
+        stop_event.clear()
+        
+        # Start SUMO with the temporary config
+        sumo_cmd = [SUMO_BINARY, "-c", os.path.basename(temp_cfg)]
+        print(f"Running command: {' '.join(sumo_cmd)}")
+        
+        try:
+            traci.start(sumo_cmd)
+            print("Successfully connected to SUMO")
+        except Exception as e:
+            print(f"Failed to connect to SUMO: {str(e)}")
+            raise
+        
+        # Counter for controlling update frequency
+        step_counter = 0
+        
+        while traci.simulation.getMinExpectedNumber() > 0 and not stop_event.is_set():
+            traci.simulationStep()
+            step_counter += 1
+            
+            # Send updates based on configured frequency
+            if step_counter % UPDATE_FREQUENCY == 0:
+                # Debug each traffic light
+                traffic_lights = []
+                for idx, tl_id in enumerate(traci.trafficlight.getIDList()):
+                    controlled_links = traci.trafficlight.getControlledLinks(tl_id)
+                    gps_position = None
+                    # Try fromEdge of controlled links
+                    if controlled_links and controlled_links[0]:
+                        first_link = controlled_links[0][0]
+                        from_edge = first_link[0]
+                        try:
+                            edge_shape = traci.edge.getShape(from_edge)
+                            if edge_shape:
+                                gps_position = traci.simulation.convertGeo(*edge_shape[0])
+                        except Exception:
+                            pass
+                    # If not found, try junction position
+                    if gps_position is None:
+                        try:
+                            junction_pos = traci.junction.getPosition(tl_id)
+                            gps_position = traci.simulation.convertGeo(*junction_pos)
+                        except Exception:
+                            continue
+                    state = traci.trafficlight.getRedYellowGreenState(tl_id)
+                    traffic_lights.append({
+                        'id': tl_id, 
+                        'x': gps_position[0], 
+                        'y': gps_position[1], 
+                        'state': state
+                    })
+                
+                # Get traffic light information
+                vehicles = []
+                for vehicle_id in traci.vehicle.getIDList():
+                    position = traci.vehicle.getPosition(vehicle_id)
+                    gps_position = traci.simulation.convertGeo(*position)
+                    angle = traci.vehicle.getAngle(vehicle_id)
+                    vehicles.append({'id': vehicle_id, 'x': gps_position[0], 'y': gps_position[1], 'angle': angle})
+                
+                # Send both vehicles and traffic lights
+                socketio.emit('update', {
+                    'vehicles': vehicles,
+                    'traffic_lights': traffic_lights
+                })
+            
+            # Use configured simulation speed
+            time.sleep(SIMULATION_SPEED)
+            
+        traci.close()
+    except Exception as e:
+        print(f"Error in simulation: {e}")
+        import traceback
+        print("Full traceback:")
+        print(traceback.format_exc())
+    finally:
+        # Clean up temporary file
+        if temp_cfg and os.path.exists(temp_cfg):
+            os.unlink(temp_cfg)
+        # Restore original directory
+        os.chdir(original_dir)
+        simulation_running = False
+
+@socketio.on('connect')
+def handle_connect():
+    """Handle client connection - don't start simulation automatically"""
+    pass
+
+@socketio.on('change_city')
+def handle_change_city(data):
+    global simulation_thread, CURRENT_CITY
+    
+    city = data.get('city', DEFAULT_CITY)
+    if city not in CITY_CONFIGS:
+        return
+    
+    CURRENT_CITY = city
+    print(f"Changing city to {CITY_CONFIGS[CURRENT_CITY]['name']}")
+    
+    # Stop current simulation if running
+    if simulation_running:
+        stop_event.set()
+        if simulation_thread:
+            simulation_thread.join(timeout=2)
+    
+    # Start a new simulation with the selected city
+    simulation_thread = threading.Thread(target=sumo_simulation, args=(CURRENT_CITY,))
+    simulation_thread.start()
+
+@socketio.on('restart')
+def handle_restart(data):
+    global simulation_thread, CURRENT_CITY
+    
+    city = data.get('city', CURRENT_CITY)
+    if city not in CITY_CONFIGS:
+        return
+    
+    CURRENT_CITY = city
+    print(f"Restarting simulation for {CITY_CONFIGS[CURRENT_CITY]['name']}")
+    
+    # Stop current simulation if running
+    if simulation_running:
+        stop_event.set()
+        if simulation_thread:
+            simulation_thread.join(timeout=2)
+    
+    # Start a new simulation
+    simulation_thread = threading.Thread(target=sumo_simulation, args=(CURRENT_CITY,))
+    simulation_thread.start()
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+if __name__ == "__main__":
+    print(f"NYC path: {NYC_PATH}")
+    socketio.run(app, debug=True, host=HOST, port=PORT) 
