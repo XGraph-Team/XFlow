@@ -1,0 +1,15 @@
+line.structure <- read.csv("line-structure.csv")
+attach(line.structure)
+line.length.log <- log(line_length)
+hist(line.length.log, freq=F, breaks=50, main="Normal distribution of logarithmic line lengths",
+     xlab="ln(length)", ylab="Density")
+line.length.range <- range(line.length.log)
+line.length.x <- seq(line.length.range[1], line.length.range[2], length.out=100)
+lll.mu = mean(line.length.log)
+lll.sigma = sd(line.length.log)
+lines(line.length.x, dnorm(line.length.x, mean=lll.mu, sd=lll.sigma), lty=2)
+legend("topleft", legend=c("Observed distribution",paste("µ = ", format(lll.mu, digits=3), "/ σ = ", format(lll.sigma, digits=3))),
+       fill=c("white",NA), border=c("black", NA), lty=c(NA,2))
+dev.copy(png, "logarithm-of-all-line-length.png")
+dev.off()
+detach(line.structure)

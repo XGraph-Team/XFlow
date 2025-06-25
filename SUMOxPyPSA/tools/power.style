@@ -1,0 +1,77 @@
+# This is the adjusted and shortened default osm2pgsql .style file that comes 
+# with osm2pgsql where all lines are deleted that are not necessary for SciGRID.
+# Further there are power related lines are added such that osm2pgsql creates 
+# columns for the power entries.
+#
+# A .style file has 4 columns that define how OSM objects end up in tables in
+# the database and what columns are created. It interacts with the command-line
+# hstore options.
+#
+# Columns
+# =======
+#
+# OsmType: This is either "node", "way" or "node,way" and indicates if this tag
+# applies to nodes, ways, or both.
+#
+# Tag: The tag
+#
+# DataType: The type of the column to be created. Normally "text"
+#
+# Flags: Flags that indicate what table the OSM object is moved into.
+#
+# There are 5 possible flags. These flags are used both to indicate if a column
+# should be created, and if ways with the tag are assumed to be areas. The area
+# assumptions can be overridden with an area=yes/no tag
+#
+# polygon - Create a column for this tag, and objects the tag with are areas
+#
+# linear - Create a column for this tag
+#
+# phstore - Don't create a column for this tag, but objects with the tag are areas
+#
+# delete - Drop this tag completely and don't create a column for it. This also
+# prevents the tag from being added to hstore columns
+#
+# nocache - Deprecated and does nothing
+#
+# If an object has a tag that indicates it is an area or has area=yes/1,
+# osm2pgsql will try to turn it into an area. If it succeeds, it places it in
+# the polygon table. If it fails (e.g. not a closed way) it places it in the
+# line table.
+#
+# Nodes are never placed into the polygon or line table and are always placed in
+# the point table.
+#
+# Hstore
+# ======
+#
+# The option --hstore interacts with the .style file.
+#
+# With --hstore any tags without a column will be added to the hstore column.
+# This will also cause all objects to be kept.
+#
+#
+# Special database columns
+# ========================
+#
+# There are some special database columns that if present in the .style file
+# will be populated by osm2pgsql.
+#
+# These are
+#
+# z_order - datatype int4
+#
+# way_area - datatype real. The area of the way, in the units of the projection
+# (e.g. square mercator meters). Only applies to areas
+#
+# osm_user, osm_uid, osm_version, osm_timestamp - datatype text. Used with the
+# --extra-attributes option to include metadata in the database. If importing
+# with both --hstore and --extra-attributes the meta-data will end up in the
+# tags hstore column regardless of the style file.
+
+# OsmType  Tag          DataType     Flags
+node,way   power        text         polygon
+node,way   cables       text         linear
+node,way   voltage      text         linear
+node,way   wires        text         linear  
+

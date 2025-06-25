@@ -1,0 +1,160 @@
+#+TITLE: GridKit Log
+#+OPTIONS: num:nil toc:nil
+
+* Date: <2016-11-30 Wed>
+
+I think I have fixed the issue with the broken polygons by making a
+separate polygons table and filtering them on validity. I've also made
+a separate script to test on invalidity, which now lives in
+util/invalid-polygons.sql.
+
+To distinguish polygon-like open linestrings from linelike open
+linestrings, I'm using the heuristic that the distance between the
+start and enpoint of the line should be less than (or equal to) the
+length of the line divided by two, which is actually quite liberal
+since it includes two legs of equidistant triangles as polygons.
+
+In all of EuropePower.osm, 11 polygons are invalid, and of those, just
+1 actually creates a multipolygon when buffered. In other words, the
+underlying data issue is probably common enough, but it rarely
+generates an error. And in each of those cases, buffering the line
+rather than the created polygon will create a proper polygon.
+
+* Date: <2016-11-29 Tue>
+
+I can repeat the issue with the broken multipolygons.
+I results from self-intersecting polygons.
+Some of these, apparently, are actually... lines.
+
+Which is of course because I originally hadn't specified that the damn
+thing had to be stations. I've modified the query so it returns only stations.
+
+And now, I just get two stations, which is just enough to fail :-).
+
+
+
+
+* Date: <2016-11-28 Mon>
+
+Start of a new logfile to document GridKit development.
+
+Applying GridKit's export to a network model, missing properties are a
+large problem. Without knowing the line voltage and/or frequency, it
+is impossible to determine the line impedance, and it is impossible to
+determine if a station should need a transformer. Without knowning
+that, results will be highly distorted.
+
+It is my goal to produce a *consistent* and *complete* model of the
+electricity network from OpenStreetMap data, given that 'perfect'
+information will never be forthcoming. (Such is not in the nature of
+'open' data systems). Thus, GridKit tries to *interpret* the given
+data in the most *reasonable* way possible.
+
+Part of that is developing and testing heuristics for discovering
+topological relatiosn from spatial relations. Part of that is
+resolving conflicts using a consensus heuristic. And I think the last
+part that is statistical inference of missing values.
+
+For stations, that is not very interesting, because a station must
+carry at least those voltages of the lines it is attached
+to. Typically these should be the same, but I can't check that! There
+might be a transformer inbetween or the voltage may be
+misattributed. For a line, however, it directly affects the
+performance of the network. So it is on lines that I focus.
+
+A line always has a few features that provide some information on it:
+
++ length
++ connected stations
++ neighboring lines
+
+Furthermore, we are not actually very interested in the exact voltage
+and frequency (at least not as reported by the user), but rather in
+the 'classification' of the line, as a guide to its impedance
+characteristics. A preliminary classification (based on observation of
+data from Germany/Europe) might be as follows:
+
+| Voltage \ Frequency | DC                  | 16.7/16.67Hz                | 50/60Hz                       |
+|---------------------+---------------------+-----------------------------+-------------------------------|
+| <10kV               | Trams/Trolleys etc. | Minor railroads             | Endpoint Distribution         |
+| 10-60kV             | -                   | Main Railroads              | Local distribution            |
+| 60-120kV            | -                   | Railroad power Transmission | Low-voltage transmission      |
+| 120-250kV           | HVDC                | -                           | Medium-voltage transmission   |
+| 250-400kV           | HVDC                | -                           | High-voltage transmission     |
+| >400kV              | HVDC                | -                           | Very-high-voltage transmision |
+
+Traditionally, most interest has been in transmission and HVDC lines,
+but there is no reason to focus on those exclusively.
+
+I expect that lines in these different categories differ on the tree
+features noted above, and that those features can be used to determine
+the probability that a line belongs to a particular class. Once the
+class is known, the values of frequency and voltage can be derived
+from the modal values in the category.
+
+That probably means that the 50Hz values should be in a different
+category from 60Hz, lest we start mixing 50Hz and 60Hz lines if we
+ever cover an area that has both. Which is interesting.
+
+The basic theory so far is that I want to use Bayes rule for computing
+the probability that a line is in a given category given it has
+certain features, by determining the probablity that a line would have
+those features if it were in that category. Or to put it mathematically:
+
+\begin{equation}
+P(C|F) = \frac{P(F|C) * P(C)}{P(F)}
+\end{equation}
+
+A crucial assumption is that all features $F_i$ in $F$ are
+independent, and that the combined probability of $P(F) =
+\prod{F_i}$. Since that is not true for each of the separate neighbors
+(neighborship is symmetrical), the calculation of $P(N)$ must be
+somewhat different, and I haven't fully worked that out yet.
+
+The line length feature, well, that depends a bit on the distribution
+of the line lengths.  Now I have some reason to believe that the
+/logarithm/ of the line length is normally distributed, and I hope to
+find that the mean of the logaritmic line length differs sufficiently
+between groups. And if it does, we can use [[https://en.wikipedia.org/wiki/Gaussian_function][Gauss' formula]] to compute
+the probability of finding a line with that length per category:
+
+\begin{equation}
+f(x) = \frac{e^{-(x-\mu)/2\sigma^2}}{\sigma \sqrt{2 \pi}}
+\end{equation}
+
+Both attached stations are probably sufficiently independent features
+to be treated as such.
+
+
+** MultiPolygon Bugs.
+
+But first, a bugfix. Apparently on some inputs and on some versions of
+PostgreSQL, the following query:
+
+#+BEGIN_SRC sql
+select power_id, hstore(w.tags)->'power',
+       st_buffer(case when st_isclosed(wg.line) and st_numpoints(wg.line) > 3 then st_makepolygon(wg.line)
+                      when st_numpoints(wg.line) = 3 and st_isclosed(wg.line) or st_numpoints(wg.line) = 2 then st_buffer(wg.line, 1)
+                      else st_makepolygon(st_addpoint(wg.line, st_startpoint(wg.line))) end, :station_buffer)
+  from source_objects o
+  join planet_osm_ways w on w.id = o.osm_id
+  join way_geometry wg on wg.way_id = o.osm_id
+ where o.osm_type = 'w' and o.power_type = 's';​
+#+END_SRC
+
+Will sometimes result in the third variable being a multipolygon!
+
+What I need to do is figure out when this happens:
+
+#+BEGIN_SRC sql
+SELECT * FROM (
+    SELECT way_id, line, st_buffer(st_makepolygon(st_addpoint(line, st_startpoint(line))), 100)
+     FROM way_geometry
+     JOIN source_objects on osm_id = way_id and osm_type = 'w'
+     WHERE power_type = 's' AND NOT ST_IsClosed(line) AND ST_NumPoints(line) > 3
+) line_buffers (osm_id, line_geom, buffer_geom)
+WHERE ST_GeometryType(buffer_geom) = 'ST_MultiPolygon';
+#+END_SRC
+
+I've been unable to replicate this issue, unfortunately, but I will,
+and I will fix it.
