@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2025-06-17 15:27:26 by Eclipse SUMO sumo Version 1.23.1
+<!-- generated on 2025-06-25 17:22:36 by Eclipse SUMO sumo Version 1.23.1
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
@@ -26,12 +26,21 @@
 
     <report>
         <verbose value="true"/>
+        <no-warnings value="true"/>
         <duration-log.statistics value="true"/>
         <no-step-log value="true"/>
     </report>
+
+    <traci_server>
+        <remote-port value="58029"/>
+    </traci_server>
 
     <gui_only>
         <gui-settings-file value="osm.view.xml"/>
     </gui_only>
 
 </sumoConfiguration>
+-->
+
+<meandata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/meandata_file.xsd">
+</meandata>

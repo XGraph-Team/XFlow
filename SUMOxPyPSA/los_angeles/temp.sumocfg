@@ -3,7 +3,7 @@
     <input>
         <net-file value="osm.net.xml.gz"/>
         <route-files value="osm.passenger.trips.xml"/>
-        <additional-files value="osm.poly.xml.gz"/>
+        <additional-files value="osm.poly.xml.gz,traffic_lights.add.xml"/>
     </input>
     <processing>
         <time-to-teleport value="300"/>
@@ -19,7 +19,7 @@
         <ignore-route-errors value="true"/>
     </processing>
     <time>
-        <step-length value="0.05"/>
+        <step-length value="0.5"/>
         <start value="0"/>
         <end value="3600"/>
     </time>

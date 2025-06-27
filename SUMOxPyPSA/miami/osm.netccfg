@@ -25,7 +25,11 @@
         <tls.discard-simple value="true"/>
         <tls.join value="true"/>
         <tls.guess-signals value="true"/>
-        <tls.default-type value="actuated"/>
+        <tls.default-type value="static"/>
+        <tls.min-duration value="5"/>
+        <tls.max-duration value="60"/>
+        <tls.yellow.time value="3"/>
+        <tls.red.time value="2"/>
     </tls_building>
 
     <ramp_guessing>

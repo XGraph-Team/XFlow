@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<additional>
+    <!-- Template for 4-way intersection with proper green-yellow-red-green cycling -->
+    <tlLogic id="intersection_template" type="static" programID="0" offset="0">
+        <!-- Phase 1: North-South green, East-West red -->
+        <phase duration="15" state="GGGGrrrr"/>
+        <!-- Phase 2: North-South yellow, East-West red -->
+        <phase duration="3" state="yyyyrrrr"/>
+        <!-- Phase 3: All red (safety buffer) -->
+        <phase duration="2" state="rrrrrrrr"/>
+        <!-- Phase 4: East-West green, North-South red -->
+        <phase duration="15" state="rrrrGGGG"/>
+        <!-- Phase 5: East-West yellow, North-South red -->
+        <phase duration="3" state="rrrryyyy"/>
+        <!-- Phase 6: All red (safety buffer) -->
+        <phase duration="2" state="rrrrrrrr"/>
+    </tlLogic>
+    
+    <!-- Template for complex intersection with more signal groups -->
+    <tlLogic id="complex_intersection_template" type="static" programID="0" offset="0">
+        <!-- Phase 1: Main directions green -->
+        <phase duration="15" state="GGGGGGGrrrrrrrrrrrrrrr"/>
+        <!-- Phase 2: Main directions yellow -->
+        <phase duration="3" state="yyyyyyyrrrrrrrrrrrrrrr"/>
+        <!-- Phase 3: All red -->
+        <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr"/>
+        <!-- Phase 4: Cross directions green -->
+        <phase duration="15" state="rrrrrrrGGGGGGGrrrrrrrr"/>
+        <!-- Phase 5: Cross directions yellow -->
+        <phase duration="3" state="rrrrrrryyyyyyyrrrrrrrr"/>
+        <!-- Phase 6: All red -->
+        <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr"/>
+    </tlLogic>
+</additional>

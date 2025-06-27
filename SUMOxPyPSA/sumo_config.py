@@ -33,7 +33,7 @@ SUMO_COMMON_CONFIG = {
         'device.rerouting.output': 'rerouting.xml'
     },
     'time': {
-        'step-length': '0.5',
+        'step-length': '0.1',
         'start': '0',
         'end': '3600'
     },
@@ -52,21 +52,21 @@ CITY_CONFIGS = {
     "MANCHESTER": {
         "net-file": "osm.net.xml.gz",
         "route-files": "osm.passenger.trips.xml",
-        "additional-files": "osm.poly.xml.gz"
+        "additional-files": "osm.poly.xml.gz,traffic_lights.add.xml"
     },
     "NEWYORK": {
         "net-file": "osm.net.xml.gz",
         "route-files": "osm.passenger.trips.xml",
-        "additional-files": "osm.poly.xml.gz"
+        "additional-files": "osm.poly.xml.gz,traffic_lights.add.xml"
     },
     "MIAMI": {
         "net-file": "osm.net.xml.gz",
         "route-files": "osm.passenger.trips.xml",
-        "additional-files": "osm.poly.xml.gz"
+        "additional-files": "osm.poly.xml.gz,traffic_lights.add.xml"
     },
     "LOSANGELES": {
         "net-file": "osm.net.xml.gz",
         "route-files": "osm.passenger.trips.xml",
-        "additional-files": "osm.poly.xml.gz"
+        "additional-files": "osm.poly.xml.gz,traffic_lights.add.xml"
     }
 } 
