@@ -11,7 +11,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SUMO_COMMON_CONFIG = {
     'processing': {
         'time-to-teleport': '300',
-        'ignore-junction-blocker': '60',
         'collision.action': 'none',
         'collision.stoptime': '0',
         'collision.check-junctions': 'false',
@@ -33,7 +32,7 @@ SUMO_COMMON_CONFIG = {
         'device.rerouting.output': 'rerouting.xml'
     },
     'time': {
-        'step-length': '0.1',
+        'step-length': '0.5',
         'start': '0',
         'end': '3600'
     },
@@ -52,21 +51,21 @@ CITY_CONFIGS = {
     "MANCHESTER": {
         "net-file": "osm.net.xml.gz",
         "route-files": "osm.passenger.trips.xml",
-        "additional-files": "osm.poly.xml.gz,traffic_lights.add.xml"
+        "additional-files": "osm.poly.xml.gz,traffic_lights_safe.add.xml"
     },
     "NEWYORK": {
         "net-file": "osm.net.xml.gz",
         "route-files": "osm.passenger.trips.xml",
-        "additional-files": "osm.poly.xml.gz,traffic_lights.add.xml"
+        "additional-files": "osm.poly.xml.gz,traffic_lights_safe.add.xml"
     },
     "MIAMI": {
         "net-file": "osm.net.xml.gz",
         "route-files": "osm.passenger.trips.xml",
-        "additional-files": "osm.poly.xml.gz,traffic_lights.add.xml"
+        "additional-files": "osm.poly.xml.gz,traffic_lights_safe.add.xml"
     },
     "LOSANGELES": {
         "net-file": "osm.net.xml.gz",
         "route-files": "osm.passenger.trips.xml",
-        "additional-files": "osm.poly.xml.gz,traffic_lights.add.xml"
+        "additional-files": "osm.poly.xml.gz,traffic_lights_safe.add.xml"
     }
 } 

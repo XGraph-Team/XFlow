@@ -8,7 +8,7 @@
     <input>
         <net-file value="osm.net.xml.gz"/>
         <route-files value="osm.passenger.trips.xml"/>
-        <additional-files value="osm.poly.xml.gz,output.add.xml"/>
+        <additional-files value="osm.poly.xml.gz,traffic_lights_fixed.add.xml"/>
     </input>
 
     <output>

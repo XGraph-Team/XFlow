@@ -1,0 +1,13 @@
+***Starting server on port 59467 ***
+Loading net-file from 'osm.net.xml.gz' ... done (481ms).
+Loading additional-files from 'osm.poly.xml.gz' ... done (1132ms).
+Loading additional-files from 'traffic_lights_simple.add.xml' ... done (15ms).
+Loading route-files incrementally from 'osm.passenger.trips.xml'
+Loading done.
+Simulation version 1.23.1 started with time: 0.00.
+Warning: No connection between edge '797654755' and edge '-481047237#2' found.
+Warning: No route for vehicle '3' found.
+Error: Vehicle '3' has no valid route.
+Quitting (on error).
+DijkstraRouter answered 4 queries and explored 1540.25 edges on average.
+DijkstraRouter spent 0.00s answering queries (0.75ms on average).

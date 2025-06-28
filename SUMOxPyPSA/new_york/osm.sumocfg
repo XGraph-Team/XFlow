@@ -3,7 +3,7 @@
     <input>
         <net-file value="osm.net.xml.gz"/>
         <route-files value="osm.passenger.trips.xml"/>
-        <additional-files value="osm.poly.xml.gz,traffic_lights.add.xml"/>
+        <additional-files value="osm.poly.xml.gz,traffic_lights_fixed.add.xml"/>
     </input>
     <time>
         <begin value="0"/>
@@ -11,7 +11,6 @@
         <step-length value="0.1"/>
     </time>
     <processing>
-        <ignore-junction-blocker value="5"/>
         <time-to-teleport value="5"/>
         <max-depart-delay value="5"/>
         <routing-algorithm value="dijkstra"/>
@@ -19,9 +18,6 @@
         <collision.stoptime value="0"/>
         <collision.mingap-factor value="0.5"/>
         <eager-insert value="true"/>
-        <ignore-junction-blocker.fringe value="true"/>
-        <ignore-junction-blocker.keep-clear value="false"/>
-        <ignore-junction-blocker.keep-clear.fringe value="false"/>
     </processing>
     <report>
         <verbose value="true"/>
