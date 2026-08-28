@@ -58,6 +58,25 @@ def greedy(g, config, budget, seeds, rounds=100, model='SI', beta=0.1):
     return selected
 
 # baselines: proxy based
+# eigenvector_centrality_numpy is only well defined on a connected graph, and
+# removing the selected nodes one by one easily disconnects it, so score the
+# largest connected component and leave the remaining nodes at zero
+def _eigen_centrality(g):
+    if g.number_of_nodes() == 0:
+        return {}
+
+    component = g
+    if not nx.is_connected(g):
+        component = g.subgraph(max(nx.connected_components(g), key=len))
+
+    if component.number_of_nodes() < 2:
+        # only isolated nodes are left, all of them are equally central
+        return nx.centrality.degree_centrality(g)
+
+    centrality = dict.fromkeys(g, 0.0)
+    centrality.update(nx.eigenvector_centrality_numpy(component))
+    return centrality
+
 # eigen centrality
 def eigen(g, config, budget):
     g_eig = g.__class__()
@@ -70,7 +89,9 @@ def eigen(g, config, budget):
     eig = []
 
     for k in range(budget):
-        eigen = nx.eigenvector_centrality_numpy(g_eig)
+        eigen = _eigen_centrality(g_eig)
+        if not eigen:
+            break
         selected = sorted(eigen, key=eigen.get, reverse=True)[0]
         eig.append(selected)
         g_eig.remove_node(selected)
