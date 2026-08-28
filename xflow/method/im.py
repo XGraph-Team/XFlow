@@ -4,12 +4,11 @@ import ndlib
 import ndlib.models.epidemics as ep
 import ndlib.models.ModelConfig as mc
 import statistics as s
-import random
+import random as rand
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import time
-from random import uniform, seed
 
 from collections import Counter
 import operator
@@ -18,7 +17,14 @@ from xflow.diffusion.SI import SI
 from xflow.diffusion.IC import IC
 from xflow.diffusion.LT import LT
 
+# baselines: random
+
 # random
+def random(g, config, budget):
+    selected = rand.sample(list(g.nodes()), budget)
+
+    print(selected)
+    return selected
 
 # baselines: simulation based
 
@@ -419,7 +425,7 @@ def RIS(g, config, budget, rounds=100):
 #         x = n / (2 ** i)
 #         theta_i = (l / eps_prime ** 2) * np.log(n) / x
 #         while len(R) <= theta_i:
-#             v = random.choice(list(g.nodes()))
+#             v = rand.choice(list(g.nodes()))
 #             R.append(get_RRS(g, config))
 #         S_i = NodeSelection(R, int(x))  # Changed budget to int(x) here
 #         if n * len(S_i) >= (1 + eps_prime) * x:  
@@ -427,7 +433,7 @@ def RIS(g, config, budget, rounds=100):
 #             break
 #     theta = (l / (epsilon ** 2)) * np.log(n) / LB
 #     while len(R) <= theta:
-#         v = random.choice(list(g.nodes()))
+#         v = rand.choice(list(g.nodes()))
 #         R.append(get_RRS(g, config))
 #     return R
 
@@ -475,13 +481,13 @@ def get_RRS(g, config):
     Outputs: A random reverse reachable set expressed as a list of nodes
     """
     # get edges according to the propagation probability
-    edges = [(u, v) for (u, v, d) in g.edges(data=True) if uniform(0, 1) < config.config["edges"]['threshold'][(u, v)]]
+    edges = [(u, v) for (u, v, d) in g.edges(data=True) if rand.uniform(0, 1) < config.config["edges"]['threshold'][(u, v)]]
     
     # create a subgraph based on the edges
     g_sub = g.edge_subgraph(edges)
     
     # select a random node as the starting point that is part of the subgraph
-    source = random.choice(list(g_sub.nodes()))
+    source = rand.choice(list(g_sub.nodes()))
     
     # perform a depth-first traversal from the source node to get the RRS
     RRS = list(nx.dfs_preorder_nodes(g_sub, source))

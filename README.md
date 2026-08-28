@@ -35,7 +35,6 @@ pip install xflow-net
 import xflow.dataset.nx as nx_datasets
 import xflow.dataset.pyg as pyg_datasets
 import xflow.diffusion as diffusion_models
-import xflow.seed as seeds
 import xflow.util as util
 import xflow.method.im as im_methods
 import xflow.method.ibm as ibm_methods
@@ -53,13 +52,10 @@ gs = [fn, pyg_datasets.Cora]
 # Diffusion models to test
 df = [diffusion_models.SI, diffusion_models.IC, diffusion_models.LT]
 
-# Seed configurations to test
-se = [seeds.random, seeds.degree, seeds.eigen]
-
 # Configurations of IM experiments
-im_experiments = [im_methods.pi, im_methods.eigen]
+im_experiments = [im_methods.random, im_methods.pi, im_methods.eigen]
 rt = util.run(
-    graph=gs, diffusion=df, seeds=se,
+    graph=gs, diffusion=df,
     method=im_experiments, eval='im', epoch=10,
     budget=10,
     output=['animation', 'csv', 'fig']
@@ -67,12 +63,15 @@ rt = util.run(
 ```
 
 ## Maximizing Blocking
+Blocking is evaluated against a seed set, which is selected by an IM method
+(`seed_method`, `im_methods.random` by default) instead of a separate seed module.
+
 ```python
 ibm_experiments = [ibm_methods.sigma, ibm_methods.degree]
 rt = util.run(
-    graph=gs, diffusion=df, seeds=se,
+    graph=gs, diffusion=df,
     method=ibm_experiments, eval='ibm', epoch=10,
-    budget=10,
+    budget=10, seed_method=im_methods.degree,
     output=['animation', 'csv', 'fig']
 )
 ```
@@ -84,6 +83,7 @@ See more examples in folder `examples`
 # Benchmark Task
 
 ## Influence Maximization
+- random
 - simulation: [greedy](https://dl.acm.org/doi/10.1145/956750.956769), [CELF](https://dl.acm.org/doi/abs/10.1145/1281192.1281239), and [CELF++](https://dl.acm.org/doi/10.1145/1963192.1963217), 
 - proxy: [pi](https://ojs.aaai.org/index.php/AAAI/article/view/21694), [sigma](https://ieeexplore.ieee.org/document/8661648), degree, and [eigen-centrality](https://en.wikipedia.org/wiki/Eigenvector_centrality)
 - sketch: [RIS](https://epubs.siam.org/doi/abs/10.1137/1.9781611973402.70)

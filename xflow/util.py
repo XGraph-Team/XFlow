@@ -1,29 +1,47 @@
 import random
-import xflow.method.cosasi as co
+
 import numpy as np
 
-# TODO make seeds changable
-# def run (graph, diffusion, seeds, method, eval, epoch, budget, output):
-def run (graph, diffusion, method, eval, epoch, budget, output):
+import xflow.method.cosasi as co
+import xflow.method.im as im_methods
+
+
+# Seed sets are no longer configured separately: they are produced by the IM
+# methods in ``xflow.method.im`` (the former ``xflow.seed`` module is gone).
+# ``seed_method`` below is any of those methods, e.g. ``im_methods.random``,
+# ``im_methods.degree`` or ``im_methods.eigen``.
+def run(graph, diffusion, method, eval, epoch, budget, output,
+        seed_method=im_methods.random, seed_budget=None, seed=None):
 
     print("Running " + eval.upper() + " :")
+
+    if seed_budget is None:
+        seed_budget = budget
+
+    results = {}
 
     for graph_fn in graph:
         try:
             print(graph_fn.__name__)
             g, config = graph_fn()
             print(g)
-            seeds = random.sample(list(g.nodes()), 10)
+
+            # seeds come from an IM method instead of a dedicated seed module
+            seeds = None
+            if eval == 'ibm':
+                print('seeds by ' + seed_method.__name__)
+                seeds = seed_method(g, config, seed_budget)
 
             for method_fn in method:
                 try:
                     print(method_fn.__name__)
-                    baselines = ['eigen', 'degree', 'pi', 'sigma', 'Netshield', 'IMRank']
+                    sims = None
+                    baselines = ['random', 'eigen', 'degree', 'pi', 'sigma', 'Netshield', 'IMRank']
                     if method_fn.__name__ in baselines:
-                        sims = method_fn(g, config, budget=10)
+                        sims = method_fn(g, config, budget)
                     baselines = ['RIS']
                     if method_fn.__name__ in baselines:
-                        sims = method_fn(g, config, budget=10)
+                        sims = method_fn(g, config, budget, rounds=epoch)
                     baselines = ['greedy', 'celf', 'celfpp']
                     if method_fn.__name__ in baselines:
                         for diffusion_fn in diffusion:
@@ -37,10 +55,11 @@ def run (graph, diffusion, method, eval, epoch, budget, output):
                                 print(f"Error when calling {diffusion_fn.__name__}: {str(e)}")
 
                     if method_fn.__name__ == 'netsleuth':
-                        # todo seed shoule be changable
-                        seed = 10
-                        random.seed(seed)
-                        np.random.seed(seed)
+                        # ``seed`` here is the random number generation state,
+                        # not a seed set of nodes
+                        if seed is not None:
+                            random.seed(seed)
+                            np.random.seed(seed)
 
                         contagion = co.StaticNetworkContagion(
                             G=g,
@@ -63,9 +82,13 @@ def run (graph, diffusion, method, eval, epoch, budget, output):
                         evals = sims.evaluate(true_source)
                         top_dis= evals["distance"]["top score's distance"]
                         print(top_dis)
-                        
+
+                    results[(graph_fn.__name__, method_fn.__name__)] = sims
+
                 except Exception as e:
                     print(f"Error when calling {method_fn.__name__}: {str(e)}")    
 
         except Exception as e:
             print(f"Error when calling {graph_fn.__name__}: {str(e)}")
+
+    return results

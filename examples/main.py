@@ -3,7 +3,6 @@ import xflow_loader
 from xflow.dataset.nx import BA, connSW
 from xflow.dataset.pyg import Cora
 from xflow.diffusion import SI, IC, LT
-from xflow.seed import random as seed_random, degree as seed_degree, eigen as seed_eigen
 from xflow.util import run
 
 # graphs to test
@@ -16,24 +15,25 @@ gs = [fn, BA]
 df = [SI, IC, LT]
 
 # configurations of IM experiments
-from xflow.method.im import pi as im_pi, degree as im_degree, sigma as im_sigma, eigen as im_eigen, celf as im_celf,celfpp as im_celfpp, greedy as im_greedy
-me = [im_pi, im_eigen]
+# seed sets are produced by the IM methods themselves, there is no separate seed module
+from xflow.method.im import random as im_random, pi as im_pi, degree as im_degree, sigma as im_sigma, eigen as im_eigen, celf as im_celf,celfpp as im_celfpp, greedy as im_greedy
+me = [im_random, im_pi, im_eigen]
 rt = run (
     graph = gs, diffusion = df, 
     method = me, eval = 'im', epoch = 10, 
     budget = 10, 
-    output = [ 'animation', 'csv', 'fig'],
-    seeds = seed_random)
+    output = [ 'animation', 'csv', 'fig'])
 
 # configurations of IBM experiments
-from xflow.method.ibm import pi as ibm_pi, degree as ibm_degree, sigma as ibm_sigma, eigen as im_eigen, greedy as ibm_greedy
+# the seed set to be blocked is selected by an IM method, e.g. im_degree
+from xflow.method.ibm import pi as ibm_pi, degree as ibm_degree, sigma as ibm_sigma, eigen as ibm_eigen, greedy as ibm_greedy
 me = [ibm_pi, ibm_sigma, ibm_degree]
 rt = run (
     graph = gs, diffusion = df, 
     method = me, eval = 'ibm', epoch = 10,
     budget = 10,
     output = [ 'animation', 'csv', 'fig'],
-    seeds = seed_random)
+    seed_method = im_degree)
  
 # configurations of SL experiments
 from xflow.method.cosasi.source_inference.multiple_source.netsleuth import netsleuth, fast_multisource_netsleuth
@@ -46,4 +46,4 @@ rt = run (
     method = me, eval = 'sl', epoch = 10,
     budget = 10,
     output = [ 'animation', 'csv', 'fig'],
-    seeds = seed_random)
+    seed = 10)
